@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  trans:
+    build: .
+    command: gunicorn --bind 0.0.0.0:5003 manage:app
+    volumes:
+      - .:/usr/src/app/
+    expose:
+      - 5003
+    ports:
+      - "5003:5003"
+    env_file:
+      - ./.env.prod
