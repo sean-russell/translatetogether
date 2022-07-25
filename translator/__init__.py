@@ -106,6 +106,7 @@ def main_page():
         gr.set_activity_progress('Completed')
         gr.set_grading_progress('FullyGraded')
         gr.set_user_id(username)
+        ags.put_grade(gr)
         pprint.pprint("has_ags")
     if message_launch.has_nrps():
         pprint.pprint("has_nrps")
