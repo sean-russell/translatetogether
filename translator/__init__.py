@@ -3,7 +3,7 @@ from importlib.resources import is_resource
 import os
 import pprint
 
-from flask import Flask, jsonify, request, render_template, url_for
+from flask import Flask, jsonify, request, render_template, url_for, redirect
 from tempfile import mkdtemp
 from flask_caching import Cache
 
@@ -125,6 +125,7 @@ def main_page():
 @app.route('/translate/', methods=['POST'])
 def process_translation():
     pprint.pprint(request.form)
+    return redirect(url_for('main_page'))
     pass
 
 
