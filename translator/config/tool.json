@@ -10,7 +10,7 @@
             "key_set": null,
             "private_key_file": "jwtRS256.key",
             "public_key_file": "jwtRS256.key.pub",
-            "deployment_ids": ["5"]
+            "deployment_ids": ["5","6"]
         }
     ]
 }
