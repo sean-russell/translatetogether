@@ -9,6 +9,6 @@ app = Flask(__name__)
 preface = ""
 
 
-@app.route('/quiz/', methods=['GET'])
+@app.route('/init/', methods=['GET'])
 def main_page():
     return render_template('main.html', preface=preface)
