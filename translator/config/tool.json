@@ -2,7 +2,7 @@
     "https://waist.ucd.ie/moodle": [
         {
             "default": true,
-            "client_id": "dpgXkdh9lkYTVIv",
+            "client_id": "Ge5hPneE5UDeOAZ",
             "auth_login_url": "https://waist.ucd.ie/moodle/mod/lti/auth.php",
             "auth_token_url": "https://waist.ucd.ie/moodle/mod/lti/token.php",
             "auth_audience": "https://waist.ucd.ie/moodle",
