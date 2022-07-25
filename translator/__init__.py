@@ -75,7 +75,7 @@ def login():
 
 @app.route('/init/', methods=['POST'])
 def main_page():
-    print(request)
+    print(request.get_data())
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     flask_request = FlaskRequest()
     message_launch = FlaskMessageLaunch(
