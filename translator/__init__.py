@@ -73,7 +73,7 @@ def login():
     return oidc_login.enable_check_cookies().redirect(target_link_uri)
 
 
-@app.route('/init/', methods=['GET', 'POST'])
+@app.route('/init/', methods=['POST'])
 def main_page():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     message_launch = FlaskMessageLaunch(
