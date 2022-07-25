@@ -87,7 +87,10 @@ def main_page():
         pprint.pprint("is_resource_launch")
     if message_launch.is_deep_link_launch():
         pprint.pprint("deep_link_launch")
-
+    if message_launch.has_ags():
+        pprint.pprint("has_ags")
+    if message_launch.has_nrps():
+        pprint.pprint("has_nrps")
 
     custom_data = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom', {})
     pprint.pprint(custom_data)
