@@ -77,9 +77,9 @@ def login():
 def main_page():
     print(request)
     tool_conf = ToolConfJsonFile(get_lti_config_path())
-    request = FlaskRequest()
+    flask_request = FlaskRequest()
     message_launch = FlaskMessageLaunch(
-        request=request,
+        request=flask_request,
         tool_config=tool_conf
     )
     launch_data = message_launch.get_launch_data()
