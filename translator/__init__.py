@@ -62,7 +62,7 @@ def login():
     return oidc_login.enable_check_cookies().redirect(target_link_uri)
 
 
-@app.route('/init/', methods=['GET'])
+@app.route('/init/', methods=['GET', 'POST'])
 def main_page():
     return render_template('main.html', preface=preface)
 
