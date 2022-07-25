@@ -46,11 +46,14 @@ def get_launch_data_storage():
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
+    print("request.datar",request.data)
     tool_conf = ToolConfJsonFile(get_lti_config_path())
+    print("tool_conf", tool_conf)
     launch_data_storage = get_launch_data_storage()
-
+    print("launch_data_storage", launch_data_storage)
+    
     flask_request = FlaskRequest()
-    print(flask_request)
+
     target_link_uri = flask_request.get_param('target_link_uri')
     if not target_link_uri:
         raise Exception('Missing "target_link_uri" param')
