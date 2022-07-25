@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+translator/config/jwtRS256.key
+translator/config/jwtRS256.key.pub
+.idea/*
