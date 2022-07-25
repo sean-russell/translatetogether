@@ -88,3 +88,7 @@ def main_page():
 def get_jwks():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     return jsonify(tool_conf.get_jwks())
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=9001)
