@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+</head>
+<body>
+    <form action="{{ preface~url_for('process_translation') }}">
+        <input type="hidden" id="term" name="term" value="{{ term }}">
+        <label for="termtrans">
+            Term:
+            <input type="text" id="termtrans" name="termtrans" value="{{ termtrans }}" placeholder="Translated term">
+        </label>
+        <label for="translation">
+            Description:
+            <textarea id="translation" name="translation" rows="8" cols="40"></textarea>
+        </label>
+        <input type="submit">
+    </form>
+    <footer>
+        &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
+    </footer>
+</body>
+</html>
