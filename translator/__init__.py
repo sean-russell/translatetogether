@@ -82,12 +82,30 @@ def main_page():
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
     message_launch_data = message_launch.get_launch_data()
     pprint.pprint(message_launch_data)
-
+    email = message_launch_data.get('email')
+    if "https://purl.imsglobal.org/spec/lti/claim/ext" in message_launch_data:
+        pprint.pprint(message_launch_data["https://purl.imsglobal.org/spec/lti/claim/ext"])
+        ext = message_launch_data["https://purl.imsglobal.org/spec/lti/claim/ext"]
+        if "user_username" in ext:
+            username = ext["user_username"]
+            print("username", username)
+        else:
+            pprint.pprint("no username in ext")
+    else:
+        pprint.pprint("no ext in message_launch_data")
     if message_launch.is_resource_launch():
         pprint.pprint("is_resource_launch")
     if message_launch.is_deep_link_launch():
         pprint.pprint("deep_link_launch")
     if message_launch.has_ags():
+        ags = message_launch.get_ags()
+        gr = Grade()
+        gr.set_score_given(100)
+        gr.set_score_maximum(100)
+        gr.set_timestamp(datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S+0000'))
+        gr.set_activity_progress('Completed')
+        gr.set_grading_progress('FullyGraded')
+        gr.set_user_id(external_user_id)
         pprint.pprint("has_ags")
     if message_launch.has_nrps():
         pprint.pprint("has_nrps")
