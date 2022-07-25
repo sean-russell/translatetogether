@@ -50,6 +50,7 @@ def login():
     launch_data_storage = get_launch_data_storage()
 
     flask_request = FlaskRequest()
+    print(flask_request)
     target_link_uri = flask_request.get_param('target_link_uri')
     if not target_link_uri:
         raise Exception('Missing "target_link_uri" param')
