@@ -75,17 +75,13 @@ def login():
 
 @app.route('/init/', methods=['POST'])
 def main_page():
-    print(request.get_data())
     tool_conf = ToolConfJsonFile(get_lti_config_path())
-    launch_data_storage = get_launch_data_storage()
     flask_request = FlaskRequest()
-    target_link_uri = flask_request.get_param('target_link_uri')
-    if not target_link_uri:
-        raise Exception('Missing "target_link_uri" param')
+    launch_data_storage = get_launch_data_storage()
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
+    message_launch_data = message_launch.get_launch_data()
+    pprint.pprint(message_launch_data)
 
-    launch_data = message_launch.get_launch_data()
-    print("launch_data", launch_data)
     return render_template('main.html', preface=preface)
 
 @app.route('/jwks/', methods=['GET'])
