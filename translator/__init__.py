@@ -99,6 +99,8 @@ def main_page():
         pprint.pprint("deep_link_launch")
     if message_launch.has_ags():
         ags = message_launch.get_ags()
+        items_lst = ags.get_lineitems()
+        pprint.pprint(items_lst)
         gr = Grade()
         gr.set_score_given(100)
         gr.set_score_maximum(100)
@@ -106,9 +108,12 @@ def main_page():
         gr.set_activity_progress('Completed')
         gr.set_grading_progress('FullyGraded')
         gr.set_user_id(username)
-        ags.put_grade(gr)
+        # ags.put_grade(gr)
         pprint.pprint("has_ags")
     if message_launch.has_nrps():
+        nrps = message_launch.get_nrps()
+        members = nrps.get_members()
+        pprint.pprint(members)
         pprint.pprint("has_nrps")
 
     custom_data = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom', {})
