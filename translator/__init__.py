@@ -1,4 +1,5 @@
 import datetime
+from importlib.resources import is_resource
 import os
 import pprint
 
@@ -81,6 +82,16 @@ def main_page():
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
     message_launch_data = message_launch.get_launch_data()
     pprint.pprint(message_launch_data)
+
+    if message_launch.is_resource_launch():
+        pprint.pprint("is_resource_launch")
+    if message_launch.is_deep_link_launch():
+        pprint.pprint("deep_link_launch")
+
+
+    custom_data = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom', {})
+    pprint.pprint(custom_data)
+
 
     return render_template('main.html', preface=preface)
 
