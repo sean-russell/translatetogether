@@ -62,3 +62,8 @@ def login():
 @app.route('/init/', methods=['GET'])
 def main_page():
     return render_template('main.html', preface=preface)
+
+@app.route('/jwks/', methods=['GET'])
+def get_jwks():
+    tool_conf = ToolConfJsonFile(get_lti_config_path())
+    return jsonify(tool_conf.get_jwks())
