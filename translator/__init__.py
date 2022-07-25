@@ -120,7 +120,13 @@ def main_page():
     pprint.pprint(custom_data)
 
 
-    return render_template('main.html', preface=preface)
+    return render_template('term.html', preface=preface, term="hello")
+
+@app.route('/translate/', methods=['POST'])
+def process_translation():
+    pprint.pprint(request.form)
+    pass
+
 
 @app.route('/jwks/', methods=['GET'])
 def get_jwks():
