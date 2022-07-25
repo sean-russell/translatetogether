@@ -46,7 +46,7 @@ def get_launch_data_storage():
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    print("request.datar",request.data)
+    print("request",request)
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     print("tool_conf", tool_conf)
     launch_data_storage = get_launch_data_storage()
