@@ -105,7 +105,7 @@ def main_page():
         gr.set_timestamp(datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S+0000'))
         gr.set_activity_progress('Completed')
         gr.set_grading_progress('FullyGraded')
-        gr.set_user_id(external_user_id)
+        gr.set_user_id(username)
         pprint.pprint("has_ags")
     if message_launch.has_nrps():
         pprint.pprint("has_nrps")
