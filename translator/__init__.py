@@ -65,6 +65,13 @@ def login():
 
 @app.route('/init/', methods=['GET', 'POST'])
 def main_page():
+    tool_conf = ToolConfJsonFile(get_lti_config_path())
+    message_launch = FlaskMessageLaunch(
+        request=request,
+        tool_config=tool_conf
+    )
+    launch_data = message_launch.get_launch_data()
+    print("launch_data", launch_data)
     return render_template('main.html', preface=preface)
 
 @app.route('/jwks/', methods=['GET'])
