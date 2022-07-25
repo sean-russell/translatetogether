@@ -125,7 +125,7 @@ def main_page():
 @app.route('/translate/', methods=['POST'])
 def process_translation():
     pprint.pprint(request.form)
-    return redirect(url_for('main_page'))
+    return redirect(preface+url_for('main_page'))
     pass
 
 
