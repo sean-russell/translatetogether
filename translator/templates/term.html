@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
 </head>
 <body>
-    <form action="{{ preface~url_for('process_translation') }}">
+    <form action="{{ preface~url_for('process_translation') }}" method="post">
         <input type="hidden" id="term" name="term" value="{{ term }}">
         <label for="termtrans">
             Term:
