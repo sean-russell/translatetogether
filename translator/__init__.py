@@ -37,7 +37,7 @@ app.config.from_mapping(config)
 cache = Cache(app)
 
 def get_lti_config_path():
-    return os.path.join(app.root_path, 'translator', 'config', 'tool.json')
+    return os.path.join(app.root_path, 'config', 'tool.json')
 
 
 def get_launch_data_storage():
