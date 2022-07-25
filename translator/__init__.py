@@ -55,6 +55,7 @@ def login():
     flask_request = FlaskRequest()
 
     target_link_uri = flask_request.get_param('target_link_uri')
+    print("target_link_uri", target_link_uri)
     if not target_link_uri:
         raise Exception('Missing "target_link_uri" param')
 
