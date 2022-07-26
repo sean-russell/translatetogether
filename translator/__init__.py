@@ -135,7 +135,7 @@ def main_page():
             distribute_terms(config, message_launch)
             term = get_assigned_term(user, config)
             id_token = request.form['id_token']
-            return render_template('term.html', term=term, id_token=id_token, language = config.language)
+            return render_template('term.html', preface=preface, term=term, id_token=id_token, language = config.language)
 
 
 
@@ -170,7 +170,7 @@ def main_page():
 
 @app.route('/translate/', methods=['POST'])
 def process_translation():
-    pprint.pprint(request.form)
+    print(request.form)
     return redirect(preface+url_for('main_page'))
     pass
 
@@ -260,6 +260,11 @@ def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
         term = term_list[0]
         term_list.remove(term)
         assign_term(student, term, config)
+
+    """ set the status in the database to indicate that the terms have been distributed """
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE status SET status = %s WHERE course_id = %s AND section = %s", (STATUS_TERMS_ASSIGNED, config.course, config.section))
 
 def assign_term(student, term, config: Config):
     conn = mysql.connect()
