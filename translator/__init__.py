@@ -171,8 +171,16 @@ def main_page():
 
 @app.route('/translate/', methods=['POST'])
 def process_translation():
+    user=json.loads(request.form['user'])
+    config=json.loads(request.form['config'])
+    term=request.form['term']
+    transterm=request.form['transterm']
+    translation=request.form['translation']
+
     print(request.form)
-    return render_template('config.html', preface=preface, user=json.loads(request.form['user']), config=json.loads(request.form['config']))
+    record_action(user, "submitted translation")
+    translate_term(user, config, term, transterm, translation)
+    return render_template('config.html', preface=preface, user=user ,config = config)
     pass
 
 @app.route('/test/', methods=['GET'])
@@ -271,6 +279,16 @@ def assign_term(student, term, config):
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute("INSERT INTO assignments (vle_id, term_id, term, section, course_id) VALUES (%s, %s, %s, %s, %s)", (student.get('user_id'), term.get('id'), term.get('term'), config['section'], config['course']))
+    conn.commit()
+    conn.close()
+    return
+
+def translate_term(user, config, term, transterm, translation):
+    """ add the translation to the database """
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO translations (vle_id, term, transterm, transdescription, section, course_id) VALUES (%s, %s, %s, %s, %s, %s)", 
+        (user['id'], term, transterm, translation, config['section'], config['course']))
     conn.commit()
     conn.close()
     return
