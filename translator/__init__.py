@@ -202,12 +202,12 @@ def get_jwks():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     return jsonify(tool_conf.get_jwks())
 
-def record_action(user: User, actioncompleted: str ):
+def record_action(user, actioncompleted: str ):
     print("recording action", actioncompleted, "for user", user)
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute("INSERT INTO actions (vle_user_id, email, vle_username, course_id, role, actioncompleted) VALUES (%s, %s, %s, %s, %s, %s)", (
-        user.id, user.email, user.username, user.course, user.role, actioncompleted))
+        user['id'], user['email'], user['username'], user['course'], user['role'], actioncompleted))
     conn.commit()
     conn.close()
     return
