@@ -134,7 +134,8 @@ def main_page():
         elif status == STATUS_TERMS_PREPARED:
             distribute_terms(config, message_launch)
             term = get_assigned_term(user, config)
-            return render_template('term.html', term=term, id_token=message_launch.get_id_token())
+            id_token = request.form['id_token']
+            return render_template('term.html', term=term, id_token=id_token)
 
 
 
