@@ -57,6 +57,7 @@ config = {
 }
 
 Config = namedtuple('Config', ['course', 'phase', 'section', 'language'])
+User = namedtuple('User', ['id', 'email', 'username', 'course', 'full_name'])
 
 app.config.from_mapping(config)
 cache = Cache(app)
@@ -92,6 +93,8 @@ def main_page():
     user_vle_id = message_launch_data.get('sub')
     user_email = message_launch_data.get('email')
     vle_username = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
+
+    user=User(user_vle_id, user_email, vle_username, course_code,   message_launch_data.get('lis_person_name_full'))
     context = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/context')
     course_code = context.get('label')
     record_action(user_vle_id, user_email, vle_username, course_code, "Initiated the translation tool")
@@ -106,7 +109,7 @@ def main_page():
 
 
 
-    # pprint.pprint(message_launch_data)
+    pprint.pprint(message_launch_data)
     email = message_launch_data.get('email')
     if "https://purl.imsglobal.org/spec/lti/claim/ext" in message_launch_data:
         pprint.pprint(message_launch_data["https://purl.imsglobal.org/spec/lti/claim/ext"])
