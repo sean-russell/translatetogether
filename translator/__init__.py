@@ -128,6 +128,7 @@ def main_page():
         pass
     elif user.role == 'learner':
         status = get_status(config)
+        print("current status is ", status)
         if status == STATUS_NOT_PREPARED:
             return render_template('config.html', user=user, config=config)
         elif status == STATUS_TERMS_PREPARED:
