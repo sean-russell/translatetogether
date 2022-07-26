@@ -228,6 +228,7 @@ def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
     if message_launch.has_nrps():
         nrps = message_launch.get_nrps()
         members = nrps.get_members()
+    print(members)
     teaching_assistants= ['ta@example.com']
     students = [ m for m in members if 'Learner' in m.get('role') ]
     print("students at the start", students)
