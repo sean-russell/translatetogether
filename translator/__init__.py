@@ -90,17 +90,19 @@ def main_page():
     launch_data_storage = get_launch_data_storage()
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
     message_launch_data = message_launch.get_launch_data()
-    print("message_launch_data", message_launch_data)
     user_vle_id = message_launch_data.get('sub')
-    print("User ID (Moodle)", user_vle_id)
     user_email = message_launch_data.get('email')
-    print("User email", user_email)
+    vle_username = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
     context = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/context')
     print("Context Value:",type(context), context)
+    print("id == sub", context.get('id') == user_vle_id)
     course_code = context.get('label')
-    print("Course code:", course_code)
-    vle_username = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
-    print("VLE username:", vle_username)
+    
+    
+
+
+    record_action(user_vle_id, user_email, vle_username, course_code, "Initiated the translation tool")
+    
     custom = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom')
     print("Custom:", custom)
     language = custom.get('language')
@@ -183,6 +185,14 @@ def test_method():
 def get_jwks():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     return jsonify(tool_conf.get_jwks())
+
+def record_action(vle_user_id, email, vle_username, course_id, actioncompleted ):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO actions (vle_user_id, email, vle_username, course_id, actioncompleted) VALUES (%s, %s, %s, %s, %s)", (vle_user_id, email, vle_username, course_id, actioncompleted))
+    conn.commit()
+    conn.close()
+    return
 
 
 if __name__ == '__main__':
