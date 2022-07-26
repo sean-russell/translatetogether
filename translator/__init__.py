@@ -263,7 +263,7 @@ def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
 def assign_term(student, term, config: Config):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO assignments (vle_id, term_id, term, termgroup, course_id) VALUES (%s, %s, %s, %s, %s)", (student.get('user_id'), term.get('id'), term.get('term'), config.section, config.course))
+    cursor.execute("INSERT INTO assignments (vle_id, term_id, term, section, course_id) VALUES (%s, %s, %s, %s, %s)", (student.get('user_id'), term.get('id'), term.get('term'), config.section, config.course))
     conn.commit()
     conn.close()
     return
