@@ -237,14 +237,14 @@ def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
     conn = mysql.connect()
     """ load the assignments from the database for this course and section """ 
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM assignments WHERE course_code = %s AND section = %s", (config.course, config.section))
+    cursor.execute("SELECT * FROM assignments WHERE course_id = %s AND section = %s", (config.course, config.section))
     assignments = cursor.fetchall()
     cursor.close()
     conn.close()
     print("assignments", assignments)
     """ load the terms from the database"""
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM terms where course_code = %s and section = %s", (config.course, config.section))
+    cursor.execute("SELECT * FROM terms where course_id = %s and section = %s", (config.course, config.section))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
