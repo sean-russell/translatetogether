@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `status` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `course_id` varchar(255) NOT NULL,
   `termgroup` INTEGER NOT NULL,
-  `ready` BOOLEAN,
+  `status` INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -24,15 +24,25 @@ CREATE TABLE IF NOT EXISTS `terms` (
 
 INSERT INTO `terms` (`id`, `term`, `termgroup`, `course_id`) VALUES
 (1, 'term1', 1, 'COMP1001J'),
-(2, 'term2', 1, 'COMP1001J'),
-(3, 'term3', 1, 'COMP1001J'),
-(4, 'term4', 1, 'COMP1001J'),
-(5, 'term5', 1, 'COMP1001J'),
-(6, 'term6', 1, 'COMP1001J'),
-(7, 'term7', 1, 'COMP1001J'),
-(8, 'term8', 1, 'COMP1001J');
+(2, 'term2', 1, 'COMP1001J');
 
-INSERT INTO `status` (`id`, `course_id`, `termgroup`, `ready`) VALUES (1, 'COMP1001J', 1, true);
+INSERT INTO `status` (`id`, `course_id`, `termgroup`, `ready`) VALUES (1, 'COMP1001J', 1, 1);
+
+CREATE TABLE IF NOT EXISTS `students` (
+  `vle_user_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `vle_username` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `fullname` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `course_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  PRIMARY KEY (`vle_user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS `tas` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `course_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `actions` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -45,12 +55,20 @@ CREATE TABLE IF NOT EXISTS `actions` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
-
+CREATE TABLE IF NOT EXISTS `assignments` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `vle_id` varchar(255) NOT NULL,
+  `term_id` varchar(255) NOT NULL,
+  `term` varchar(255) NOT NULL,
+  `termgroup` INTEGER NOT NULL,
+  `course_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `translations` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `vle_id` varchar(255) NOT NULL,
-  `term` varchar(255) NOT NULL,
+  `term` bigint(20) NOT NULL,
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `transdescription` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `course_id` varchar(255) NOT NULL,

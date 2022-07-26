@@ -1,8 +1,9 @@
 import datetime
 import os
+import random
 import pprint
 import pymysql
-
+from collections import namedtuple
 from flask import Flask, jsonify, request, render_template, url_for, redirect
 from flaskext.mysql import MySQL
 from tempfile import mkdtemp
@@ -53,6 +54,8 @@ config = {
     "DEBUG_TB_INTERCEPT_REDIRECTS": False
 }
 
+Config = namedtuple('Config', ['course', 'phase', 'section', 'language'])
+
 app.config.from_mapping(config)
 cache = Cache(app)
 
@@ -66,16 +69,10 @@ def get_launch_data_storage():
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    print("request",request)
     tool_conf = ToolConfJsonFile(get_lti_config_path())
-    print("tool_conf", tool_conf)
     launch_data_storage = get_launch_data_storage()
-    print("launch_data_storage", launch_data_storage)
-    
     flask_request = FlaskRequest()
-
     target_link_uri = flask_request.get_param('target_link_uri')
-    print("target_link_uri", target_link_uri)
     if not target_link_uri:
         raise Exception('Missing "target_link_uri" param')
 
@@ -94,23 +91,19 @@ def main_page():
     user_email = message_launch_data.get('email')
     vle_username = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
     context = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/context')
-    print("Context Value:",type(context), context)
-    print("id == sub", context.get('id') == user_vle_id)
     course_code = context.get('label')
-    
-    
-
-
     record_action(user_vle_id, user_email, vle_username, course_code, "Initiated the translation tool")
     
     custom = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom')
-    print("Custom:", custom)
     language = custom.get('language')
-    print("Language:", language)
     phase = custom.get('phase')
-    print("Phase:", phase)
     section = custom.get('section')
-    print("Section:", section)
+    config = Config(course_code, phase, section, language)
+    print(config, message_launch)
+    
+
+
+
     # pprint.pprint(message_launch_data)
     email = message_launch_data.get('email')
     if "https://purl.imsglobal.org/spec/lti/claim/ext" in message_launch_data:
@@ -194,6 +187,50 @@ def record_action(vle_user_id, email, vle_username, course_id, actioncompleted )
     conn.close()
     return
 
+def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
+    members = []
+    if message_launch.has_nrps():
+        nrps = message_launch.get_nrps()
+        members = nrps.get_members()
+    teaching_assistants= ['ta@example.com']
+    students = [ m for m in members if 'Learner' in m.get('role') ]
+    print("students at the start", students)
+    students = [ s for s in students if s.get('email') not in teaching_assistants ]
+    print("students after removing teaching assistants", students)
+    conn = mysql.connect()
+    """ load the assignments from the database for this course and section """ 
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM assignments WHERE course_code = %s AND section = %s", (config.course, config.section))
+    assignments = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    print("assignments", assignments)
+    """ load the terms from the database"""
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM terms where course_code = %s and section = %s", (config.course, config.section))
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    print("terms", rows)
+    """ remove students from the list if they have already been assigned a term for this section of the course"""
+    assigned_ids = [ a.get('vle_id') for a in assignments ]
+    students = [ s for s in students if s.get('user_id') not in assigned_ids ]
+    print("students after assigned are removed", students)
+    """ distribute the terms to the students """
+    num_students = len(students)
+    term_list = random.sample(rows, k = num_students)
+    for student in students:
+        term = term_list[0]
+        term_list.remove(term)
+        assign_term(student, term, config)
+
+def assign_term(student, term, config: Config):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO assignments (vle_id, term_id, term, termgroup, course_id) VALUES (%s, %s, %s, %s, %s)", (student.get('user_id'), term.get('id'), term.get('term'), config.section, config.course))
+    conn.commit()
+    conn.close()
+    return
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003)
