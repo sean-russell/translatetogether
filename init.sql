@@ -1,3 +1,4 @@
+CREATE USER IF NOT EXISTS 'transapp'@'%' IDENTIFIED BY '8HT6c8U74GcMQWnBj9GaZmaRahAu49';
 Grant All Privileges ON *.* to 'transapp'@'%' Identified By '8HT6c8U74GcMQWnBj9GaZmaRahAu49'; 
 FLUSH PRIVILEGES;
 
