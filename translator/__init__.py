@@ -90,11 +90,13 @@ def main_page():
     launch_data_storage = get_launch_data_storage()
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
     message_launch_data = message_launch.get_launch_data()
+    print(message_launch_data)
+    
     user_vle_id = message_launch_data.get('sub')
     user_email = message_launch_data.get('email')
     vle_username = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
 
-    user=User(user_vle_id, user_email, vle_username, course_code,   message_launch_data.get('lis_person_name_full'))
+    # user=User(user_vle_id, user_email, vle_username, course_code,   message_launch_data.get('lis_person_name_full'))
     context = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/context')
     course_code = context.get('label')
     record_action(user_vle_id, user_email, vle_username, course_code, "Initiated the translation tool")
