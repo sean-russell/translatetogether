@@ -240,7 +240,6 @@ def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
     cursor.execute("SELECT * FROM assignments WHERE course_id = %s AND section = %s", (config.course, config.section))
     assignments = cursor.fetchall()
     cursor.close()
-    conn.close()
     print("assignments", assignments)
     """ load the terms from the database"""
     cursor = conn.cursor(pymysql.cursors.DictCursor)
