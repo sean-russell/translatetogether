@@ -254,7 +254,7 @@ def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
     print("students after assigned are removed", students)
     """ distribute the terms to the students """
     num_students = len(students)
-    term_list = random.sample(rows, k = num_students)
+    term_list = random.choices(rows, k = num_students)
     for student in students:
         term = term_list[0]
         term_list.remove(term)
