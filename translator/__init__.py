@@ -1,11 +1,13 @@
 import datetime
-from importlib.resources import is_resource
 import os
 import pprint
+import pymysql
 
 from flask import Flask, jsonify, request, render_template, url_for, redirect
+from flaskext.mysql import MySQL
 from tempfile import mkdtemp
 from flask_caching import Cache
+from importlib.resources import is_resource
 
 from pylti1p3.contrib.flask import FlaskOIDCLogin, FlaskMessageLaunch, FlaskRequest, FlaskCacheDataStorage
 from pylti1p3.deep_link_resource import DeepLinkResource
@@ -26,8 +28,15 @@ class ReverseProxied(object):
 
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
+mysql = MySQL()
 
-preface = "/trans"
+# MySQL configurations
+app.config['MYSQL_DATABASE_USER'] = 'transapp'
+app.config['MYSQL_DATABASE_PASSWORD'] = '8HT6c8U74GcMQWnBj9GaZmaRahAu49'
+app.config['MYSQL_DATABASE_DB'] = 'translation'
+app.config['MYSQL_DATABASE_HOST'] = 'database'
+mysql.init_app(app)
+preface = ""
 
 config = {
     "DEBUG": True,
@@ -81,6 +90,17 @@ def main_page():
     launch_data_storage = get_launch_data_storage()
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
     message_launch_data = message_launch.get_launch_data()
+    print("message_launch_data", message_launch_data)
+    user_vle_id = message_launch_data.get('sub')
+    print("User ID (Moodle)", user_vle_id)
+    user_email = message_launch_data.get('email')
+    print("User email", user_email)
+    context = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/context')
+    print("Context Value:",type(context), context)
+    course_code = context.get('label')
+    print("Course code:", course_code)
+    vle_username = context.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
+    print("VLE username:", vle_username)
     pprint.pprint(message_launch_data)
     email = message_launch_data.get('email')
     if "https://purl.imsglobal.org/spec/lti/claim/ext" in message_launch_data:
@@ -128,6 +148,28 @@ def process_translation():
     return redirect(preface+url_for('main_page'))
     pass
 
+@app.route('/test/', methods=['GET'])
+def test_method():
+    conn = mysql.connect()
+
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM status")
+
+    rows = cursor.fetchall()
+    print("rows", jsonify(rows))
+
+    cursor.execute("SELECT * FROM terms")
+
+    rows = cursor.fetchall()
+    print("rows", jsonify(rows))
+    resp = jsonify(rows)
+    resp.status_code = 200
+
+    return resp
+    
+    
+    return redirect(preface+url_for('main_page'))
+    pass
 
 @app.route('/jwks/', methods=['GET'])
 def get_jwks():

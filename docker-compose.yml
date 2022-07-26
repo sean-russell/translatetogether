@@ -12,3 +12,16 @@ services:
       - "5003:5003"
     env_file:
       - ./.env.prod
+  database:
+    image: mysql:5.7
+    expose:
+      - 3306
+    command: --init-file /data/application/init.sql
+    volumes:
+        - ./init.sql:/data/application/init.sql
+    environment:
+        MYSQL_ROOT_USER: root
+        MYSQL_ROOT_PASSWORD: 4vqAbeEnC3DM8Wkf2BtGnu6fHawVAG
+        MYSQL_DATABASE: translation
+        MYSQL_USER: transapp
+        MYSQL_PASSWORD: 8HT6c8U74GcMQWnBj9GaZmaRahAu49
