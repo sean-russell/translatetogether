@@ -2,6 +2,7 @@ import datetime
 import os
 import random
 import pprint
+import json
 import pymysql
 from collections import namedtuple
 from flask import Flask, jsonify, request, render_template, url_for, redirect, escape
@@ -135,7 +136,7 @@ def main_page():
             distribute_terms(config, message_launch)
             term = get_assigned_term(user, config)
             id_token = request.form['id_token']
-            return render_template('term.html', preface=preface, user=escape(user), config=config,term=term, id_token=id_token, language = config['language'])
+            return render_template('term.html', preface=preface, user=json.dumps(user), config=json.dumps(config),term=term, id_token=id_token, language = config['language'])
 
 
 
