@@ -230,7 +230,7 @@ def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
         members = nrps.get_members()
     print(members)
     teaching_assistants= ['ta@example.com']
-    students = [ m for m in members if 'Learner' in m.get('role') ]
+    students = [ m for m in members if 'Learner' in m.get('roles') ]
     print("students at the start", students)
     students = [ s for s in students if s.get('email') not in teaching_assistants ]
     print("students after removing teaching assistants", students)
