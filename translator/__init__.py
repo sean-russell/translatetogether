@@ -101,7 +101,15 @@ def main_page():
     print("Course code:", course_code)
     vle_username = context.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
     print("VLE username:", vle_username)
-    pprint.pprint(message_launch_data)
+    custom = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom')
+    print("Custom:", custom)
+    language = custom.get('language')
+    print("Language:", language)
+    phase = custom.get('phase')
+    print("Phase:", phase)
+    section = custom.get('section')
+    print("Section:", section)
+    # pprint.pprint(message_launch_data)
     email = message_launch_data.get('email')
     if "https://purl.imsglobal.org/spec/lti/claim/ext" in message_launch_data:
         pprint.pprint(message_launch_data["https://purl.imsglobal.org/spec/lti/claim/ext"])
@@ -136,8 +144,8 @@ def main_page():
         pprint.pprint(members)
         pprint.pprint("has_nrps")
 
-    custom_data = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom', {})
-    pprint.pprint(custom_data)
+    # custom_data = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom', {})
+    # pprint.pprint(custom_data)
 
 
     return render_template('term.html', preface=preface, term="hello")
