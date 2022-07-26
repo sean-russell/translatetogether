@@ -94,12 +94,12 @@ def main_page():
     
     user_vle_id = message_launch_data.get('sub')
     user_email = message_launch_data.get('email')
+    user_name = message_launch_data.get('name')
     vle_username = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
-
-    # user=User(user_vle_id, user_email, vle_username, course_code,   message_launch_data.get('lis_person_name_full'))
     context = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/context')
     course_code = context.get('label')
     record_action(user_vle_id, user_email, vle_username, course_code, "Initiated the translation tool")
+    user=User(user_vle_id, user_email, vle_username, course_code, user_name)
     
     custom = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom')
     language = custom.get('language')
@@ -108,8 +108,8 @@ def main_page():
     config = Config(course_code, phase, section, language)
     print(config, message_launch)
     
-
-
+    roles = message_launch_data.get("https://purl.imsglobal.org/spec/lti/claim/roles")
+    print(roles)
 
     pprint.pprint(message_launch_data)
     email = message_launch_data.get('email')
