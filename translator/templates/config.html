@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+</head>
+<body>
+    <p>If you are seeing this there has been a configuration error. Please tell your teacher and pass them the following information.</p>
+    <ul>
+        <li>
+            User ID: {{ user.id }}
+        </li>
+        <li>
+            User Email: {{ user.email }}
+        </li>
+        <li>
+            User Name: {{ user.full_name }}
+        </li>
+        <li>
+            User Role: {{ user.role }}
+        </li>
+        <li>
+            Username: {{ user.username }}
+        </li>
+        <li>
+            Course Code: {{ user.course }}
+        </li>
+    </ul>
+    <footer>
+        &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
+    </footer>
+</body>
+</html>
