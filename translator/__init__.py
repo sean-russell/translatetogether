@@ -174,12 +174,12 @@ def process_translation():
     user=json.loads(request.form['user'])
     config=json.loads(request.form['config'])
     term=request.form['term']
-    transterm=request.form['transterm']
+    termtrans=request.form['termtrans']
     translation=request.form['translation']
 
     print(request.form)
     record_action(user, "submitted translation")
-    translate_term(user, config, term, transterm, translation)
+    translate_term(user, config, term, termtrans, translation)
     return render_template('config.html', preface=preface, user=user ,config = config)
     pass
 
