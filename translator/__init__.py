@@ -172,7 +172,7 @@ def main_page():
 @app.route('/translate/', methods=['POST'])
 def process_translation():
     print(request.form)
-    return render_template('config.html', preface=preface, user=request.form['user'], config=request.form['config'])
+    return render_template('config.html', preface=preface, user=json.loads(request.form['user']), config=json.loads(request.form['config']))
     pass
 
 @app.route('/test/', methods=['GET'])
