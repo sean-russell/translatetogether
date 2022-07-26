@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `assignments` (
 CREATE TABLE IF NOT EXISTS `translations` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `vle_id` varchar(255) NOT NULL,
-  `term` bigint(20) NOT NULL,
+  `term` varchar(255) NOT NULL,
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `transdescription` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `section` INTEGER NOT NULL,
