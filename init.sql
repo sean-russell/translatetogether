@@ -1,7 +1,8 @@
 Grant All Privileges ON *.* to 'transapp'@'%' Identified By '8HT6c8U74GcMQWnBj9GaZmaRahAu49'; 
 FLUSH PRIVILEGES;
 
-CREATE DATABASE IF NOT EXISTS translation;
+DROP DATABASE IF EXISTS translation;
+CREATE DATABASE translation;
 use translation;
 
 CREATE TABLE IF NOT EXISTS `status` (
