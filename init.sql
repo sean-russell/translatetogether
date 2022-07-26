@@ -26,7 +26,7 @@ INSERT INTO `terms` (`id`, `term`, `termgroup`, `course_id`) VALUES
 (1, 'term1', 1, 'COMP1001J'),
 (2, 'term2', 1, 'COMP1001J');
 
-INSERT INTO `status` (`id`, `course_id`, `termgroup`, `ready`) VALUES (1, 'COMP1001J', 1, 1);
+INSERT INTO `status` (`id`, `course_id`, `termgroup`, `status`) VALUES (1, 'COMP1001J', 1, 1);
 
 CREATE TABLE IF NOT EXISTS `students` (
   `vle_user_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,

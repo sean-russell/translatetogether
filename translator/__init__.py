@@ -36,6 +36,8 @@ app.config['MYSQL_DATABASE_USER'] = 'transapp'
 app.config['MYSQL_DATABASE_PASSWORD'] = '8HT6c8U74GcMQWnBj9GaZmaRahAu49'
 app.config['MYSQL_DATABASE_DB'] = 'translation'
 app.config['MYSQL_DATABASE_HOST'] = 'database'
+
+
 mysql.init_app(app)
 preface = "/trans"
 
