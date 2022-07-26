@@ -122,11 +122,11 @@ def main_page():
     section = custom.get('section')
     config = {'course': course_code, 'phase': phase, 'section': section, 'language': language}
     
-    if user.role == 'instructor':
+    if user['role'] == 'instructor':
         if message_launch.is_deep_link_launch():
             pprint.pprint("deep_link_launch")
         pass
-    elif user.role == 'learner':
+    elif user['role'] == 'learner':
         status = get_status(config)
         print("current status is ", status)
         if status == STATUS_NOT_PREPARED:
