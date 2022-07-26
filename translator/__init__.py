@@ -63,8 +63,8 @@ config = {
     "DEBUG_TB_INTERCEPT_REDIRECTS": False
 }
 
-Config = namedtuple('Config', ['course', 'phase', 'section', 'language'])
-User = namedtuple('User', ['id', 'email', 'username', 'course', 'full_name', 'role'])
+# Config = namedtuple('Config', ['course', 'phase', 'section', 'language'])
+# User = namedtuple('User', ['id', 'email', 'username', 'course', 'full_name', 'role'])
 
 app.config.from_mapping(config)
 cache = Cache(app)
@@ -112,7 +112,7 @@ def main_page():
         role = 'learner'
     elif 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor' in roles:
         role = 'instructor'
-    user=User(user_vle_id, user_email, vle_username, course_code, user_name, role)
+    user={'id': user_vle_id, 'email': user_email, 'username': vle_username, 'full_name': user_name, 'role': role}
     
     record_action(user, "Initiated the translation tool")
     
@@ -120,7 +120,7 @@ def main_page():
     language = custom.get('language')
     phase = custom.get('phase')
     section = custom.get('section')
-    config = Config(course_code, phase, section, language)
+    config = {'course': course_code, 'phase': phase, 'section': section, 'language': language}
     
     if user.role == 'instructor':
         if message_launch.is_deep_link_launch():
@@ -135,7 +135,7 @@ def main_page():
             distribute_terms(config, message_launch)
             term = get_assigned_term(user, config)
             id_token = request.form['id_token']
-            return render_template('term.html', preface=preface, user=escape(user), config=escape(config),term=term, id_token=id_token, language = config.language)
+            return render_template('term.html', preface=preface, user=escape(user), config=config,term=term, id_token=id_token, language = config.language)
 
 
 
@@ -212,10 +212,10 @@ def record_action(user: User, actioncompleted: str ):
     conn.close()
     return
 
-def get_status(config:Config) -> str:
+def get_status(config) -> str:
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT status FROM status WHERE course_id = %s AND section = %s", (config.course, config.section))
+    cursor.execute("SELECT status FROM status WHERE course_id = %s AND section = %s", (config['course'], config['section']))
     rows = cursor.fetchall()
     status = -1
     if len(rows) == 1:
@@ -224,7 +224,7 @@ def get_status(config:Config) -> str:
     cursor.close()
     return status
 
-def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
+def distribute_terms(config, message_launch: FlaskMessageLaunch):
     members = []
     if message_launch.has_nrps():
         nrps = message_launch.get_nrps()
@@ -238,13 +238,13 @@ def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
     conn = mysql.connect()
     """ load the assignments from the database for this course and section """ 
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM assignments WHERE course_id = %s AND section = %s", (config.course, config.section))
+    cursor.execute("SELECT * FROM assignments WHERE course_id = %s AND section = %s", (config['course'], config['section']))
     assignments = cursor.fetchall()
     cursor.close()
     print("assignments", assignments)
     """ load the terms from the database"""
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM terms where course_id = %s and section = %s", (config.course, config.section))
+    cursor.execute("SELECT * FROM terms where course_id = %s and section = %s", (config['course'], config['section']))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -264,20 +264,20 @@ def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
     """ set the status in the database to indicate that the terms have been distributed """
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("UPDATE status SET status = %s WHERE course_id = %s AND section = %s", (STATUS_TERMS_ASSIGNED, config.course, config.section))
+    cursor.execute("UPDATE status SET status = %s WHERE course_id = %s AND section = %s", (STATUS_TERMS_ASSIGNED, config['course'], config['section']))
 
-def assign_term(student, term, config: Config):
+def assign_term(student, term, config):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO assignments (vle_id, term_id, term, section, course_id) VALUES (%s, %s, %s, %s, %s)", (student.get('user_id'), term.get('id'), term.get('term'), config.section, config.course))
+    cursor.execute("INSERT INTO assignments (vle_id, term_id, term, section, course_id) VALUES (%s, %s, %s, %s, %s)", (student.get('user_id'), term.get('id'), term.get('term'), config['section'], config['course']))
     conn.commit()
     conn.close()
     return
 
-def get_assigned_term(student : User, config: Config):
+def get_assigned_term(student, config):
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT term_id, term FROM assignments WHERE vle_id = %s AND course_id = %s AND section = %s", (student.id, config.course, config.section))
+    cursor.execute("SELECT term_id, term FROM assignments WHERE vle_id = %s AND course_id = %s AND section = %s", (student['id'], config['course'], config['section']))
     rows = cursor.fetchall()
     if len(rows) == 1:
         return rows[0]['term']
