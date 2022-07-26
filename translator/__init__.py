@@ -4,7 +4,7 @@ import random
 import pprint
 import pymysql
 from collections import namedtuple
-from flask import Flask, jsonify, request, render_template, url_for, redirect
+from flask import Flask, jsonify, request, render_template, url_for, redirect, escape
 from flaskext.mysql import MySQL
 from tempfile import mkdtemp
 from flask_caching import Cache
@@ -135,7 +135,7 @@ def main_page():
             distribute_terms(config, message_launch)
             term = get_assigned_term(user, config)
             id_token = request.form['id_token']
-            return render_template('term.html', preface=preface, user=jsonify(user), config=jsonify(config),term=term, id_token=id_token, language = config.language)
+            return render_template('term.html', preface=preface, user=escape(user), config=escape(config),term=term, id_token=id_token, language = config.language)
 
 
 
