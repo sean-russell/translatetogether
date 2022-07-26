@@ -130,12 +130,12 @@ def main_page():
         status = get_status(config)
         print("current status is ", status)
         if status == STATUS_NOT_PREPARED:
-            return render_template('config.html', preface=preface, user=user, config=config)
+            return render_template('config.html', preface=preface, user=jsonify(user), config=jsonify(config))
         elif status == STATUS_TERMS_PREPARED:
             distribute_terms(config, message_launch)
             term = get_assigned_term(user, config)
             id_token = request.form['id_token']
-            return render_template('term.html', preface=preface, term=term, id_token=id_token, language = config.language)
+            return render_template('term.html', preface=preface, user=jsonify(user), config=jsonify(config),term=term, id_token=id_token, language = config.language)
 
 
 
