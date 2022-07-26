@@ -130,7 +130,7 @@ def main_page():
         status = get_status(config)
         print("current status is ", status)
         if status == STATUS_NOT_PREPARED:
-            return render_template('config.html', user=user, config=config)
+            return render_template('config.html', preface=preface, user=user, config=config)
         elif status == STATUS_TERMS_PREPARED:
             distribute_terms(config, message_launch)
             term = get_assigned_term(user, config)
@@ -171,7 +171,7 @@ def main_page():
 @app.route('/translate/', methods=['POST'])
 def process_translation():
     print(request.form)
-    return redirect(preface+url_for('main_page'))
+    return render_template('config.html', preface=preface, user=request.form['user'], config=request.form['config'])
     pass
 
 @app.route('/test/', methods=['GET'])
