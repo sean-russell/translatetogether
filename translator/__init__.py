@@ -99,7 +99,7 @@ def main_page():
     print("Context Value:",type(context), context)
     course_code = context.get('label')
     print("Course code:", course_code)
-    vle_username = context.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
+    vle_username = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
     print("VLE username:", vle_username)
     custom = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom')
     print("Custom:", custom)
