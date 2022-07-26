@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS `actions` (
   `email` varchar(255) NOT NULL,
   `vle_username` varchar(255) NOT NULL,
   `course_id` varchar(255) NOT NULL,
+  `role` varchar(255) NOT NULL,
   `actioncompleted` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

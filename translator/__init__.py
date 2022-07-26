@@ -57,7 +57,7 @@ config = {
 }
 
 Config = namedtuple('Config', ['course', 'phase', 'section', 'language'])
-User = namedtuple('User', ['id', 'email', 'username', 'course', 'full_name'])
+User = namedtuple('User', ['id', 'email', 'username', 'course', 'full_name', 'role'])
 
 app.config.from_mapping(config)
 cache = Cache(app)
@@ -98,8 +98,16 @@ def main_page():
     vle_username = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
     context = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/context')
     course_code = context.get('label')
-    record_action(user_vle_id, user_email, vle_username, course_code, "Initiated the translation tool")
-    user=User(user_vle_id, user_email, vle_username, course_code, user_name)
+
+    roles = message_launch_data.get("https://purl.imsglobal.org/spec/lti/claim/roles")
+    role = 'none'
+    if 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner' in roles:
+        role = 'learner'
+    elif 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor' in roles:
+        role = 'instructor'
+    user=User(user_vle_id, user_email, vle_username, course_code, user_name, role)
+    
+    record_action(user, "Initiated the translation tool")
     
     custom = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom')
     language = custom.get('language')
@@ -107,9 +115,6 @@ def main_page():
     section = custom.get('section')
     config = Config(course_code, phase, section, language)
     print(config, message_launch)
-    
-    roles = message_launch_data.get("https://purl.imsglobal.org/spec/lti/claim/roles")
-    print(roles)
 
     pprint.pprint(message_launch_data)
     email = message_launch_data.get('email')
@@ -186,10 +191,12 @@ def get_jwks():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     return jsonify(tool_conf.get_jwks())
 
-def record_action(vle_user_id, email, vle_username, course_id, actioncompleted ):
+def record_action(user: User, actioncompleted: str ):
+    print("recording action", actioncompleted, "for user", user)
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO actions (vle_user_id, email, vle_username, course_id, actioncompleted) VALUES (%s, %s, %s, %s, %s)", (vle_user_id, email, vle_username, course_id, actioncompleted))
+    cursor.execute("INSERT INTO actions (vle_user_id, email, vle_username, course_id, role, actioncompleted) VALUES (%s, %s, %s, %s, %s, %s)", (
+        user.id, user.email, user.username, user.course, user.role, actioncompleted))
     conn.commit()
     conn.close()
     return
