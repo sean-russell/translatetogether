@@ -3,6 +3,7 @@ import os
 import random
 import pprint
 import pymysql
+from langcodes import Language
 from collections import namedtuple
 from flask import Flask, jsonify, request, render_template, url_for, redirect
 from flaskext.mysql import MySQL
@@ -135,7 +136,8 @@ def main_page():
             distribute_terms(config, message_launch)
             term = get_assigned_term(user, config)
             id_token = request.form['id_token']
-            return render_template('term.html', term=term, id_token=id_token)
+            language = Language.make(language=config.language).display_name()
+            return render_template('term.html', term=term, id_token=id_token, language = language)
 
 
 
