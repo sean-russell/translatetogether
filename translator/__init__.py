@@ -112,7 +112,7 @@ def main_page():
         role = 'learner'
     elif 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor' in roles:
         role = 'instructor'
-    user={'id': user_vle_id, 'email': user_email, 'username': vle_username, 'full_name': user_name, 'role': role}
+    user={'id': user_vle_id, 'email': user_email,'course': course_code, 'username': vle_username, 'full_name': user_name, 'role': role}
     
     record_action(user, "Initiated the translation tool")
     
