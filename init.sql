@@ -9,7 +9,7 @@ use translation;
 CREATE TABLE IF NOT EXISTS `status` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `course_id` varchar(255) NOT NULL,
-  `termgroup` INTEGER NOT NULL,
+  `section` INTEGER NOT NULL,
   `status` INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `status` (
 CREATE TABLE IF NOT EXISTS `terms` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `term` varchar(255) NOT NULL,
-  `termgroup` INTEGER NOT NULL,
+  `section` INTEGER NOT NULL,
   `course_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `assignments` (
   `vle_id` varchar(255) NOT NULL,
   `term_id` varchar(255) NOT NULL,
   `term` varchar(255) NOT NULL,
-  `termgroup` INTEGER NOT NULL,
+  `section` INTEGER NOT NULL,
   `course_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `translations` (
   `term` bigint(20) NOT NULL,
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `transdescription` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `section` INTEGER NOT NULL,
   `course_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -84,6 +85,7 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   `transdescription` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `review_score` INTEGER NOT NULL,
   `review_comment` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `section` INTEGER NOT NULL,
   `course_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -95,6 +97,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `transdescription` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `vote_score` INTEGER NOT NULL,
+  `section` INTEGER NOT NULL,
   `course_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

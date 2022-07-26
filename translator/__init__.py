@@ -17,6 +17,13 @@ from pylti1p3.lineitem import LineItem
 from pylti1p3.tool_config import ToolConfJsonFile
 from pylti1p3.registration import Registration
 
+
+STATUS_NOT_PREPARED = 0
+STATUS_TERMS_PREPARED = 1
+STATUS_TERMS_ASSIGNED = 2
+STATUS_REVIEWS_ASSIGNED = 3
+STATUS_VOTES_ASSIGNED = 4
+
 class ReverseProxied(object):
     def __init__(self, app):
         self.app = app
@@ -114,42 +121,44 @@ def main_page():
     phase = custom.get('phase')
     section = custom.get('section')
     config = Config(course_code, phase, section, language)
-    print(config, message_launch)
+    
+    if user.role == 'instructor':
+        if message_launch.is_deep_link_launch():
+            pprint.pprint("deep_link_launch")
+        pass
+    elif user.role == 'learner':
+        status = get_status(config)
+        if status == STATUS_NOT_PREPARED:
+            return render_template('config.html', user=user, config=config)
+        elif status == STATUS_TERMS_PREPARED:
+            distribute_terms(config, message_launch)
+            term = get_assigned_term(user, config)
+            return render_template('term.html', term=term, id_token=message_launch.get_id_token())
 
-    pprint.pprint(message_launch_data)
-    email = message_launch_data.get('email')
-    if "https://purl.imsglobal.org/spec/lti/claim/ext" in message_launch_data:
-        pprint.pprint(message_launch_data["https://purl.imsglobal.org/spec/lti/claim/ext"])
-        ext = message_launch_data["https://purl.imsglobal.org/spec/lti/claim/ext"]
-        if "user_username" in ext:
-            username = ext["user_username"]
-            print("username", username)
-        else:
-            pprint.pprint("no username in ext")
-    else:
-        pprint.pprint("no ext in message_launch_data")
+
+
+
     if message_launch.is_resource_launch():
         pprint.pprint("is_resource_launch")
-    if message_launch.is_deep_link_launch():
-        pprint.pprint("deep_link_launch")
-    if message_launch.has_ags():
-        ags = message_launch.get_ags()
-        items_lst = ags.get_lineitems()
-        pprint.pprint(items_lst)
-        gr = Grade()
-        gr.set_score_given(100)
-        gr.set_score_maximum(100)
-        gr.set_timestamp(datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S+0000'))
-        gr.set_activity_progress('Completed')
-        gr.set_grading_progress('FullyGraded')
-        gr.set_user_id(username)
-        # ags.put_grade(gr)
-        pprint.pprint("has_ags")
-    if message_launch.has_nrps():
-        nrps = message_launch.get_nrps()
-        members = nrps.get_members()
-        pprint.pprint(members)
-        pprint.pprint("has_nrps")
+    
+    # if message_launch.has_ags():
+    #     ags = message_launch.get_ags()
+    #     items_lst = ags.get_lineitems()
+    #     pprint.pprint(items_lst)
+    #     gr = Grade()
+    #     gr.set_score_given(100)
+    #     gr.set_score_maximum(100)
+    #     gr.set_timestamp(datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S+0000'))
+    #     gr.set_activity_progress('Completed')
+    #     gr.set_grading_progress('FullyGraded')
+    #     gr.set_user_id(username)
+    #     # ags.put_grade(gr)
+    #     pprint.pprint("has_ags")
+    # if message_launch.has_nrps():
+    #     nrps = message_launch.get_nrps()
+    #     members = nrps.get_members()
+    #     pprint.pprint(members)
+    #     pprint.pprint("has_nrps")
 
     # custom_data = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom', {})
     # pprint.pprint(custom_data)
@@ -201,6 +210,18 @@ def record_action(user: User, actioncompleted: str ):
     conn.close()
     return
 
+def get_status(config:Config) -> str:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT status FROM status WHERE course_id = %s AND section = %s", (config.course, config.section))
+    rows = cursor.fetchall()
+    status = -1
+    if len(rows) == 1:
+        status = rows[0]['status']
+    conn.close()
+    cursor.close()
+    return status
+
 def distribute_terms(config: Config, message_launch: FlaskMessageLaunch):
     members = []
     if message_launch.has_nrps():
@@ -245,6 +266,19 @@ def assign_term(student, term, config: Config):
     conn.commit()
     conn.close()
     return
+
+def get_assigned_term(student : User, config: Config):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT term_id, term FROM assignments WHERE vle_id = %s AND course_id = %s AND section = %s", (student.id, config.course, config.section))
+    rows = cursor.fetchall()
+    if len(rows) == 1:
+        return rows[0]['term']
+    conn.close()
+    cursor.close()
+
+    return None
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003)
