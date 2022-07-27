@@ -459,6 +459,9 @@ def delete_term_from_database(term_id) -> List:
                 conn.close()
                 cursor.close()
                 return True
+            else:
+                print("status was not right so i did not delete the term")
+    print("term was not found so it couldn't be deleted")
     return False
 
 def convert_status(status):
