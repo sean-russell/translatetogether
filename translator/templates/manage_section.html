@@ -27,17 +27,23 @@
             {% for t in data.terms %}
                 <tr>
                     <td>{{t.term}}</td>
-                    <td></td>
+                    <td><form action="{{preface~url_for('delete_term')}}" method="POST">
+                        <input type="hidden" name="iss" value="{{data.iss}}">
+                        <input type="hidden" name="course" value="{{data.course}}">
+                        <input type="hidden" name="term_id" value="{{t.id}}">
+                        <input type="hidden" name="datajson" value="{{datajson}}">
+                        <input type="hidden" name="id_token" value="{{id_token}}">
+                        <input type="submit" value="Delete Term">
+                    </form></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <form action="{{preface~url_for('add_section')}}" method="POST">
-        <input type="hidden" name="iss" value="{{data.iss}}">
-        <input type="hidden" name="course" value="{{data.course}}">
+    <form action="{{preface~url_for('add_term')}}" method="POST">
         <input type="hidden" name="datajson" value="{{datajson}}">
         <input type="hidden" name="id_token" value="{{id_token}}">
-        <input type="submit" value="Add New Section">
+        <input type="text" name="term" placeholder="Term">
+        <input type="submit" value="Add New Term">
     </form>
     <p>{{data}}</p>
     <footer>

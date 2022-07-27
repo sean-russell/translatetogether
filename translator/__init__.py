@@ -152,6 +152,22 @@ def delete_section():
     data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
+@app.route('/addterm/', methods=['POST'])
+def add_term():
+    data = json.loads(request.form['datajson'])
+    term = request.form['term']
+    add_term_to_section_of_course(data['iss'], data['course'], data['section'], term)
+    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+@app.route('/deleteterm/', methods=['POST'])
+def delete_term():
+    data = json.loads(request.form['datajson'])
+    term_id = request.form['term_id']
+    delete_term(term_id)
+    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
 
 @app.route('/init/', methods=['POST'])
 def main_page():
@@ -409,6 +425,24 @@ def get_terms_for_section_of_course(iss, course, section) -> List:
     conn.close()
     cursor.close()
     return [ r for r in rows ]
+
+def add_term_to_section_of_course(iss, course, section, term) -> List:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("INSERT INTO terms (term, iss, section, course) VALUES (%s, %s, %s, %s)", (term, iss, section, course,))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    return
+
+def delete_term(term_id) -> List:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("DELETE FROM terms WHERE id = %s", (term_id,))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    return
 
 def convert_status(status):
     if status == STATUS_NOT_PREPARED:
