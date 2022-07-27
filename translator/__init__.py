@@ -178,6 +178,7 @@ def add_tas():
 
 @app.route('/updatestudents/', methods=['POST'])
 def update_students():
+    data = json.loads(request.form['datajson'])
     launch_id = request.form['launch_id']
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     flask_request = FlaskRequest()
@@ -188,6 +189,14 @@ def update_students():
     if message_launch.has_nrps():
         nrps = message_launch.get_nrps()
         members = nrps.get_members()
+        for member in members:
+            role = 'none'
+            roles = member['roles']
+            if LEARNER in roles:
+                role = LEARNER
+            elif INSTRUCTOR in roles:
+                role = INSTRUCTOR
+            add_participant_to_course(member['user_id'], member['email'], member["name"],  role, data['iss'], data['course'])
         print(members)
     else:
         print('No NRPS')
@@ -354,6 +363,15 @@ def add_participant(data):
     cursor = conn.cursor()
     cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, vle_username, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (
         data['id'], data['email'], data['username'], data['iss'], data['course'], data['role']))
+    conn.commit()
+    conn.close()
+    return
+
+def add_participant_to_course(user_id, email, name, role, iss, course):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, vle_username, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (
+        user_id, email, name, iss, course, role))
     conn.commit()
     conn.close()
     return
