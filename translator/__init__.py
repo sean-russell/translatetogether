@@ -183,6 +183,8 @@ def update_students():
                 role = LEARNER
             elif INSTRUCTOR in roles or 'Instructor' in roles:
                 role = INSTRUCTOR
+            print("add_participant_to_course(member['user_id'], member['email'], member["name"],  role, data['iss'], data['course'])")
+            print("add_participant_to_course(",member['user_id'],",",member['email'],",", member["name"],",",  role,",", data['iss'],",", data['course'],",",")")
             add_participant_to_course(member['user_id'], member['email'], member["name"],  role, data['iss'], data['course'])
         print(members)
     else:
