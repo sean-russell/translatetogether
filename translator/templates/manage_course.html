@@ -30,7 +30,7 @@
                 <tr>
                     <td>{{s.section}}</td>
                     <td>{{s.status}}</td>
-                    <td>{{(s.terms|selectattr("term"))|join(', ')}}</td>
+                    <td>{{(s.terms| map(attribute='c') | list | join(', ')}}</td>
                     <td>
                         <form action="{{preface~url_for('manage_section')}}" method="POST">
                             <input type="hidden" name="iss" value="{{data.iss}}">
