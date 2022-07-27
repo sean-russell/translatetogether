@@ -167,7 +167,7 @@ def add_term():
 def delete_term():
     data = json.loads(request.form['datajson'])
     term_id = request.form['term_id']
-    success = delete_term(term_id)
+    success = delete_term_from_database(term_id)
     data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section']['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], success=success)
 
@@ -210,27 +210,6 @@ def main_page():
     if message_launch.is_resource_launch():
         pprint.pprint("is_resource_launch")
     
-    # if message_launch.has_ags():
-    #     ags = message_launch.get_ags()
-    #     items_lst = ags.get_lineitems()
-    #     pprint.pprint(items_lst)
-    #     gr = Grade()
-    #     gr.set_score_given(100)
-    #     gr.set_score_maximum(100)
-    #     gr.set_timestamp(datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S+0000'))
-    #     gr.set_activity_progress('Completed')
-    #     gr.set_grading_progress('FullyGraded')
-    #     gr.set_user_id(username)
-    #     # ags.put_grade(gr)
-    #     pprint.pprint("has_ags")
-    # if message_launch.has_nrps():
-    #     nrps = message_launch.get_nrps()
-    #     members = nrps.get_members()
-    #     pprint.pprint(members)
-    #     pprint.pprint("has_nrps")
-
-    # custom_data = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom', {})
-    # pprint.pprint(custom_data)
 
 
     return render_template('term.html', preface=preface, term="hello")
@@ -450,7 +429,7 @@ def add_term_to_section_of_course(iss, course, section, term) -> List:
     cursor.close()
     return
 
-def delete_term(term_id) -> List:
+def delete_term_from_database(term_id) -> List:
     """ load term from the database """
     term = None
     conn = mysql.connect()
