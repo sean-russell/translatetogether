@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS `assistants` (
   `iss` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `course` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE(`email`, `iss`, `course`),
   CONSTRAINT fk_mrt_ot4 FOREIGN KEY (`iss`,`course`) REFERENCES `courses`(`iss`,`course_id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
