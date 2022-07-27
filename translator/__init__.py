@@ -100,7 +100,18 @@ def login():
     return oidc_login.enable_check_cookies().redirect(target_link_uri)
 
 
-    
+@app.route('/create/', methods=['POST'])
+def create_course():
+    data = json.loads(request.form['data'])
+    course_name = request.form['coursename']
+    print(data, course_name)
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("INSERT INTO courses (iss, course_id, course_name) VALUES (%s, %s, %s)", (data['iss'], data['course'], course_name))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    return render_template('manage_course.html', preface=preface, data=data)
 
 @app.route('/init/', methods=['POST'])
 def main_page():
@@ -121,9 +132,9 @@ def main_page():
             else:
                 pass
                 # record_action(data, "Initiated the translation tool")
-            return render_template('manage_course.html', data=data)
+            return render_template('manage_course.html', preface=preface, data=data)
         else:
-            return render_template('create_course.html', data=data)
+            return render_template('create_course.html',  preface=preface, data=data, id_token=request.form['id_token'])
 
     elif data['role'] == LEARNER:
         status = get_status(config)
