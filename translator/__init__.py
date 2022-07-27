@@ -102,13 +102,17 @@ def login():
 
 @app.route('/create/', methods=['POST'])
 def create_course():
-    data = json.loads(request.form['dataj'])
+    data  = request.form['data']
+    print(type(data), data)
+    dataj = request.form['dataj']
+    print(type(dataj), dataj, json.loads(request.form['dataj']))
+    data_dict = json.loads(request.form['dataj'])
     # data = request.form['data']
     course_name = request.form['coursename']
     print(data, course_name)
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("INSERT INTO courses (iss, course_id, course_name) VALUES (%s, %s, %s)", (data['iss'], data['course'], course_name))
+    cursor.execute("INSERT INTO courses (iss, course_id, course_name) VALUES (%s, %s, %s)", (data_dict['iss'], data_dict['course'], course_name))
     conn.commit()
     conn.close()
     cursor.close()
