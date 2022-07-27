@@ -530,7 +530,7 @@ def get_ta_details_for_course(iss, course):
         """ get timestamp for the last action based on the email"""
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM actions WHERE email = %s ORDER BY timestamp DESC LIMIT 1", (iss, row['email']))
+        cursor.execute("SELECT * FROM actions WHERE email = %s ORDER BY timestamp DESC LIMIT 1", (row['email']))
         rows = cursor.fetchall()
         conn.close()
         cursor.close()
