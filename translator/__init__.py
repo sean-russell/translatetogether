@@ -125,9 +125,6 @@ def delete_course():
     dataj = request.form['dataj']
     print(type(dataj), dataj, json.loads(request.form['dataj']))
     data_dict = json.loads(request.form['dataj'])
-    # data = request.form['data']
-    course_name = request.form['coursename']
-    print(data, course_name)
     """ delete row from database with matching iss and course_id """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
