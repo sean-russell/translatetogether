@@ -293,7 +293,7 @@ def record_action(data, actioncompleted: str ):
 def add_participant(data):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO participants (vle_user_id, email, vle_username, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (
+    cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, vle_username, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (
         data['id'], data['email'], data['username'], data['iss'], data['course'], data['role']))
     conn.commit()
     conn.close()
