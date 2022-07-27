@@ -118,6 +118,25 @@ def create_course():
     cursor.close()
     return render_template('manage_course.html', preface=preface, data=data)
 
+@app.route('/delete/', methods=['POST'])
+def delete_course():
+    data  = request.form['data']
+    print(type(data), data)
+    dataj = request.form['dataj']
+    print(type(dataj), dataj, json.loads(request.form['dataj']))
+    data_dict = json.loads(request.form['dataj'])
+    # data = request.form['data']
+    course_name = request.form['coursename']
+    print(data, course_name)
+    """ delete row from database with matching iss and course_id """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("DELETE FROM courses WHERE iss = %s AND course_id = %s", (data_dict['iss'], data_dict['course']))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    return render_template('manage_course.html', preface=preface, data=data)
+
 @app.route('/init/', methods=['POST'])
 def main_page():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
