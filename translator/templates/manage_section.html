@@ -53,6 +53,12 @@
         <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="submit" value="Finalise Section" data-tooltip="This will prevent further modification of the list of terms and allow terms to be assigned to students for translation.">
     </form>
+    {% if data.section.status == "Terms added to section" %}
+    <form action="{{preface~url_for('asign_terms')}}" method="POST">
+        <input type="hidden" name="datajson" value="{{datajson}}">
+        <input type="hidden" name="id_token" value="{{id_token}}">
+        <input type="submit" value="Assign Terms" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+    </form>
     {% endif %}
    
     <footer>

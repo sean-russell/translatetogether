@@ -146,7 +146,17 @@ def manage_section():
 @app.route('/finalisesection/', methods=['POST'])
 def finalise_section():
     data = json.loads(request.form['datajson'])
-    pass
+    set_status_of_section(data['iss'], data['course'], data['section']['section'], STATUS_TERMS_PREPARED)
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+@app.route('/assignterms/', methods=['POST'])
+def asign_terms():
+    data = json.loads(request.form['datajson'])
+    # distribute_terms(data)
+    # set_status_of_section(data['iss'], data['course'], data['section']['section'], STATUS_TERMS_PREPARED)
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+
 
 @app.route('/deletesection/', methods=['POST'])
 def delete_section():
@@ -463,6 +473,15 @@ def delete_term_from_database(term_id) -> List:
                 print("status was not right so i did not delete the term")
     print("term was not found so it couldn't be deleted")
     return False
+
+def set_status_of_section(iss, course, section, status):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("UPDATE sections SET status = %s WHERE iss = %s AND course = %s AND section_number = %s", (status, iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    return
 
 def convert_status(status):
     if status == STATUS_NOT_PREPARED:
