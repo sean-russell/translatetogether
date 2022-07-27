@@ -114,7 +114,9 @@ def create_course():
     conn.commit()
     conn.close()
     cursor.close()
-    data['tas'] = []
+    data['sections'] = get_sections_for_course(data['iss'], data['course'])
+    data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = get_student_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/delete/', methods=['POST'])
@@ -140,6 +142,8 @@ def add_section():
     conn.close()
     cursor.close()
     data['sections'] = get_sections_for_course(data['iss'], data['course'])
+    data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = get_student_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/managesection/', methods=['POST'])
@@ -167,7 +171,9 @@ def add_tas():
     data = json.loads(request.form['datajson'])
     ta_emails = request.form['tas'].split(',') 
     add_tas_to_course(data['iss'], data['course'], ta_emails)
+    data['sections'] = get_sections_for_course(data['iss'], data['course'])
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = get_student_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/updatestudents/', methods=['POST'])
@@ -176,13 +182,20 @@ def update_students():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     flask_request = FlaskRequest()
     launch_data_storage = get_launch_data_storage()
-    message_launch = FlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf,
-                                                           launch_data_storage=launch_data_storage)
-    launch_data_storage = get_launch_data_storage()
+    message_launch = FlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf, launch_data_storage=launch_data_storage)
+    message_launch_data = message_launch.get_launch_data()
+
+    if message_launch.has_nrps():
+        nrps = message_launch.get_nrps()
+        members = nrps.get_members()
+        print(members)
+    else:
+        print('No NRPS')
     data = json.loads(request.form['datajson'])
-    ta_emails = request.form['tas'].split(',') 
-    add_tas_to_course(data['iss'], data['course'], ta_emails)
+    
+    data['sections'] = get_sections_for_course(data['iss'], data['course'])
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = get_student_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 
@@ -191,7 +204,9 @@ def remove_ta():
     data = json.loads(request.form['datajson'])
     ta_id = request.form['ta_id']
     remove_ta_from_course(ta_id)
+    data['sections'] = get_sections_for_course(data['iss'], data['course'])
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = get_student_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 
