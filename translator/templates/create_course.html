@@ -6,7 +6,7 @@
 </head>
 <body>
     <p>This course ({{ data.course }}) currently does not exist on the system for iss {{data.iss}}. Complete the following form to create a new course.</p>
-    <form method="post" action="{{preface~url_for('new_course')}}">
+    <form method="post" action="{{preface~url_for('create_course')}}">
         <input type="hidden" name="iss" value="{{data.iss}}">
         <input type="hidden" name="course" value="{{data.course}}">
         <input type="hidden" name="data" value="{{data}}">
