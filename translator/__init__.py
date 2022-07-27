@@ -137,6 +137,13 @@ def add_section():
     data['sections'] = get_sections_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
+@app.route('/managesection/', methods=['POST'])
+def manage_section():
+    data = json.loads(request.form['datajson'])
+    data['section'] = request.form['section']
+    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
 
 @app.route('/init/', methods=['POST'])
 def main_page():

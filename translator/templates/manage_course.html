@@ -22,6 +22,7 @@
                 <td>Section Number</td>
                 <td>Current Status</td>
                 <td>Terms</td>
+                <td>Action</td>
             </tr>
         </thead>
         <tbody>
@@ -29,7 +30,17 @@
                 <tr>
                     <td>{{s.section}}</td>
                     <td>{{s.status}}</td>
-                    <td>{{s.terms|join(', ')}}</td>
+                    <td>{{s.terms|selectattr("term")|join(', ')}}</td>
+                    <td>
+                        <form action="{{preface~url_for('manage_section')}}" method="POST">
+                            <input type="hidden" name="iss" value="{{data.iss}}">
+                            <input type="hidden" name="course" value="{{data.course}}">
+                            <input type="hidden" name="section" value="{{s.section}}">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" name="id_token" value="{{id_token}}">
+                            <input type="submit" value="Manage Section">
+                        </form>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
