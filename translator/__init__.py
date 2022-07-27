@@ -124,6 +124,20 @@ def delete_course():
     cursor.close()
     return render_template('create_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
+@app.route('/addsection/', methods=['POST'])
+def add_section():
+    data = json.loads(request.form['datajson'])
+    section = request.form['sec_number']
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("INSERT INTO sections (iss, course_id, section_number) VALUES (%s, %s, %s)", (data['iss'], data['course'], section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    data['sections'] = get_sections_for_course(data['iss'], data['course'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+
 @app.route('/init/', methods=['POST'])
 def main_page():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
@@ -140,8 +154,8 @@ def main_page():
             else:
                 pass
                 # record_action(data, "Initiated the translation tool")
-                sections = get_sections_for_course(data['iss'], data['course'])
-            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], sections=sections)
+            data['sections'] = get_sections_for_course(data['iss'], data['course'])
+            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
         else:
             return render_template('create_course.html',  preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
