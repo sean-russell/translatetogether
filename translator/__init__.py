@@ -164,8 +164,14 @@ def add_tas():
     ta_emails = request.form['tas'].split(',') 
     add_tas_to_course(data['iss'], data['course'], ta_emails)
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
-    # distribute_terms(data)
-    # set_status_of_section(data['iss'], data['course'], data['section']['section'], STATUS_TERMS_PREPARED)
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+@app.route('/removeta/', methods=['POST'])
+def remove_ta():
+    data = json.loads(request.form['datajson'])
+    ta_id = request.form['ta_id']
+    remove_ta_from_course(data['iss'], data['course'], ta_id)
+    data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 
@@ -523,6 +529,15 @@ def add_tas_to_course(iss, course, tas):
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     for ta in tas:
         cursor.execute("INSERT INTO assistants (iss, course, email) VALUES (%s, %s, %s)", (iss, course, ta))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    return
+
+def remove_ta_from_course(ta_id):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("DELETE FROM assistants WHERE ta_id = %s", (ta_id,))
     conn.commit()
     conn.close()
     cursor.close()

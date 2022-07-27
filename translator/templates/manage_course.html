@@ -63,6 +63,7 @@
                 <td>Name</td>
                 <td>Email</td>
                 <td>Last Access</td>
+                <td>Action</td>
             </tr>
         </thead>
         <tbody>
@@ -82,14 +83,16 @@
                         {% if t.last_action is defined %}
                             {{t.last_action}}
                         {% endif %}
-                        <!-- <form action="{{preface~url_for('manage_section')}}" method="POST">
+                    </td>
+                    <td>
+                        <form action="{{preface~url_for('remove_ta')}}" method="POST">
                             <input type="hidden" name="iss" value="{{data.iss}}">
                             <input type="hidden" name="course" value="{{data.course}}">
                             <input type="hidden" name="ta_id" value="{{t.id}}">
                             <input type="hidden" name="datajson" value="{{datajson}}">
                             <input type="hidden" name="id_token" value="{{id_token}}">
-                            <input type="submit" value="Manage Section">
-                        </form> -->
+                            <input type="submit" value="Remove TA">
+                        </form>
                     </td>
                 </tr>
             {% endfor %}
