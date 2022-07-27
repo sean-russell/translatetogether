@@ -224,6 +224,7 @@ def main_page():
                 # record_action(data, "Initiated the translation tool")
             data['sections'] = get_sections_for_course(data['iss'], data['course'])
             data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
+            data['students'] = get_student_details_for_course(data['iss'], data['course'])
             return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token)
         else:
             return render_template('create_course.html',  preface=preface, data=data, datajson=json.dumps(data), id_token=id_token)
@@ -305,6 +306,15 @@ def record_action(data, actioncompleted: str ):
     conn.commit()
     conn.close()
     return
+
+def get_student_details_for_course(iss, course):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM participants WHERE iss = %s AND course = %s AND role = %s", (iss, course, LEARNER))
+    rows = cursor.fetchall()
+    print(rows)
+    conn.close()
+    return rows
 
 def add_participant(data):
     conn = mysql.connect()
