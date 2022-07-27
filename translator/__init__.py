@@ -537,7 +537,7 @@ def add_tas_to_course(iss, course, tas):
 def remove_ta_from_course(ta_id):
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("DELETE FROM assistants WHERE ta_id = %s", (ta_id,))
+    cursor.execute("DELETE FROM assistants WHERE id = %s", (ta_id,))
     conn.commit()
     conn.close()
     cursor.close()
