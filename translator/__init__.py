@@ -384,7 +384,7 @@ def get_sections_for_course(iss, course) -> List:
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
-    return [ { 'section' : r['section_number'], 'status' : convert_status(r['status']), 'terms': get_terms_for_section_of_course(iss, course, r['section']) } for r in rows ]
+    return [ { 'section' : r['section_number'], 'status' : convert_status(r['status']), 'terms': get_terms_for_section_of_course(iss, course, r['section_number']) } for r in rows ]
 
 def get_terms_for_section_of_course(iss, course, section) -> List:
     conn = mysql.connect()
