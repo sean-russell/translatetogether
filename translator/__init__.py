@@ -183,9 +183,7 @@ def update_students():
                 role = LEARNER
             elif INSTRUCTOR in roles or 'Instructor' in roles:
                 role = INSTRUCTOR
-            print("add_participant_to_course(member['user_id'], member['email'], member['name'],  role, data['iss'], data['course'])")
-            print("add_participant_to_course(",member['user_id'],",",member['email'],",",member["user_id"],",", member["name"],",",  role,",", data['iss'],",", data['course'],",",")")
-            add_participant_to_course(member['user_id'], member['email'], member["user_id"],member["name"],  role, data['iss'], data['course'])
+            add_participant_to_course(member['user_id'], member['email'],member["name"],  role, data['iss'], data['course'])
         print(members)
     else:
         print('No NRPS')
@@ -361,18 +359,18 @@ def get_student_details_for_course(iss, course):
 def add_participant(data):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, vle_username, fullname, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s, %s)", (
-        data['id'], data['email'], data['username'], data['full_name'], data['iss'], data['course'], data['role']))
+    cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, fullname, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (
+        data['id'], data['email'], data['full_name'], data['iss'], data['course'], data['role']))
     conn.commit()
     conn.close()
     return
 
-def add_participant_to_course(user_id, email, name, username, role, iss, course):
-    print("adding participant to course", user_id, email, name, username, role, iss, course)
+def add_participant_to_course(user_id, email, name, role, iss, course):
+    print("adding participant to course", user_id, email, name, role, iss, course)
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, fullname, vle_username, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s, %s)", (
-        user_id, email, name, username, iss, course, role))
+    cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, fullname, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (
+        user_id, email, name, iss, course, role))
     conn.commit()
     conn.close()
     return
