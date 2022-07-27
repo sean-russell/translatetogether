@@ -110,6 +110,7 @@ def create_course():
     conn.commit()
     conn.close()
     cursor.close()
+    data['tas'] = []
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/delete/', methods=['POST'])
@@ -162,9 +163,10 @@ def add_tas():
     data = json.loads(request.form['datajson'])
     ta_emails = request.form['tas'].split(',') 
     add_tas_to_course(data['iss'], data['course'], ta_emails)
+    data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
     # distribute_terms(data)
     # set_status_of_section(data['iss'], data['course'], data['section']['section'], STATUS_TERMS_PREPARED)
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 
 
@@ -514,6 +516,16 @@ def add_tas_to_course(iss, course, tas):
     conn.close()
     cursor.close()
     return
+
+def get_ta_details_for_course(iss, course):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM assistants NATURAL LEFT OUTER JOIN participants WHERE iss = %s AND course = %s", (iss, course))
+    rows = cursor.fetchall()
+    print(rows)
+    conn.close()
+    cursor.close()
+    return [ r for r in rows ]
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003)

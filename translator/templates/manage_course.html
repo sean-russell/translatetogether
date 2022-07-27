@@ -28,7 +28,8 @@
         <tbody>
             {% for s in data.sections %}
                 <tr>
-                    <td>{{s.section}}</td>
+                    <td>
+                        {{s.section}}</td>
                     <td>{{s.status}}</td>
                     <td>{{s.terms| map(attribute='term') | list | join(', ')}}</td>
                     <td>
@@ -54,6 +55,43 @@
         <input type="submit" value="Add New Section">
     </form>
     <h1>Teaching Assistants</h1>
+    <p>There are the following {{data.tas|length}} teaching assistants registed for this course:</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>Email</td>
+                <td>Last Access</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in data.tas %}
+                <tr>
+                    <td>
+                        {% if t.fullname is defined %}
+                            {{t.fullname}}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if t.email is defined %}
+                            {{t.email}}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{preface~url_for('manage_section')}}" method="POST">
+                            <input type="hidden" name="iss" value="{{data.iss}}">
+                            <input type="hidden" name="course" value="{{data.course}}">
+                            <input type="hidden" name="section" value="{{s.section}}">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" name="id_token" value="{{id_token}}">
+                            <input type="submit" value="Manage Section">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <form action="{{preface~url_for('add_tas')}}" method="POST">
         <input type="hidden" name="iss" value="{{data.iss}}">
         <input type="hidden" name="course" value="{{data.course}}">
