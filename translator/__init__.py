@@ -144,6 +144,10 @@ def manage_section():
     data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
+@app.route('/finalisesection/', methods=['POST'])
+def finalise_section():
+    data = json.loads(request.form['datajson'])
+    pass
 
 @app.route('/deletesection/', methods=['POST'])
 def delete_section():
@@ -164,9 +168,9 @@ def add_term():
 def delete_term():
     data = json.loads(request.form['datajson'])
     term_id = request.form['term_id']
-    delete_term(term_id)
+    success = delete_term(term_id)
     data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], success=success)
 
 
 @app.route('/init/', methods=['POST'])
@@ -436,13 +440,36 @@ def add_term_to_section_of_course(iss, course, section, term) -> List:
     return
 
 def delete_term(term_id) -> List:
+    """ load term from the database """
+    term = None
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("DELETE FROM terms WHERE id = %s", (term_id,))
-    conn.commit()
+    cursor.execute("SELECT * FROM terms WHERE id = %s", (term_id,))
+    rows = cursor.fetchall()
     conn.close()
     cursor.close()
-    return
+    if len(rows) == 1:
+        term = rows[0]
+    """ get status for section of course """
+    if term is not None:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM sections WHERE iss = %s AND course = %s AND section_number = %s", (term['iss'], term['course'], term['section']))
+        rows = cursor.fetchall()
+        conn.close()
+        cursor.close()
+        if len(rows) == 1:
+            status = rows[0]['status']
+            if status == STATUS_NOT_PREPARED: # con only delete the term if the section is not prepared
+                """ delete term from database """
+                conn = mysql.connect()
+                cursor = conn.cursor(pymysql.cursors.DictCursor)
+                cursor.execute("DELETE FROM terms WHERE id = %s", (term_id,))
+                conn.commit()
+                conn.close()
+                cursor.close()
+                return True
+    return False
 
 def convert_status(status):
     if status == STATUS_NOT_PREPARED:
