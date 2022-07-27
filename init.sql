@@ -2,8 +2,7 @@ CREATE USER IF NOT EXISTS 'transapp'@'%' IDENTIFIED BY '8HT6c8U74GcMQWnBj9GaZmaR
 Grant All Privileges ON *.* to 'transapp'@'%' Identified By '8HT6c8U74GcMQWnBj9GaZmaRahAu49'; 
 FLUSH PRIVILEGES;
 
-DROP DATABASE IF EXISTS translation;
-CREATE DATABASE translation;
+CREATE DATABASE IF NOT EXISTS translation;
 use translation;
 
 CREATE TABLE IF NOT EXISTS `status` (
@@ -21,12 +20,6 @@ CREATE TABLE IF NOT EXISTS `terms` (
   `course_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
-INSERT INTO `terms` (`id`, `term`, `section`, `course_id`) VALUES
-(1, 'term1', 1, 'COMP1001J'),
-(2, 'term2', 1, 'COMP1001J');
-
-INSERT INTO `status` (`id`, `course_id`, `section`, `status`) VALUES (1, 'COMP1001J', 1, 1);
 
 CREATE TABLE IF NOT EXISTS `students` (
   `vle_user_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
