@@ -28,6 +28,10 @@ STATUS_TERMS_ASSIGNED = 2
 STATUS_REVIEWS_ASSIGNED = 3
 STATUS_VOTES_ASSIGNED = 4
 
+PHASE_TRANSLATE= "translate"
+PHASE_REVIEW = "review"
+PHASE_VOTE = "vote"
+
 CLAIM_EXT = 'https://purl.imsglobal.org/spec/lti/claim/ext'
 CLAIM_CONTEXT = 'https://purl.imsglobal.org/spec/lti/claim/context'
 CLAIM_CUSTOM = "https://purl.imsglobal.org/spec/lti/claim/custom"
@@ -202,6 +206,7 @@ def delete_term():
 
 @app.route('/init/', methods=['POST'])
 def main_page():
+    id_token = request.form['id_token']
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     flask_request = FlaskRequest()
     launch_data_storage = get_launch_data_storage()
@@ -219,20 +224,25 @@ def main_page():
                 # record_action(data, "Initiated the translation tool")
             data['sections'] = get_sections_for_course(data['iss'], data['course'])
             data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
-            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token)
         else:
-            return render_template('create_course.html',  preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+            return render_template('create_course.html',  preface=preface, data=data, datajson=json.dumps(data), id_token=id_token)
 
     elif data['role'] == LEARNER:
-        status = get_status(config)
-        print("current status is ", status)
-        if status == STATUS_NOT_PREPARED:
+        data['section'] = get_section_for_course(data['iss'], data['course'], data['section'])
+        print("current status is ", data['section']['status'])
+        if data['section']['status'] in (STATUS_NOT_PREPARED, STATUS_TERMS_PREPARED):
             return render_template('config.html', preface=preface, data=jsonify(data))
-        elif status == STATUS_TERMS_PREPARED:
-            distribute_terms(config, message_launch)
-            term = get_assigned_term(data)
-            id_token = request.form['id_token']
-            return render_template('term.html', preface=preface, data=jsonify(data),term=term, id_token=id_token, language = config['language'])
+        elif data['phase'] == PHASE_TRANSLATE:
+            if data['section']['status'] == STATUS_TERMS_ASSIGNED:
+                
+                term = get_assigned_term(data)
+                if term == None:
+                    assign_term(data)
+                    term = get_assigned_term(data)
+                
+                
+                return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token, term=term)
 
 
 
@@ -359,13 +369,37 @@ def distribute_terms(config, message_launch: FlaskMessageLaunch):
     cursor = conn.cursor()
     cursor.execute("UPDATE status SET status = %s WHERE course_id = %s AND section = %s", (STATUS_TERMS_ASSIGNED, config['course'], config['section']))
 
-def assign_term(student, term, config):
+def assign_term(data):
+    """ get list of terms that have been assigned for this iss, course and section
+    order the list by the number of times they have been assigned descending"""
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT term, count(vle_user_id) as c FROM trans_assignments WHERE iss = %s AND course = %s AND section = %s GROUP BY term ORDER BY c DESC", (data['iss'], data['course'], data['section']))
+    rows = cursor.fetchall()
+    print(rows)
+    if len(rows) > 0:
+        term = rows[0]['term']
+    else:
+        term = assign_random_term(data)
+    """ assign the term to the user """
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO assignments (vle_id, term_id, term, section, course_id) VALUES (%s, %s, %s, %s, %s)", (student.get('user_id'), term.get('id'), term.get('term'), config['section'], config['course']))
+    cursor.execute("INSERT INTO trans_assignments (vle_user_id, term, iss, course, section) VALUES (%s, %s, %s, %s, %s)", (data['id'], term, data['iss'], data['course'], data['section'])  )
     conn.commit()
     conn.close()
     return
+
+
+def assign_random_term(data):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT term FROM terms WHERE iss = %s AND course = %s AND section = %s", (data['course'], data['section']))
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    term = random.choice([r['term'] for r in rows])
+    return term
+
 
 def translate_term(user, config, term, transterm, translation):
     """ add the translation to the database """
