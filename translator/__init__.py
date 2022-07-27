@@ -112,27 +112,29 @@ def main_page():
     print(message_launch_data)
     
     data = build_launch_dict(message_launch_data)
-    record_action(data, "Initiated the translation tool")
+    
     
     if data['role'] == INSTRUCTOR:
         if course_exists(data['iss'], data['course']):
             if message_launch.is_deep_link_launch():
                 print("deep_link_launch")
+            else:
+                pass
+                # record_action(data, "Initiated the translation tool")
             return render_template('manage_course.html', data=data)
         else:
             return render_template('create_course.html', data=data)
-        
-        pass
+
     elif data['role'] == LEARNER:
         status = get_status(config)
         print("current status is ", status)
         if status == STATUS_NOT_PREPARED:
-            return render_template('config.html', preface=preface, user=jsonify(user), config=jsonify(config))
+            return render_template('config.html', preface=preface, data=jsonify(data))
         elif status == STATUS_TERMS_PREPARED:
             distribute_terms(config, message_launch)
-            term = get_assigned_term(user, config)
+            term = get_assigned_term(data)
             id_token = request.form['id_token']
-            return render_template('term.html', preface=preface, user=json.dumps(user), config=json.dumps(config),term=term, id_token=id_token, language = config['language'])
+            return render_template('term.html', preface=preface, data=jsonify(data),term=term, id_token=id_token, language = config['language'])
 
 
 
