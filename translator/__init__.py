@@ -202,7 +202,7 @@ def main_page():
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
     message_launch_data = message_launch.get_launch_data()    
     data = build_launch_dict(message_launch_data)
-    
+    record_action(data, "Initiated the translation tool")
     if data['role'] == INSTRUCTOR:
         if course_exists(data['iss'], data['course']):
             if message_launch.is_deep_link_launch():
