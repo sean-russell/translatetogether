@@ -9,9 +9,7 @@
     <form method="post" action="{{preface~url_for('create_course')}}">
         <input type="hidden" name="iss" value="{{data.iss}}">
         <input type="hidden" name="course" value="{{data.course}}">
-        <input type="hidden" name="data" value="{{data}}">
-        <input type="hidden" name="dataj" value="{{dataj}}">
-        <input type="hidden" name="issalt" value="{{dataj.iss}}">
+        <input type="hidden" name="datajson" value="{{datajson}}">
         <input type="hidden" name="id_token" value="{{id_token}}">
         <label for="coursename">Course Name:</label>
         <input type="text" id="coursename" name="coursename" placeholder="Course Name">

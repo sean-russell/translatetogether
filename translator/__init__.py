@@ -102,21 +102,15 @@ def login():
 
 @app.route('/create/', methods=['POST'])
 def create_course():
-    data  = request.form['data']
-    print(type(data), data)
-    dataj = request.form['dataj']
-    print(type(dataj), dataj, json.loads(request.form['dataj']))
-    data_dict = json.loads(request.form['dataj'])
-    # data = request.form['data']
+    data = json.loads(request.form['datajson'])
     course_name = request.form['coursename']
-    print(data, course_name)
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("INSERT INTO courses (iss, course_id, course_name) VALUES (%s, %s, %s)", (data_dict['iss'], data_dict['course'], course_name))
+    cursor.execute("INSERT INTO courses (iss, course_id, course_name) VALUES (%s, %s, %s)", (data['iss'], data['course'], course_name))
     conn.commit()
     conn.close()
     cursor.close()
-    return render_template('manage_course.html', preface=preface, data=data,dataj=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/delete/', methods=['POST'])
 def delete_course():
@@ -136,11 +130,8 @@ def main_page():
     flask_request = FlaskRequest()
     launch_data_storage = get_launch_data_storage()
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
-    message_launch_data = message_launch.get_launch_data()
-    print(message_launch_data)
-    
+    message_launch_data = message_launch.get_launch_data()    
     data = build_launch_dict(message_launch_data)
-    
     
     if data['role'] == INSTRUCTOR:
         if course_exists(data['iss'], data['course']):
@@ -149,9 +140,9 @@ def main_page():
             else:
                 pass
                 # record_action(data, "Initiated the translation tool")
-            return render_template('manage_course.html', preface=preface, data=data,dataj=json.dumps(data), id_token=request.form['id_token'])
+            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
         else:
-            return render_template('create_course.html',  preface=preface, data=data,dataj=json.dumps(data), id_token=request.form['id_token'])
+            return render_template('create_course.html',  preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
     elif data['role'] == LEARNER:
         status = get_status(config)
