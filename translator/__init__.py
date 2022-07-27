@@ -140,8 +140,7 @@ def add_section():
 @app.route('/managesection/', methods=['POST'])
 def manage_section():
     data = json.loads(request.form['datajson'])
-    data['section'] = request.form['section']
-    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
+    data['section'] = get_section_for_course(data['iss'], data['course'], request.form['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/finalisesection/', methods=['POST'])
@@ -420,6 +419,18 @@ def get_sections_for_course(iss, course) -> List:
     conn.close()
     cursor.close()
     return [ { 'section' : r['section_number'], 'status' : convert_status(r['status']), 'terms': get_terms_for_section_of_course(iss, course, r['section_number']) } for r in rows ]
+
+def get_section_for_course(iss, course, section_number) -> List:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM sections WHERE iss = %s AND course = %s AND section_number = %s", (iss, course, section_number))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    if len(rows) == 1:
+        return { 'section' : rows[0]['section_number'], 'status' : convert_status(rows[0]['status']), 'terms': get_terms_for_section_of_course(iss, course, rows[0]['section_number']) }
+    else:
+        return None
 
 def get_terms_for_section_of_course(iss, course, section) -> List:
     conn = mysql.connect()

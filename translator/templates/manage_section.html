@@ -24,10 +24,10 @@
             </tr>
         </thead>
         <tbody>
-            {% for t in data.terms %}
+            {% for t in data.section.terms %}
                 <tr>
                     <td>{{t.term}}</td>
-
+                    {% if data.section.status == "Not prepared" %}
                     <td><form action="{{preface~url_for('delete_term')}}" method="POST">
                         <input type="hidden" name="iss" value="{{data.iss}}">
                         <input type="hidden" name="course" value="{{data.course}}">
@@ -36,10 +36,12 @@
                         <input type="hidden" name="id_token" value="{{id_token}}">
                         <input type="submit" value="Delete Term">
                     </form></td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% if data.section.status == "Not prepared" %}
     <form action="{{preface~url_for('add_term')}}" method="POST">
         <input type="hidden" name="datajson" value="{{datajson}}">
         <input type="hidden" name="id_token" value="{{id_token}}">
@@ -51,7 +53,8 @@
         <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="submit" value="Finalise Section" data-tooltip="This will prevent further modification of the list of terms and allow terms to be assigned to students for translation.">
     </form>
-    <p>{{data}}</p>
+    {% endif %}
+   
     <footer>
         &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
     </footer>
