@@ -1,7 +1,7 @@
 # pytrans
 
 # Database Tables
-1. courses(<ins>iss, course_id</ins>, course_name)
+1. courses(<ins>iss, course_id</ins>)
 2. sections(<ins>*iss*,*course*, section_number</ins>, status)
 3. terms(<ins>id</ins>, term, *iss*, *section*, *course* )
 

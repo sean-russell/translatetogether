@@ -104,20 +104,7 @@ def login():
     return oidc_login.enable_check_cookies().redirect(target_link_uri)
 
 
-@app.route('/create/', methods=['POST'])
-def create_course():
-    data = json.loads(request.form['datajson'])
-    course_name = request.form['coursename']
-    conn = mysql.connect()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("INSERT INTO courses (iss, course_id, course_name) VALUES (%s, %s, %s)", (data['iss'], data['course'], course_name))
-    conn.commit()
-    conn.close()
-    cursor.close()
-    data['sections'] = get_sections_for_course(data['iss'], data['course'])
-    data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
-    data['students'] = get_student_details_for_course(data['iss'], data['course'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
 
 @app.route('/delete/', methods=['POST'])
 def delete_course():
@@ -253,6 +240,7 @@ def main_page():
     launch_id = message_launch.get_launch_id()
     print(launch_id)  
     data = build_launch_dict(message_launch_data)
+    create_course(data)
     add_participant(data)
     record_action(data, "Initiated the translation tool")
     if data['role'] == INSTRUCTOR:
@@ -336,6 +324,18 @@ def test_method():
 def get_jwks():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     return jsonify(tool_conf.get_jwks())
+
+def create_course(data):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("INSERT IGNORE INTO courses (iss, course_id) VALUES (%s, %s)", (data['iss'], data['course']))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    data['sections'] = get_sections_for_course(data['iss'], data['course'])
+    data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = get_student_details_for_course(data['iss'], data['course'])
+    return
 
 def record_action(data, actioncompleted: str ):
     print("recording action", actioncompleted, "for user", data)

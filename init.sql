@@ -8,7 +8,6 @@ use translation;
 CREATE TABLE IF NOT EXISTS `courses` (
   `iss` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `course_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `course_name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   PRIMARY KEY (`iss`,`course_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
