@@ -172,6 +172,12 @@ def add_tas():
 
 @app.route('/updatestudents/', methods=['POST'])
 def update_students():
+    tool_conf = ToolConfJsonFile(get_lti_config_path())
+    flask_request = FlaskRequest()
+    launch_data_storage = get_launch_data_storage()
+    message_launch = ExtendedFlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf,
+                                                           launch_data_storage=launch_data_storage)
+    launch_data_storage = get_launch_data_storage()
     data = json.loads(request.form['datajson'])
     ta_emails = request.form['tas'].split(',') 
     add_tas_to_course(data['iss'], data['course'], ta_emails)
@@ -220,7 +226,9 @@ def main_page():
     flask_request = FlaskRequest()
     launch_data_storage = get_launch_data_storage()
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
-    message_launch_data = message_launch.get_launch_data()    
+    message_launch_data = message_launch.get_launch_data()  
+    launch_id = message_launch.get_launch_id()
+    print(launch_id)  
     data = build_launch_dict(message_launch_data)
     add_participant(data)
     record_action(data, "Initiated the translation tool")
@@ -234,7 +242,7 @@ def main_page():
             data['sections'] = get_sections_for_course(data['iss'], data['course'])
             data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
             data['students'] = get_student_details_for_course(data['iss'], data['course'])
-            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token)
+            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token, launch_id=launch_id)
         else:
             return render_template('create_course.html',  preface=preface, data=data, datajson=json.dumps(data), id_token=id_token)
 
