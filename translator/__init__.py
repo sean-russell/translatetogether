@@ -192,19 +192,19 @@ def update_students():
         for member in members:
             role = 'none'
             roles = member['roles']
-            if LEARNER in roles:
+            if LEARNER in roles or 'Learner' in roles:
                 role = LEARNER
-            elif INSTRUCTOR in roles:
+            elif INSTRUCTOR in roles or 'Instructor' in roles:
                 role = INSTRUCTOR
             add_participant_to_course(member['user_id'], member['email'], member["name"],  role, data['iss'], data['course'])
         print(members)
     else:
         print('No NRPS')
-    data = json.loads(request.form['datajson'])
     
     data['sections'] = get_sections_for_course(data['iss'], data['course'])
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = get_student_details_for_course(data['iss'], data['course'])
+    print("current students: " + str(data['students']))
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 
@@ -217,8 +217,6 @@ def remove_ta():
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = get_student_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-
 
 @app.route('/deletesection/', methods=['POST'])
 def delete_section():
