@@ -147,6 +147,7 @@ def manage_section():
 def finalise_section():
     data = json.loads(request.form['datajson'])
     set_status_of_section(data['iss'], data['course'], data['section']['section'], STATUS_TERMS_PREPARED)
+    data['section'] = get_section_for_course(data['iss'], data['course'], request.form['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/assignterms/', methods=['POST'])

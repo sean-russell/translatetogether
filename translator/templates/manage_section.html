@@ -6,6 +6,7 @@
 </head>
 <body>
     <p>This is the group of terms that are gathered as a section for the course {{data.course}} on iss {{data.iss}}.</p>
+    {% if data.section.status == "Not prepared" %}
     <form action="{{preface~url_for('delete_section')}}" method="POST">
         <input type="hidden" name="iss" value="{{data.iss}}">
         <input type="hidden" name="course" value="{{data.course}}">
@@ -13,7 +14,8 @@
         <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="submit" value="Delete Section">
     </form>
-    <h1>Sections</h1>
+    {% endif %}
+    <h1>Terms</h1>
     <p>There are the following {{data.section.terms|length}} terms are prepared in this section:</p>
     <!-- A table for showing the section number and status for each section -->
     <table>
