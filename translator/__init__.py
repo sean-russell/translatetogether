@@ -159,7 +159,7 @@ def delete_section():
 def add_term():
     data = json.loads(request.form['datajson'])
     term = request.form['term']
-    add_term_to_section_of_course(data['iss'], data['course'], data['section'], term)
+    add_term_to_section_of_course(data['iss'], data['course'], data['section']['section'], term)
     data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
@@ -435,7 +435,7 @@ def get_section_for_course(iss, course, section_number) -> List:
 def get_terms_for_section_of_course(iss, course, section) -> List:
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM terms WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    cursor.execute("SELECT id, term FROM terms WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
@@ -444,7 +444,7 @@ def get_terms_for_section_of_course(iss, course, section) -> List:
 def add_term_to_section_of_course(iss, course, section, term) -> List:
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("INSERT INTO terms (term, iss, section, course) VALUES (%s, %s, %s, %s)", (term, iss, section, course,))
+    cursor.execute("INSERT INTO terms (term, iss, section, course) VALUES (%s, %s, %s, %s)", (term, iss, section, course))
     conn.commit()
     conn.close()
     cursor.close()
