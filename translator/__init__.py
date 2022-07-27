@@ -368,6 +368,7 @@ def add_participant(data):
     return
 
 def add_participant_to_course(user_id, email, name, role, iss, course):
+    print("adding participant to course", user_id, email, name, role, iss, course)
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, vle_username, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (
