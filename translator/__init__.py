@@ -170,7 +170,7 @@ def add_tas():
 def remove_ta():
     data = json.loads(request.form['datajson'])
     ta_id = request.form['ta_id']
-    remove_ta_from_course(data['iss'], data['course'], ta_id)
+    remove_ta_from_course(ta_id)
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
