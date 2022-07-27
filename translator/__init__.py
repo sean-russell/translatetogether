@@ -135,7 +135,7 @@ def main_page():
                 # record_action(data, "Initiated the translation tool")
             return render_template('manage_course.html', preface=preface, data=data)
         else:
-            return render_template('create_course.html',  preface=preface, data=data, id_token=request.form['id_token'])
+            return render_template('create_course.html',  preface=preface, data=data,dataj=json.dumps(data), id_token=request.form['id_token'])
 
     elif data['role'] == LEARNER:
         status = get_status(config)
