@@ -156,7 +156,7 @@ def main_page():
             else:
                 pass
                 # record_action(data, "Initiated the translation tool")
-            return render_template('manage_course.html', preface=preface, data=data)
+            return render_template('manage_course.html', preface=preface, data=data,dataj=json.dumps(data), id_token=request.form['id_token'])
         else:
             return render_template('create_course.html',  preface=preface, data=data,dataj=json.dumps(data), id_token=request.form['id_token'])
 
