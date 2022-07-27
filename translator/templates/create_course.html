@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+</head>
+<body>
+    <!--     return {
+        'id'        : user_vle_id, 
+        'email'     : user_email,
+        'username'  : vle_username, 
+        'full_name' : user_name, 
+        'role'      : role,
+        'iss'       : iss,
+        'course'    : course_code,
+        'phase'     : phase,
+        'section'   : section,
+        'language'  : language
+    } -->
+    <p>If you are seeing this there has been a configuration error. Please tell your teacher and pass them the following information.</p>
+    <ul>
+        <li>
+            ID: {{ data.id }}
+        </li>
+        <li>
+            Email: {{ data.email }}
+        </li>
+        <li>
+            Username: {{ data.username }}
+        </li>
+        <li>
+            Name: {{ data.full_name }}
+        </li>
+        <li>
+            Role: {{ data.role }}
+        </li>
+        <li>
+            Course Code: {{ data.course }}
+        </li>
+        <li>
+            ISS: {{ data.iss }}
+        </li>
+        <li>
+            Phase: {{ data.phase }}
+        </li>
+        <li>
+            Language: {{ data.language }}
+        </li>
+        <li>
+            Section: {{ data.section }}
+        </li>
+    </ul>
+    <p>{{data}}</p>
+    <footer>
+        &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
+    </footer>
+</body>
+</html>

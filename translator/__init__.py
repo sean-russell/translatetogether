@@ -4,6 +4,9 @@ import random
 import pprint
 import json
 import pymysql
+
+from typing import Dict, List
+
 from collections import namedtuple
 from flask import Flask, jsonify, request, render_template, url_for, redirect, escape
 from flaskext.mysql import MySQL
@@ -25,6 +28,12 @@ STATUS_TERMS_ASSIGNED = 2
 STATUS_REVIEWS_ASSIGNED = 3
 STATUS_VOTES_ASSIGNED = 4
 
+CLAIM_EXT = 'https://purl.imsglobal.org/spec/lti/claim/ext'
+CLAIM_CONTEXT = 'https://purl.imsglobal.org/spec/lti/claim/context'
+CLAIM_CUSTOM = "https://purl.imsglobal.org/spec/lti/claim/custom"
+CLAIM_ROLES = "https://purl.imsglobal.org/spec/lti/claim/roles"
+LEARNER = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
+INSTRUCTOR = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor'
 class ReverseProxied(object):
     def __init__(self, app):
         self.app = app
@@ -91,6 +100,8 @@ def login():
     return oidc_login.enable_check_cookies().redirect(target_link_uri)
 
 
+    
+
 @app.route('/init/', methods=['POST'])
 def main_page():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
@@ -100,34 +111,19 @@ def main_page():
     message_launch_data = message_launch.get_launch_data()
     print(message_launch_data)
     
-    user_vle_id = message_launch_data.get('sub')
-    user_email = message_launch_data.get('email')
-    user_name = message_launch_data.get('name')
-    vle_username = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/ext').get('user_username')
-    context = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/context')
-    course_code = context.get('label')
-
-    roles = message_launch_data.get("https://purl.imsglobal.org/spec/lti/claim/roles")
-    role = 'none'
-    if 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner' in roles:
-        role = 'learner'
-    elif 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor' in roles:
-        role = 'instructor'
-    user={'id': user_vle_id, 'email': user_email,'course': course_code, 'username': vle_username, 'full_name': user_name, 'role': role}
+    data = build_launch_dict(message_launch_data)
+    record_action(data, "Initiated the translation tool")
     
-    record_action(user, "Initiated the translation tool")
-    
-    custom = message_launch_data.get('https://purl.imsglobal.org/spec/lti/claim/custom')
-    language = custom.get('language')
-    phase = custom.get('phase')
-    section = custom.get('section')
-    config = {'course': course_code, 'phase': phase, 'section': section, 'language': language}
-    
-    if user['role'] == 'instructor':
-        if message_launch.is_deep_link_launch():
-            pprint.pprint("deep_link_launch")
+    if data['role'] == INSTRUCTOR:
+        if course_exists(data['iss'], data['course']):
+            if message_launch.is_deep_link_launch():
+                print("deep_link_launch")
+            return render_template('manage_course.html', data=data)
+        else:
+            return render_template('create_course.html', data=data)
+        
         pass
-    elif user['role'] == 'learner':
+    elif data['role'] == LEARNER:
         status = get_status(config)
         print("current status is ", status)
         if status == STATUS_NOT_PREPARED:
@@ -211,12 +207,12 @@ def get_jwks():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     return jsonify(tool_conf.get_jwks())
 
-def record_action(user, actioncompleted: str ):
-    print("recording action", actioncompleted, "for user", user)
+def record_action(data, actioncompleted: str ):
+    print("recording action", actioncompleted, "for user", data)
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO actions (vle_user_id, email, vle_username, course_id, role, actioncompleted) VALUES (%s, %s, %s, %s, %s, %s)", (
-        user['id'], user['email'], user['username'], user['course'], user['role'], actioncompleted))
+    cursor.execute("INSERT INTO actions (vle_user_id, email, vle_username, iss, course, role, action_completed) VALUES (%s, %s, %s, %s, %s, %s, %s)", (
+        data['id'], data['email'], data['username'], data['iss'], data['course'], data['role'], actioncompleted))
     conn.commit()
     conn.close()
     return
@@ -305,6 +301,45 @@ def get_assigned_term(student, config):
 
     return None
 
+def build_launch_dict(mld)-> Dict:
+    iss = mld.get('iss')
+    user_vle_id = mld.get('sub')
+    user_email = mld.get('email')
+    user_name = mld.get('name')
+    vle_username = mld.get(CLAIM_EXT).get('user_username')
+    context = mld.get(CLAIM_CONTEXT)
+    course_code = context.get('label')
+    custom = mld.get(CLAIM_CUSTOM)
+    phase = custom.get('phase')
+    language = custom.get('language')
+    section = custom.get('section')
+    roles = mld.get(CLAIM_ROLES)
+    role = 'none'
+    if LEARNER in roles:
+        role = LEARNER
+    elif INSTRUCTOR in roles:
+        role = INSTRUCTOR
+    return {
+        'id'        : user_vle_id, 
+        'email'     : user_email,
+        'username'  : vle_username, 
+        'full_name' : user_name, 
+        'role'      : role,
+        'iss'       : iss,
+        'course'    : course_code,
+        'phase'     : phase,
+        'section'   : section,
+        'language'  : language
+    }
+
+def course_exists(iss, course) -> bool:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM courses WHERE iss = %s AND course_id = %s", (iss, course))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    return len(rows) == 1
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003)
