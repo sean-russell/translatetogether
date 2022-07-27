@@ -106,6 +106,49 @@
         <input type="text" name="tas" placeholder="Enter TA email addresses separated by commas">
         <input type="submit" value="Add Teaching Assistants">
     </form>
+    <h1>Students</h1>
+    <p>There are the following {{data.students|length}} students registered for this course:</p>
+    <table>
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>Email</td>
+                <td>Last Access</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in data.students %}
+                <tr>
+                    <td>
+                        {% if t.fullname is defined %}
+                            {{t.fullname}}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if t.email is defined %}
+                            {{t.email}}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if t.last_action is defined %}
+                            {{t.last_action}}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <!-- <form action="{{preface~url_for('remove_ta')}}" method="POST">
+                            <input type="hidden" name="iss" value="{{data.iss}}">
+                            <input type="hidden" name="course" value="{{data.course}}">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" name="id_token" value="{{id_token}}">
+                            <input type="submit" value="Remove TA">
+                        </form> -->
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     <footer>
         &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
     </footer>

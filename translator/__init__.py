@@ -252,7 +252,7 @@ def main_page():
     
 
 
-    return render_template('term.html', preface=preface, term="hello")
+    return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token, term="hello")
 
 @app.route('/translate/', methods=['POST'])
 def process_translation():
