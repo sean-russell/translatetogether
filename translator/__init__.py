@@ -116,7 +116,7 @@ def create_course():
     conn.commit()
     conn.close()
     cursor.close()
-    return render_template('manage_course.html', preface=preface, data=data)
+    return render_template('manage_course.html', preface=preface, data=data,dataj=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/delete/', methods=['POST'])
 def delete_course():
