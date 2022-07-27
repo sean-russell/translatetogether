@@ -172,10 +172,11 @@ def add_tas():
 
 @app.route('/updatestudents/', methods=['POST'])
 def update_students():
+    launch_id = request.form['launch_id']
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     flask_request = FlaskRequest()
     launch_data_storage = get_launch_data_storage()
-    message_launch = ExtendedFlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf,
+    message_launch = FlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf,
                                                            launch_data_storage=launch_data_storage)
     launch_data_storage = get_launch_data_storage()
     data = json.loads(request.form['datajson'])
