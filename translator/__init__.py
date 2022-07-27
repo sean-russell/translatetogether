@@ -152,7 +152,7 @@ def finalise_section():
 def delete_section():
     data = json.loads(request.form['datajson'])
     data['section'] = request.form['section']
-    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
+    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section']['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/addterm/', methods=['POST'])
@@ -160,7 +160,7 @@ def add_term():
     data = json.loads(request.form['datajson'])
     term = request.form['term']
     add_term_to_section_of_course(data['iss'], data['course'], data['section']['section'], term)
-    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
+    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section']['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/deleteterm/', methods=['POST'])
@@ -168,7 +168,7 @@ def delete_term():
     data = json.loads(request.form['datajson'])
     term_id = request.form['term_id']
     success = delete_term(term_id)
-    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
+    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section']['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], success=success)
 
 
