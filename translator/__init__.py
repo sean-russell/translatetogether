@@ -211,6 +211,7 @@ def main_page():
                 pass
                 # record_action(data, "Initiated the translation tool")
             data['sections'] = get_sections_for_course(data['iss'], data['course'])
+            data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
             return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
         else:
             return render_template('create_course.html',  preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
