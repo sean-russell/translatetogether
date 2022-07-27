@@ -509,7 +509,7 @@ def add_tas_to_course(iss, course, tas):
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     for ta in tas:
-        cursor.execute("INSERT INTO tas (iss, course, email) VALUES (%s, %s, %s)", (iss, course, ta))
+        cursor.execute("INSERT INTO assistants (iss, course, email) VALUES (%s, %s, %s)", (iss, course, ta))
     conn.commit()
     conn.close()
     cursor.close()
