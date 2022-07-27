@@ -130,7 +130,7 @@ def add_section():
     section = request.form['sec_number']
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("INSERT INTO sections (iss, course_id, section_number) VALUES (%s, %s, %s)", (data['iss'], data['course'], section))
+    cursor.execute("INSERT INTO sections (iss, course, section_number) VALUES (%s, %s, %s)", (data['iss'], data['course'], section))
     conn.commit()
     conn.close()
     cursor.close()
