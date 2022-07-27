@@ -145,6 +145,14 @@ def manage_section():
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 
+@app.route('/deletesection/', methods=['POST'])
+def delete_section():
+    data = json.loads(request.form['datajson'])
+    data['section'] = request.form['section']
+    data['terms'] = get_terms_for_section_of_course(data['iss'], data['course'], data['section'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+
 @app.route('/init/', methods=['POST'])
 def main_page():
     tool_conf = ToolConfJsonFile(get_lti_config_path())
@@ -400,7 +408,7 @@ def get_terms_for_section_of_course(iss, course, section) -> List:
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
-    return [ r['term'] for r in rows ]
+    return [ r for r in rows ]
 
 def convert_status(status):
     if status == STATUS_NOT_PREPARED:
