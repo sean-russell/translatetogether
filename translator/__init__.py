@@ -170,6 +170,15 @@ def add_tas():
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
+@app.route('/updatestudents/', methods=['POST'])
+def update_students():
+    data = json.loads(request.form['datajson'])
+    ta_emails = request.form['tas'].split(',') 
+    add_tas_to_course(data['iss'], data['course'], ta_emails)
+    data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+
 @app.route('/removeta/', methods=['POST'])
 def remove_ta():
     data = json.loads(request.form['datajson'])
