@@ -202,6 +202,7 @@ def main_page():
     message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
     message_launch_data = message_launch.get_launch_data()    
     data = build_launch_dict(message_launch_data)
+    add_participant(data)
     record_action(data, "Initiated the translation tool")
     if data['role'] == INSTRUCTOR:
         if course_exists(data['iss'], data['course']):
@@ -285,6 +286,15 @@ def record_action(data, actioncompleted: str ):
     cursor = conn.cursor()
     cursor.execute("INSERT INTO actions (vle_user_id, email, vle_username, iss, course, role, action_completed) VALUES (%s, %s, %s, %s, %s, %s, %s)", (
         data['id'], data['email'], data['username'], data['iss'], data['course'], data['role'], actioncompleted))
+    conn.commit()
+    conn.close()
+    return
+
+def add_participant(data):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO participants (vle_user_id, email, vle_username, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (
+        data['id'], data['email'], data['username'], data['iss'], data['course'], data['role']))
     conn.commit()
     conn.close()
     return
