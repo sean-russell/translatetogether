@@ -13,38 +13,28 @@
         <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="submit" value="Delete Course">
     </form>
-    <ul>
-        <li>
-            ID: {{ data.id }}
-        </li>
-        <li>
-            Email: {{ data.email }}
-        </li>
-        <li>
-            Username: {{ data.username }}
-        </li>
-        <li>
-            Name: {{ data.full_name }}
-        </li>
-        <li>
-            Role: {{ data.role }}
-        </li>
-        <li>
-            Course Code: {{ data.course }}
-        </li>
-        <li>
-            ISS: {{ data.iss }}
-        </li>
-        <li>
-            Phase: {{ data.phase }}
-        </li>
-        <li>
-            Language: {{ data.language }}
-        </li>
-        <li>
-            Section: {{ data.section }}
-        </li>
-    </ul>
+    <h1>Sections</h1>
+    <p>There are the following {{sections|length}} sections (groups of terms) prepared in this course:</p>
+    <!-- A table for showing the section number and status for each section -->
+    <table>
+        <thead>
+            <tr>
+                <td>Section Number</td>
+                <td>Current Status</td>
+                <td>Terms</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sections %}
+                <tr>
+                    <td>{{s.section}}</td>
+                    <td>{{s.status}}</td>
+                    <td>{{ s.terms|join(', ') }}</td>
+                </tr>
+            {% end for %}
+        </tbody>
+    </table>
+    
     <p>{{data}}</p>
     <footer>
         &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>

@@ -140,7 +140,8 @@ def main_page():
             else:
                 pass
                 # record_action(data, "Initiated the translation tool")
-            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+                sections = get_sections_for_course(data['iss'], data['course'])
+            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], sections=sections)
         else:
             return render_template('create_course.html',  preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
@@ -361,6 +362,37 @@ def course_exists(iss, course) -> bool:
     conn.close()
     cursor.close()
     return len(rows) == 1
+
+def get_sections_for_course(iss, course) -> List:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM sections WHERE iss = %s AND course = %s", (iss, course))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    return [ { 'section' : r['section_number'], 'status' : convert_status(r['status']), 'terms': get_terms_for_section_of_course(iss, course, r['section']) } for r in rows ]
+
+def get_terms_for_section_of_course(iss, course, section) -> List:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM terms WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    return [ r['term'] for r in rows ]
+
+def convert_status(status):
+    if status == STATUS_NOT_PREPARED:
+        return "Not prepared"
+    elif status == STATUS_TERMS_PREPARED:
+        return "Terms added to section"
+    elif status == STATUS_TERMS_ASSIGNED:
+        return "Terms assigned to students"
+    elif status == STATUS_REVIEWS_ASSIGNED:
+        return "Reviews assigned to students"
+    elif status == STATUS_VOTES_ASSIGNED:
+        return "Votes assigned to students"
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003)

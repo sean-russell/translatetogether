@@ -3,7 +3,7 @@
 # Database Tables
 1. courses(<ins>iss, course_id</ins>, course_name)
 2. sections(<ins>*iss*,*course*, section_number</ins>, status)
-3. terms(<ins>id</ins>, term, *section*, *course_id* )
+3. terms(<ins>id</ins>, term, *iss*, *section*, *course_id* )
 
 4. participants(<ins>vle_user_id</ins>, email, vle_username, fullname, role, *iss*, *course*)
 5. assistants(<ins>id</ins>, email, *iss*, *course*)
