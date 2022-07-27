@@ -102,8 +102,8 @@ def login():
 
 @app.route('/create/', methods=['POST'])
 def create_course():
-    # data = json.loads(request.form['data'])
-    data = request.form['data']
+    data = json.loads(request.form['dataj'])
+    # data = request.form['data']
     course_name = request.form['coursename']
     print(data, course_name)
     conn = mysql.connect()
