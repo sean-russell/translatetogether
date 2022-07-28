@@ -365,7 +365,8 @@ def add_new_translation():
     translation = request.form['translation']
     data = json.loads(request.form['datajson'])
     dbstuff.add_term_translation(data['id'], trans_ass_id, term, termtrans, translation, data['iss'], data['course'], data['section_num'])
-    pass
+    term = dbstuff.get_assigned_term(data)
+    return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data),term=term)
 
 
 if __name__ == '__main__':
