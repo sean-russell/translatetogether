@@ -5,7 +5,7 @@ import pprint
 import json
 import pymysql
 from translator import dbstuff
-from translator.constants import *
+K)
 from typing import Dict, List
 
 from collections import namedtuple
@@ -164,12 +164,12 @@ def finalise_section():
 def asign_terms():
     """ assign terms to all registered students within a section TODO finish this"""
     data = json.loads(request.form['datajson'])
+    assign_terms(data)
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
 ######################################################################################################################################################################
-
 
 @app.route('/term/add/', methods=['POST'])
 def add_term():
@@ -278,11 +278,9 @@ def update_students():
     print("current students: " + str(data['students']))
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
-
 ######################################################################################################################################################################
 # Functions for building the core data carried through the program ###################################################################################################
 ######################################################################################################################################################################
-
 
 def build_launch_dict(mld)-> Dict:
     iss = mld.get('iss')
@@ -314,6 +312,15 @@ def build_launch_dict(mld)-> Dict:
         'section_num'   : section,
         'language'      : language
     }
+
+######################################################################################################################################################################
+# Functions for processing the submitted translations ###################################################################################################
+######################################################################################################################################################################
+
+@app.route('/translation/add/', methods=['POST'])
+def add_new_translation():
+    pass
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003)

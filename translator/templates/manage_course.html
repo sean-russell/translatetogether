@@ -77,7 +77,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <form action="{{preface~url_for('remove_ta')}}" method="POST">
+                        <form action="{{preface~url_for('remove_teaching_assistant')}}" method="POST">
                             <input type="hidden" name="iss" value="{{data.iss}}">
                             <input type="hidden" name="course" value="{{data.course}}">
                             <input type="hidden" name="ta_id" value="{{t.id}}">
@@ -90,7 +90,7 @@
             {% endfor %}
         </tbody>
     </table>
-    <form action="{{preface~url_for('add_tas')}}" method="POST">
+    <form action="{{preface~url_for('add_teaching_assistants')}}" method="POST">
         <input type="hidden" name="iss" value="{{data.iss}}">
         <input type="hidden" name="course" value="{{data.course}}">
         <input type="hidden" name="datajson" value="{{datajson}}">
