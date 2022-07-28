@@ -419,6 +419,18 @@ def add_term_translation(vle_user_id, trans_ass_id, term, transterm, translation
     conn.commit()
     conn.close()
 
+def get_term_translations_for_section(iss: str, course: str, section: str) -> List:
+    """ load the most recent translation for each student """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM translations WHERE id IN (SELECT MAX(id) FROM translations GROUP BY vle_user_id WHERE iss = %s AND course = %s AND section = %s)", (iss, course, section))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    return [ r for r in rows ]
+
+
+
 #########################################
 # def course_exists(iss: str, course: str) -> bool:
 #     """ Check if a course exists in the database """

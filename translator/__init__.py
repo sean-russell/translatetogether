@@ -197,6 +197,19 @@ def asign_terms():
 
 @app.route('/section/review/', methods=['POST'])
 def start_review():
+    """ assign reviews to all registered students within a section """
+
+    """ first find the list of translations completed for this section (only most recent by each student) """
+    data = json.loads(request.form['datajson'])
+    section_num = request.form['section']
+    iss = data['iss']
+    course = data['course']
+    students = dbstuff.get_student_details_for_course(iss, course)
+    tas = dbstuff.get_ta_details_for_course(iss, course)
+    translations = dbstuff.get_term_translations_for_section(iss, course, section_num)
+
+
+
     pass
 
 ######################################################################################################################################################################
