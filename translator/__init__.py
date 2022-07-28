@@ -102,7 +102,7 @@ def main_page():
         data = json.loads(request.form['datajson'])
         state = data['state']
         id_token = data['id_token']
-        launch_id = request.form['launch_id']
+        launch_id = data['launch_id']
         message_launch = FlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf, launch_data_storage=launch_data_storage)
     else:
         message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
