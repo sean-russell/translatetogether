@@ -10,7 +10,7 @@
     <form action="{{preface~url_for('delete_section')}}" method="POST">
         <input type="hidden" name="iss" value="{{data.iss}}">
         <input type="hidden" name="course" value="{{data.course}}">
-        <input type="hidden" name="section" value="{{data.section.section_number}}">
+        <input type="hidden" name="section" value="{{data.section.section}}">
         <input type="hidden" name="datajson" value="{{datajson}}">
         <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="submit" value="Delete Section">
@@ -35,7 +35,7 @@
                         <form action="{{preface~url_for('delete_term')}}" method="POST">
                             <input type="hidden" name="iss" value="{{data.iss}}">
                             <input type="hidden" name="course" value="{{data.course}}">
-                            <input type="hidden" name="section" value="{{data.section.section_number}}">
+                            <input type="hidden" name="section" value="{{data.section.section}}">
                             <input type="hidden" name="term_id" value="{{t.id}}">
                             <input type="hidden" name="datajson" value="{{datajson}}">
                             <input type="hidden" name="id_token" value="{{id_token}}">
@@ -51,7 +51,7 @@
     <form action="{{preface~url_for('add_term')}}" method="POST">
         <input type="hidden" name="iss" value="{{data.iss}}">
         <input type="hidden" name="course" value="{{data.course}}">
-        <input type="hidden" name="section" value="{{data.section.section_number}}">
+        <input type="hidden" name="section" value="{{data.section.section}}">
         <input type="hidden" name="datajson" value="{{datajson}}">
         <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="text" name="term" placeholder="Term">
