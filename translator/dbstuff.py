@@ -74,7 +74,7 @@ def delete_section(iss: str, course: str, section: str) -> None:
     """ delete the translation assignments for this iss, course, and section"""
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM translation_assignments WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    cursor.execute("DELETE FROM trans_assignments WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
     conn.commit()
     conn.close()
     cursor.close()
@@ -213,7 +213,6 @@ def get_num_reviews_for_section_of_course(iss: str, course: str, section: str) -
     conn.close()
     cursor.close()
     return rev_num_dict
-
 
 def get_num_votes_for_section_of_course(iss: str, course: str, section: str) -> Dict[str,int]:
     """ Get the number of votes for each term for a section of a course """
