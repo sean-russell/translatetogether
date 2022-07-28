@@ -251,7 +251,7 @@ def get_name_for_vle_user_id(vle_user_id: str) -> str:
     """ Get the name of a VLE user """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT fullname FROM participants WHERE vle_user_id = %s", (vle_user_id))
+    cursor.execute("SELECT distinct fullname FROM participants WHERE vle_user_id = %s", (vle_user_id))
     rows = cursor.fetchall()
     conn.close()
     cursor.close()

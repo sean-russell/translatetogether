@@ -263,7 +263,7 @@ def assign_term(data: Dict) -> None:
 @app.route('/tas/add/', methods=['POST'])
 def add_teaching_assistants():
     data = json.loads(request.form['datajson'])
-    ta_emails = request.form['tas'].split(',') 
+    ta_emails = [ a.trim() for a in request.form['tas'].split(',') if a.trim() != '' ] 
     dbstuff.add_tas_to_course(data['iss'], data['course'], ta_emails)
     data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
