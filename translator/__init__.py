@@ -126,6 +126,9 @@ def main_page():
             print(data) #TODO: remove this
             return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
         else:
+            data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
+            data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
+            data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
             return render_template('view_course.html', preface=preface, data=data, datajson=json.dumps(data))
 
     elif data['role'] == LEARNER:
