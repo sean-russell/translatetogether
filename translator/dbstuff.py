@@ -15,13 +15,23 @@ def create_course(data: Dict) -> None:
     """ Create a course in the database """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("INSERT IGNORE INTO courses (iss, course_id) VALUES (%s, %s)", (data['iss'], data['course']))
+    cursor.execute("INSERT IGNORE INTO courses (iss, course_id, owner_id) VALUES (%s, %s, %s)", (data['iss'], data['course'], data['id']))
     conn.commit()
     conn.close()
     cursor.close()
     data['sections'] = []
     data['tas'] = []
     data['students'] = []
+
+def get_course_owner(iss: str, course: str) -> str:
+    """ Get the owner of a course """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT owner_id FROM courses WHERE iss = %s AND course_id = %s", (iss, course))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    return rows[0]['owner_id']
 
 def create_section(data: Dict, sec: str) -> None:
     """ Create a section in the database """

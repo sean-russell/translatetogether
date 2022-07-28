@@ -116,14 +116,17 @@ def main_page():
     dbstuff.add_participant_to_course(data['id'], data['email'], data['full_name'], data['role'], data['iss'], data['course'])
     dbstuff.record_action(data, "Initiated the translation tool")
     if data['role'] == INSTRUCTOR:
+        owner = dbstuff.get_course_owner(data['iss'], data['course'])
         if message_launch.is_deep_link_launch():
             print("deep_link_launch")
-        else:
+        elif owner == data['id']:
             data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
             data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
             data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
             print(data) #TODO: remove this
             return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
+        else:
+            return render_template('view_course.html', preface=preface, data=data, datajson=json.dumps(data))
 
     elif data['role'] == LEARNER:
         if dbstuff.section_exists(data['iss'], data['course'], data['section_num']):
@@ -188,6 +191,10 @@ def asign_terms():
     dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_TERMS_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
+
+@app.route('/section/review/', methods=['POST'])
+def start_review():
+    pass
 
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
