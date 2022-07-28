@@ -30,13 +30,11 @@
                             <input type="hidden" name="datajson" value="{{datajson}}">
                             <input type="submit" value="Manage Section">
                         </form>
-                        {% if s.status == "Not prepared" %}
                         <form action="{{preface~url_for('delete_section')}}" method="POST" onsubmit="return confirm('This will delete all terms, translations, reviews and votes. Are you sure?');">
                             <input type="hidden" name="section" value="{{s.section}}">
                             <input type="hidden" name="datajson" value="{{datajson}}">
                             <input type="submit" value="Delete Section">
                         </form>
-                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
