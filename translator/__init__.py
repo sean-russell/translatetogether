@@ -206,6 +206,7 @@ def start_review():
     iss = data['iss']
     course = data['course']
     students =  { s['vle_user_id'] : {'name' : s['fullname'], 'reviews' : [], 'term': None } for s in dbstuff.get_student_details_for_course(iss, course) }
+    term_assignments = dbstuff.get_trans_assignments_for_section_of_course(iss, course, section_num)
     tas = dbstuff.get_ta_details_for_course(iss, course)
     translations = dbstuff.get_term_translations_for_section(iss, course, section_num)
     term_lists = {}
@@ -221,6 +222,7 @@ def start_review():
         random.shuffle(term_lists[t])
 
     """ now assign reviews to each student """
+    random.shuffle(students)
     for s in students:
         for t in term_lists:
             if students[s]['term'] != t:
