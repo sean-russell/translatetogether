@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `participants` (
   `role` varchar(255) CHARACTER SET utf8mb4 NOT NULL,	/* learner, instructor, admin*/
   `iss` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `course` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  PRIMARY KEY (`vle_user_id`), UNIQUE(`email`), UNIQUE(`vle_username`),
+  PRIMARY KEY (`vle_user_id`, `iss`, `course`), UNIQUE(`email`), UNIQUE(`vle_username`),
   CONSTRAINT fk_mrt_ot3 FOREIGN KEY (`iss`,`course`) REFERENCES `courses`(`iss`,`course_id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
