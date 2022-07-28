@@ -280,7 +280,7 @@ def update_students():
         Remove any students that are listed as teaching assistants in the course.
         Add remaining list as participants in the database."""
     data = json.loads(request.form['datajson'])
-    launch_id = request.form['launch_id']
+    launch_id = data['launch_id']
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     flask_request = FlaskRequest()
     launch_data_storage = get_launch_data_storage()
