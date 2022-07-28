@@ -5,6 +5,7 @@ import pprint
 import json
 import pymysql
 from translator import dbstuff
+from translator.constants import *
 from typing import Dict, List
 
 from collections import namedtuple
