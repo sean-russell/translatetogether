@@ -50,7 +50,7 @@
             {% for t in data.section.terms %}
                 <tr>
                     <td>{{t.term}}</td>
-                    <td>{{data.section.trans_assignments[t.term]| join(',')}}</td>
+                    <td>{{data.section.trans_assignments[t.term]| join(', ')}}</td>
                     <td>{{data.section.trans_numbers[t.term]}}</td>
                     <td>{{data.section.review_numbers[t.term]}}</td>
                     <td>{{data.section.vote_numbers[t.term]}}</td>
@@ -90,7 +90,7 @@
     <form action="{{preface~url_for('start_review')}}" method="POST">
         <input type="hidden" name="datajson" value="{{datajson}}">
         <input type="hidden" name="section" value="{{data.section.section}}">
-        <input type="submit" value="Assign Terms" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+        <input type="submit" value="Initiate Review" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
     </form>
     {% endif %}
    
