@@ -24,7 +24,7 @@
                     <td>{{data.section.status}}</td>
                     <td>
                         <form action="{{preface~url_for('main_page')}}" method="POST">
-                            <input type="hidden" name="id_token" value="{{id_token}}">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
                             <input type="submit" value="Return to Course">
                         </form>
                     </td>
@@ -57,12 +57,9 @@
                     <td>
                         {% if data.section.status == "Not prepared" %}
                         <form action="{{preface~url_for('delete_term')}}" method="POST">
-                            <input type="hidden" name="iss" value="{{data.iss}}">
-                            <input type="hidden" name="course" value="{{data.course}}">
                             <input type="hidden" name="section" value="{{data.section.section}}">
                             <input type="hidden" name="term_id" value="{{t.id}}">
                             <input type="hidden" name="datajson" value="{{datajson}}">
-                            <input type="hidden" name="id_token" value="{{id_token}}">
                             <input type="submit" value="Delete Term">
                         </form>
                         {% endif %}
@@ -73,17 +70,13 @@
     </table>
     {% if data.section.status == "Not prepared" %}
     <form action="{{preface~url_for('add_term')}}" method="POST">
-        <input type="hidden" name="iss" value="{{data.iss}}">
-        <input type="hidden" name="course" value="{{data.course}}">
         <input type="hidden" name="section" value="{{data.section.section}}">
         <input type="hidden" name="datajson" value="{{datajson}}">
-        <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="text" name="term" placeholder="Term">
         <input type="submit" value="Add New Term">
     </form>
     <form action="{{preface~url_for('finalise_section')}}" method="POST">
         <input type="hidden" name="datajson" value="{{datajson}}">
-        <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="hidden" name="section" value="{{data.section.section}}">
         <input type="submit" value="Finalise Section" data-tooltip="This will prevent further modification of the list of terms and allow terms to be assigned to students for translation.">
     </form>
@@ -91,7 +84,6 @@
     <form action="{{preface~url_for('asign_terms')}}" method="POST">
         <input type="hidden" name="datajson" value="{{datajson}}">
         <input type="hidden" name="section" value="{{data.section.section}}">
-        <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="submit" value="Assign Terms" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
     </form>
     {% elif data.section.status == "Terms assigned to students" %}

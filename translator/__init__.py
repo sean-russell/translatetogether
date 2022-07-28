@@ -150,33 +150,33 @@ def add_section():
     """ add a section to the database and refresh the page """
     data = json.loads(request.form['datajson'])
     dbstuff.create_section(data, request.form['sec_number'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
 
 @app.route('/section/delete/', methods=['POST'])
 def delete_section():
     """ delete a section from the database and refresh the page """
     data = json.loads(request.form['datajson'])
-    iss = request.form['iss']
-    course = request.form['course']
+    iss = data['iss']
+    course = data['course']
     section_num = request.form['section']
     dbstuff.delete_section(iss, course, section_num)
     
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
 
 @app.route('/section/manage/', methods=['POST'])
 def manage_section():
     """ change to the page for managing a section """
     data = json.loads(request.form['datajson'])
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
 
 @app.route('/section/finalise/', methods=['POST'])
 def finalise_section():
     """ finalise the list of terms that are used in a section"""
     data = json.loads(request.form['datajson'])
-    dbstuff.set_status_of_section(data['iss'], data['course'], data['section']['section'], STATUS_TERMS_PREPARED)
+    dbstuff.set_status_of_section(data['iss'], data['course'], request.form['section'], STATUS_TERMS_PREPARED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
 
 @app.route('/section/assign/', methods=['POST'])
 def asign_terms():
@@ -186,7 +186,7 @@ def asign_terms():
     assign_terms(data['iss'], data['course'], section_num)
     dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_TERMS_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
 
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
@@ -196,23 +196,25 @@ def asign_terms():
 def add_term():
     """ add a term to the database and refresh the page """
     data = json.loads(request.form['datajson'])
-    iss = request.form['iss']
-    course = request.form['course']
+    iss = data['iss']
+    course = data['course']
     section = request.form['section']
     term = request.form['term']
-    id_token=request.form['id_token']
     dbstuff.add_term_to_section_of_course(iss, course, section, term)
     data['section'] = dbstuff.get_section_for_course(iss, course, section)
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token)
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
 
 @app.route('/term/delete/', methods=['POST'])
 def delete_term():
     """ delete a term from the database and refresh the page """
     data = json.loads(request.form['datajson'])
+    iss = data['iss']
+    course = data['course']
+    section = request.form['section']
     term_id = request.form['term_id']
-    success = dbstuff.delete_term_from_database(term_id)
-    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], success=success)
+    dbstuff.delete_term_from_database(term_id)
+    data['section'] = dbstuff.get_section_for_course(iss, course, section)
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
 
 def assign_terms(iss, course, section_num) -> None:
     """ assign a term to every student in a course for the current section """
