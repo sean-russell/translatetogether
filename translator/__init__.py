@@ -4,7 +4,7 @@ import random
 import pprint
 import json
 import pymysql
-import dbstuff
+from translator import dbstuff
 
 from typing import Dict, List
 
