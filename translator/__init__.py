@@ -203,7 +203,8 @@ def assign_terms(data: Dict) -> None:
     terms = [ term['term'] for term in terms_with_ids ]
     students = dbstuff.get_student_details_for_course(data['iss'], data['course'])
     student_ids = [ student['vle_user_id'] for student in students ]
-
+    print("terms list", terms)
+    print("student ids", student_ids)
     random_terms = random.choices(terms, k = len(student_ids))
     random.shuffle(student_ids)
     for student in student_ids:
