@@ -345,6 +345,16 @@ def get_student_details_for_course(iss: str, course: str) -> List:
             row['last_action'] = "Never"
     return [ r for r in rows ]
 
+def get_teaching_assistant_emails_for_course(iss: str, course: str) -> List[str]:
+    """ Get all teaching assistants for a course """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT email FROM assistants WHERE iss = %s AND course = %s", (iss, course))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    return [ r['email'] for r in rows ]
+
 def get_ta_details_for_course(iss: str, course: str) -> List:
     """ Get all TAs for a course """
     conn = mysql.connect()

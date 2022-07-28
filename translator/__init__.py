@@ -287,6 +287,7 @@ def update_students():
     message_launch = FlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf, launch_data_storage=launch_data_storage)
     
     if message_launch.has_nrps():
+        teaching_assistant_emails = dbstuff.get_teaching_assistant_emails_for_course(data['iss'], data['course'])
         nrps = message_launch.get_nrps()
         members = nrps.get_members()
         for member in members:
@@ -296,7 +297,11 @@ def update_students():
                 role = LEARNER
             elif INSTRUCTOR in roles or 'Instructor' in roles:
                 role = INSTRUCTOR
-            dbstuff.add_participant_to_course(member['user_id'], member['email'],member["name"],  role, data['iss'], data['course'])
+            if member['email'] in teaching_assistant_emails:
+                dbstuff.add_participant_to_course(member['user_id'], member['email'], member["name"], INSTRUCTOR, data['iss'], data['course'])
+            else:
+                dbstuff.add_participant_to_course(member['user_id'], member['email'], member["name"], role, data['iss'], data['course'])
+            
         print(members)
     else:
         raise Exception('No NRPS found in message launch')
