@@ -428,6 +428,8 @@ def get_term_translations_for_section(iss: str, course: str, section: int) -> Li
     print(query % (iss, course, section))
     cursor.execute(query, (iss, course, str(section)))
     rows = cursor.fetchall()
+    for r in rows:
+        r['submit_time'] = str(r['submit_time'])
     conn.close()
     cursor.close()
     return [ r for r in rows ]
