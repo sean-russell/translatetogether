@@ -301,8 +301,8 @@ def update_students():
         teaching_assistant_emails = dbstuff.get_teaching_assistant_emails_for_course(data['iss'], data['course'])
         nrps = message_launch.get_nrps()
         members = nrps.get_members()
-        print(members)
-        print(teaching_assistant_emails)
+        print("members list from the service", members)
+        print("teaching assistant emails", teaching_assistant_emails)
         for member in members:
             role = 'none'
             roles = member['roles']
