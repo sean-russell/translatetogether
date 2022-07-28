@@ -132,7 +132,7 @@ def main_page():
         if data['section']['status'] in (STATUS_NOT_PREPARED, STATUS_TERMS_PREPARED):
             return render_template('config.html', preface=preface, data=jsonify(data))
         elif data['phase'] == PHASE_TRANSLATE:
-            if data['section']['status'] == STATUS_TERMS_ASSIGNED:
+            if data['section']['status'] in (STATUS_TERMS_ASSIGNED, convert_status(STATUS_TERMS_ASSIGNED)):
                 term = dbstuff.get_assigned_term(data)
                 if term == None:
                     assign_term(data)
