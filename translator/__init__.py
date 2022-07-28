@@ -160,7 +160,7 @@ def delete_section():
     course = data['course']
     section_num = request.form['section']
     dbstuff.delete_section(iss, course, section_num)
-    
+    data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
 
 @app.route('/section/manage/', methods=['POST'])
