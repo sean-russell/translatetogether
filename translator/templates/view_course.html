@@ -27,11 +27,6 @@
             {% endfor %}
         </tbody>
     </table>
-    <form action="{{preface~url_for('add_section')}}" method="POST">
-        <input type="hidden" name="datajson" value="{{datajson}}">
-        <input type="hidden" name="sec_number" value="{{data.sections|length}}">
-        <input type="submit" value="Add New Section">
-    </form>
     <h1>Teaching Assistants</h1>
     <p>There are the following {{data.tas|length}} teaching assistants registed for this course:</p>
     
@@ -65,11 +60,6 @@
             {% endfor %}
         </tbody>
     </table>
-    <form action="{{preface~url_for('add_teaching_assistants')}}" method="POST">
-        <input type="hidden" name="datajson" value="{{datajson}}">
-        <input type="text" name="tas" placeholder="Enter TA email addresses separated by commas">
-        <input type="submit" value="Add Teaching Assistants">
-    </form>
     <h1>Students</h1>
     <p>There are the following {{data.students|length}} students registered for this course:</p>
     <table>
