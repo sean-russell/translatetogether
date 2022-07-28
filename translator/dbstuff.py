@@ -329,6 +329,7 @@ def add_tas_to_course(iss: str, course: str, tas : List) -> None:
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     for ta in tas:
         cursor.execute("INSERT INTO assistants (iss, course, email) VALUES (%s, %s, %s)", (iss, course, ta))
+        cursor.execute("UPDATE participants SET role = %s WHERE iss = %s AND course = %s AND vle_user_id = %s", (INSTRUCTOR, iss, course, ta))
     conn.commit()
     conn.close()
     cursor.close()
