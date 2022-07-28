@@ -39,7 +39,7 @@
         <thead>
             <tr>
                 <td>Term</td>
-                <td>Number of times assigned</td>
+                <td>Assigned to</td>
                 <td>Number of times translated</td>
                 <td>Number of times reviewed</td>
                 <td>Number of times voted on</td>
@@ -50,7 +50,7 @@
             {% for t in data.section.terms %}
                 <tr>
                     <td>{{t.term}}</td>
-                    <td>Number of times assigned</td>
+                    <td>{{data.section.trans_assignments[t.term]| join(',')}}</td>
                     <td>Number of times translated</td>
                     <td>Number of times reviewed</td>
                     <td>Number of times voted on</td>

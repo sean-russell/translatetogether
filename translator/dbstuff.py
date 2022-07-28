@@ -118,12 +118,13 @@ def get_section_for_course(iss: str, course: str, section_number: str) -> Dict[s
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
+    section_description = {}
     if len(rows) == 1:
-        return { 
-            'section' : rows[0]['section_number'], 
-            'status' : convert_status(rows[0]['status']), 
-            'terms': get_terms_for_section_of_course(iss, course, rows[0]['section_number']) 
-        }
+        section_description['section'] = rows[0]['section_number']
+        section_description['status'] = convert_status(rows[0]['status'])
+        section_description['terms'] = get_terms_for_section_of_course(iss, course, rows[0]['section_number'])
+        section_description['trans_assignments'] = get_trans_assignments_for_section_of_course(iss, course, section_number)
+        return section_description
     else:
         return {}
 
@@ -180,6 +181,35 @@ def get_terms_for_section_of_course(iss: str, course: str, section: str) -> List
     conn.close()
     cursor.close()
     return [ r for r in rows ]
+
+def get_trans_assignments_for_section_of_course(iss: str, course: str, section: str) -> List:
+    """ Get all term assignments for a section of a course """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM trans_assignments WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    ass_dict = {}
+    for r in rows:
+        if r['term'] not in ass_dict:
+            ass_dict[r['term']] = [get_name_for_vle_user_id(r['vle_user_id'])]
+        else:
+            ass_dict[r['term']].append(get_name_for_vle_user_id(r['vle_user_id']))
+    return ass_dict
+
+def get_name_for_vle_user_id(vle_user_id: str) -> str:
+    """ Get the name of a VLE user """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT fullname FROM participants WHERE vle_user_id = %s", (vle_user_id))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    if len(rows) == 1:
+        return rows[0]['fullname']
+    else:
+        return ""
 
 def add_term_to_section_of_course(iss: str, course: str, section: str, term: str) -> None:
     """ Add a term to a section of a course """
