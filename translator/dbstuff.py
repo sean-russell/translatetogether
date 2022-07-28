@@ -401,7 +401,7 @@ def add_term_translation(vle_user_id, trans_ass_id, term, transterm, translation
     """ Add a term translation """
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT IGNORE INTO translations (vle_user_id, trans_ass_id, term, transterm, translation, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+    cursor.execute("INSERT IGNORE INTO translations (vle_user_id, trans_ass_id, term, transterm, transdescription, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
     (vle_user_id, trans_ass_id, term, transterm, translation, iss, course, section_num))
     conn.commit()
     conn.close()
