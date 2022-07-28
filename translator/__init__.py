@@ -139,7 +139,7 @@ def main_page():
                     term = dbstuff.get_assigned_term(data)
                 
                 
-                return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token, term=term)
+                return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data),term=term)
 
 ######################################################################################################################################################################
 # Functions for managing the sections in a course ####################################################################################################################
@@ -257,7 +257,7 @@ def add_teaching_assistants():
     data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
 
 @app.route('/tas/remove/', methods=['POST'])
 def remove_teaching_assistant():
@@ -267,7 +267,7 @@ def remove_teaching_assistant():
     data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
 
 ######################################################################################################################################################################
 # Functions for administering the students in a course ###############################################################################################################
