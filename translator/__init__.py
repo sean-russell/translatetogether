@@ -168,7 +168,8 @@ def finalise_section():
 def asign_terms():
     """ assign terms to all registered students within a section TODO finish this"""
     data = json.loads(request.form['datajson'])
-    assign_terms(data)
+    section_num = request.form['section']
+    assign_terms(data['iss'], data['course'], section_num)
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 ######################################################################################################################################################################
@@ -197,11 +198,11 @@ def delete_term():
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], success=success)
 
-def assign_terms(data: Dict) -> None:
+def assign_terms(iss, course, section_num) -> None:
     """ assign a term to every student in a course for the current section """
-    terms_with_ids = dbstuff.get_terms_for_section_of_course(data['iss'], data['course'], data['section_num'])
+    terms_with_ids = dbstuff.get_terms_for_section_of_course(iss,course,section_num)
     terms = [ term['term'] for term in terms_with_ids ]
-    students = dbstuff.get_student_details_for_course(data['iss'], data['course'])
+    students = dbstuff.get_student_details_for_course(iss, course)
     student_ids = [ student['vle_user_id'] for student in students ]
     print("terms list", terms)
     print("student ids", student_ids)
@@ -209,12 +210,13 @@ def assign_terms(data: Dict) -> None:
     random.shuffle(student_ids)
     for student in student_ids:
         term = random_terms.pop()
-        dbstuff.assign_term_to_student(data['iss'], data['course'], data['section_num'], term, student)
+        dbstuff.assign_term_to_student(iss, course, section_num, term, student)
 
 def assign_term(data: Dict) -> None:
     """ This is for when a student was not in the list when terms were being assigned
     so we need to assign them a term. It finds the term that has the lowsest number of students
     assigned to it and assigns that one to the student. """
+
     terms: List[str] = dbstuff.get_terms_for_section_of_course(data['iss'], data['course'], data['section_num'])
     term_counts = dbstuff.count_term_assignments_for_section(data['iss'], data['course'], data['section_num'])	
     if len(terms) > len(term_counts):
