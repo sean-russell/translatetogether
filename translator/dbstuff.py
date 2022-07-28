@@ -387,6 +387,14 @@ def add_participant_to_course(user_id: str, email: str, name: str, role: str, is
     conn.commit()
     conn.close()
 
+def add_term_translation(vle_user_id, trans_ass_id, term, transterm, translation, iss, course, section_num) -> None:
+    """ Add a term translation """
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT IGNORE INTO translations (vle_user_id, trans_ass_id, term, transterm, translation, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+    (vle_user_id, trans_ass_id, term, transterm, translation, iss, course, section_num))
+    conn.commit()
+    conn.close()
 
 #########################################
 # def course_exists(iss: str, course: str) -> bool:
@@ -441,11 +449,25 @@ def add_participant_to_course(user_id: str, email: str, name: str, role: str, is
 def get_assigned_term(data: Dict) -> str:
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT term FROM trans_assignments WHERE iss = %s AND vle_user_id = %s AND course = %s AND section = %s", 
+    cursor.execute("SELECT id, term, status FROM trans_assignments WHERE iss = %s AND vle_user_id = %s AND course = %s AND section = %s LIMIT 1", 
         (data['iss'], data['id'], data['course'], data['section_num']))
-    rows = cursor.fetchall()
-    if len(rows) == 1:
-        return rows[0]['term']
+    ass_rows = cursor.fetchall()
+    if len(ass_rows) == 1:
+        """ get the most recent translation """
+        cursor.execute("SELECT transterm, transdescription FROM translations WHERE vle_user_id = %s AND term = %s AND iss = %s AND course = %s AND section = %s ORDER BY action_time DESC LIMIT 1",
+            data['id'], ass_rows[0]['term'], data['iss'], data['course'], data['section_num'])
+        trans_rows = cursor.fetchall()
+        t_dict = {
+            'id': ass_rows[0]['id'],
+            'term': ass_rows[0]['term'],
+            'status': ass_rows[0]['status'],
+            'transterm' : "",
+            'transdescription' : ""
+        }
+        if len(trans_rows) == 1:
+            t_dict['transterm'] = trans_rows[0]['transterm']
+            t_dict['transdescription'] = trans_rows[0]['transdescription']
+        return t_dict
     conn.close()
     cursor.close()
 

@@ -351,11 +351,17 @@ def build_launch_dict(mld, id_token, state, launch_id)-> Dict:
     }
 
 ######################################################################################################################################################################
-# Functions for processing the submitted translations ###################################################################################################
+# Functions for processing the submitted translations ################################################################################################################
 ######################################################################################################################################################################
 
 @app.route('/translation/add/', methods=['POST'])
 def add_new_translation():
+    term = request.form['term']
+    trans_ass_id = request.form['trans_ass_id']
+    termtrans = request.form['termtrans']
+    translation = request.form['translation']
+    data = json.loads(request.form['datajson'])
+    dbstuff.add_term_translation(data['id'], trans_ass_id, term, termtrans, translation, data['iss'], data['course'], data['section_num'])
     pass
 
 
