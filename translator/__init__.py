@@ -175,10 +175,14 @@ def asign_terms():
 def add_term():
     """ add a term to the database and refresh the page """
     data = json.loads(request.form['datajson'])
+    iss = request.form['iss']
+    course = request.form['course']
+    section = request.form['section']
     term = request.form['term']
-    dbstuff.add_term_to_section_of_course(data['iss'], data['course'], data['section_num'], term)
-    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    id_token=request.form['id_token']
+    dbstuff.add_term_to_section_of_course(iss, course, section, term)
+    data['section'] = dbstuff.get_section_for_course(iss, course, section)
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token)
 
 @app.route('/term/delete/', methods=['POST'])
 def delete_term():
