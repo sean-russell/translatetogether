@@ -464,7 +464,7 @@ def get_assigned_term(data: Dict) -> str:
     ass_rows = cursor.fetchall()
     if len(ass_rows) == 1:
         """ get the most recent translation """
-        cursor.execute("SELECT transterm, transdescription FROM translations WHERE vle_user_id = %s AND term = %s AND iss = %s AND course = %s AND section = %s ORDER BY action_time DESC LIMIT 1",
+        cursor.execute("SELECT transterm, transdescription FROM translations WHERE vle_user_id = %s AND term = %s AND iss = %s AND course = %s AND section = %s ORDER BY submit_time DESC LIMIT 1",
             (data['id'], ass_rows[0]['term'], data['iss'], data['course'], data['section_num']))
         trans_rows = cursor.fetchall()
         t_dict = {
