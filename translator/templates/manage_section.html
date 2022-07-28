@@ -51,9 +51,9 @@
                 <tr>
                     <td>{{t.term}}</td>
                     <td>{{data.section.trans_assignments[t.term]| join(',')}}</td>
-                    <td>Number of times translated</td>
-                    <td>Number of times reviewed</td>
-                    <td>Number of times voted on</td>
+                    <td>{{data.section.trans_numbers[t.term]}}</td>
+                    <td>{{data.section.review_numbers[t.term]}}</td>
+                    <td>{{data.section.vote_numbers[t.term]}}</td>
                     <td>
                         {% if data.section.status == "Not prepared" %}
                         <form action="{{preface~url_for('delete_term')}}" method="POST">
@@ -94,6 +94,8 @@
         <input type="hidden" name="id_token" value="{{id_token}}">
         <input type="submit" value="Assign Terms" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
     </form>
+    {% elif data.section.status == ""Terms assigned to students" %}
+
     {% endif %}
    
     <footer>

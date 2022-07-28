@@ -124,11 +124,14 @@ def get_section_for_course(iss: str, course: str, section_number: str) -> Dict[s
         section_description['status'] = convert_status(rows[0]['status'])
         section_description['terms'] = get_terms_for_section_of_course(iss, course, rows[0]['section_number'])
         section_description['trans_assignments'] = get_trans_assignments_for_section_of_course(iss, course, section_number)
+        section_description['trans_numbers'] = get_num_translations_for_section_of_course(iss, course, section_number)
+        section_description['review_numbers'] = get_num_reviews_for_section_of_course(iss, course, section_number)
+        section_description['vote_numbers'] = get_num_votes_for_section_of_course(iss, course, section_number)
         return section_description
     else:
         return {}
 
-def set_status_of_section(iss: str, course: str, section: str, status: str) -> None:
+def set_status_of_section(iss: str, course: str, section: str, status: int) -> None:
     """ Set the status of a section of a course """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -148,19 +151,6 @@ def get_status_of_section(data: Dict) -> int:
     conn.close()
     cursor.close()
     return status
-
-def convert_status(status : int) -> str:
-    """ Convert the status from the database to a more readable format """
-    if status == STATUS_NOT_PREPARED:
-        return "Not prepared"
-    elif status == STATUS_TERMS_PREPARED:
-        return "Terms added to section"
-    elif status == STATUS_TERMS_ASSIGNED:
-        return "Terms assigned to students"
-    elif status == STATUS_REVIEWS_ASSIGNED:
-        return "Reviews assigned to students"
-    elif status == STATUS_VOTES_ASSIGNED:
-        return "Votes assigned to students"
 
 def record_action(data: Dict, actioncompleted: str ):
     """ Record an action in the database """
@@ -197,6 +187,46 @@ def get_trans_assignments_for_section_of_course(iss: str, course: str, section: 
         else:
             ass_dict[r['term']].append(get_name_for_vle_user_id(r['vle_user_id']))
     return ass_dict
+
+def get_num_translations_for_section_of_course(iss: str, course: str, section: str) -> Dict[str,int]:
+    """ Get the number of translations for each term for a section of a course """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT term, COUNT(*) AS num_translations from translations where iss = %s AND course = %s AND section = %s GROUP BY term", (iss, course, section))
+    rows = cursor.fetchall()
+    trans_num_dict = {}
+    for r in rows:
+        trans_num_dict[r['term']] = r['num_translations']
+    conn.close()
+    cursor.close()
+    return trans_num_dict
+
+def get_num_reviews_for_section_of_course(iss: str, course: str, section: str) -> Dict[str,int]:
+    """ Get the number of reviews for each term for a section of a course """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT term, COUNT(*) AS num_reviews from reviews where iss = %s AND course = %s AND section = %s GROUP BY term", (iss, course, section))
+    rows = cursor.fetchall()
+    rev_num_dict = {}
+    for r in rows:
+        rev_num_dict[r['term']] = r['num_reviews']
+    conn.close()
+    cursor.close()
+    return rev_num_dict
+
+
+def get_num_votes_for_section_of_course(iss: str, course: str, section: str) -> Dict[str,int]:
+    """ Get the number of votes for each term for a section of a course """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT term, COUNT(*) AS num_votes from votes where iss = %s AND course = %s AND section = %s GROUP BY term", (iss, course, section))
+    rows = cursor.fetchall()
+    votes_num_dict = {}
+    for r in rows:
+        votes_num_dict[r['term']] = r['num_votes']
+    conn.close()
+    cursor.close()
+    return votes_num_dict
 
 def get_name_for_vle_user_id(vle_user_id: str) -> str:
     """ Get the name of a VLE user """

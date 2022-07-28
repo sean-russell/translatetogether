@@ -170,6 +170,7 @@ def asign_terms():
     data = json.loads(request.form['datajson'])
     section_num = request.form['section']
     assign_terms(data['iss'], data['course'], section_num)
+    dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_TERMS_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 

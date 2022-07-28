@@ -14,3 +14,17 @@ CLAIM_CUSTOM = "https://purl.imsglobal.org/spec/lti/claim/custom"
 CLAIM_ROLES = "https://purl.imsglobal.org/spec/lti/claim/roles"
 LEARNER = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
 INSTRUCTOR = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor'
+
+
+def convert_status(status : int) -> str:
+    """ Convert the status from the database to a more readable format """
+    if status == STATUS_NOT_PREPARED:
+        return "Not prepared"
+    elif status == STATUS_TERMS_PREPARED:
+        return "Terms added to section"
+    elif status == STATUS_TERMS_ASSIGNED:
+        return "Terms assigned to students"
+    elif status == STATUS_REVIEWS_ASSIGNED:
+        return "Reviews assigned to students"
+    elif status == STATUS_VOTES_ASSIGNED:
+        return "Votes assigned to students"
