@@ -310,7 +310,7 @@ def update_students():
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
     print("current students: " + str(data['students']))
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
 
 ######################################################################################################################################################################
 # Functions for building the core data carried through the program ###################################################################################################
