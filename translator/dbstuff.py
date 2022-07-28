@@ -404,7 +404,7 @@ def add_term_translation(vle_user_id, trans_ass_id, term, transterm, translation
     cursor.execute("INSERT IGNORE INTO translations (vle_user_id, trans_ass_id, term, transterm, transdescription, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
     (vle_user_id, trans_ass_id, term, transterm, translation, iss, course, section_num))
     conn.commit()   
-    cursor.executte("UPDATE trans_assignments SET status = %s WHERE id= %s", (1, trans_ass_id))
+    cursor.execute("UPDATE trans_assignments SET status = %s WHERE id= %s", (1, trans_ass_id))
     conn.commit()
     conn.close()
 
