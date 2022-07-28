@@ -8,26 +8,25 @@
     <p>If you are seeing this there has been a configuration error. Please tell your teacher and pass them the following information.</p>
     <ul>
         <li>
-            User ID: {{ user.id }}
+            User ID: {{ data.id }}
         </li>
         <li>
-            User Email: {{ user.email }}
+            User Email: {{ data.email }}
         </li>
         <li>
-            User Name: {{ user.full_name }}
+            User Name: {{ data.full_name }}
         </li>
         <li>
-            User Role: {{ user.role }}
+            User Role: {{ data.role }}
         </li>
         <li>
-            Username: {{ user.username }}
+            Username: {{ data.username }}
         </li>
         <li>
-            Course Code: {{ user.course }}
+            Course Code: {{ data.course }}
         </li>
     </ul>
-    <p>{{user}}</p>
-    <p>{{config}}</p>
+    <p>{{data}}</p>
     <footer>
         &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
     </footer>
