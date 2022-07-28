@@ -202,6 +202,7 @@ def start_review():
     """ first find the list of translations completed for this section (only most recent by each student) """
     data = json.loads(request.form['datajson'])
     section_num = request.form['section']
+    print(section_num)
     iss = data['iss']
     course = data['course']
     students =  { s['vle_user_id'] : {'name' : s['fullname'], 'reviews' : [], 'term': None } for s in dbstuff.get_student_details_for_course(iss, course) }
