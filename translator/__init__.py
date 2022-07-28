@@ -108,6 +108,7 @@ def main_page():
             data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
             data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
             data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
+            print(data)
             return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token, launch_id=launch_id)
 
     elif data['role'] == LEARNER:
