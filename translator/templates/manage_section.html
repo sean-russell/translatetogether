@@ -78,7 +78,7 @@
     <form action="{{preface~url_for('finalise_section')}}" method="POST">
         <input type="hidden" name="datajson" value="{{datajson}}">
         <input type="hidden" name="section" value="{{data.section.section}}">
-        <input type="submit" value="Finalise Section" data-tooltip="This will prevent further modification of the list of terms and allow terms to be assigned to students for translation.">
+        <input type="submit" value="Finalise Terms" data-tooltip="This will prevent further modification of the list of terms and allow terms to be assigned to students for translation.">
     </form>
     {% elif data.section.status == "Terms added to section" %}
     <form action="{{preface~url_for('asign_terms')}}" method="POST">

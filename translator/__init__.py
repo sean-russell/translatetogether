@@ -127,18 +127,16 @@ def main_page():
 
     elif data['role'] == LEARNER:
         data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
+        print("data['section']", data['section'])
         print("current status is ", data['section']['status'])
         if data['section']['status'] in (STATUS_NOT_PREPARED, STATUS_TERMS_PREPARED):
             return render_template('config.html', preface=preface, data=jsonify(data))
         elif data['phase'] == PHASE_TRANSLATE:
             if data['section']['status'] == STATUS_TERMS_ASSIGNED:
-                
                 term = dbstuff.get_assigned_term(data)
                 if term == None:
                     assign_term(data)
                     term = dbstuff.get_assigned_term(data)
-                
-                
                 return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data),term=term)
 
 ######################################################################################################################################################################

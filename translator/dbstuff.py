@@ -381,15 +381,9 @@ def add_participant_to_course(user_id: str, email: str, name: str, role: str, is
     """ Add a participant to a course """
     conn = mysql.connect()
     cursor = conn.cursor()
-    n = cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, fullname, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (
-        user_id, email, name, iss, course, role))
-    print("number of affected rows: " + str(n))
+    n = cursor.execute("INSERT IGNORE INTO participants (vle_user_id, email, fullname, iss, course, role) VALUES (%s, %s, %s, %s, %s, %s)", (user_id, email, name, iss, course, role))
     if(n == 0):
-        print("participant already exists")
-        n = cursor.execute("UPDATE participants SET email = %s, fullname = %s, role = %s WHERE iss = %s AND course = %s AND vle_user_id = %s", (
-            email, name, role, iss, course, user_id))
-        print("number of affected rows: " + str(n))
-        
+        n = cursor.execute("UPDATE participants SET email = %s, fullname = %s, role = %s WHERE iss = %s AND course = %s AND vle_user_id = %s", (email, name, role, iss, course, user_id))
     conn.commit()
     conn.close()
 
