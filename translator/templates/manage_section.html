@@ -5,17 +5,33 @@
     <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
 </head>
 <body>
-    <p>This is the group of terms that are gathered as a section for the course {{data.course}} on iss {{data.iss}}.</p>
-    {% if data.section.status == "Not prepared" %}
-    <form action="{{preface~url_for('delete_section')}}" method="POST">
-        <input type="hidden" name="iss" value="{{data.iss}}">
-        <input type="hidden" name="course" value="{{data.course}}">
-        <input type="hidden" name="section" value="{{data.section.section}}">
-        <input type="hidden" name="datajson" value="{{datajson}}">
-        <input type="hidden" name="id_token" value="{{id_token}}">
-        <input type="submit" value="Delete Section">
-    </form>
-    {% endif %}
+    <h1>Section Management</h1>
+    <p>This is the group of terms that are gathered as a section for the course {{data.course}} on iss {{data.iss}}. Terms remain grouped in sections, translation tasks, review tasks and voting are all based on the same group of terms for a section.</p>
+    <table>
+        <thead>
+            <tr>
+                <td>Section Number</td>
+                <td>Current Status</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody>
+           
+                <tr>
+                    <td>
+                        {{data.section.section}}
+                    </td>
+                    <td>{{data.section.status}}</td>
+                    <td>
+                        <form action="{{preface~url_for('main_page')}}" method="POST">
+                            <input type="hidden" name="id_token" value="{{id_token}}">
+                            <input type="submit" value="Return to Course">
+                        </form>
+                    </td>
+                </tr>
+            
+        </tbody>
+    </table>
     <h1>Terms</h1>
     <p>There are the following {{data.section.terms|length}} terms are prepared in this section:</p>
     <!-- A table for showing the section number and status for each section -->
@@ -23,6 +39,10 @@
         <thead>
             <tr>
                 <td>Term</td>
+                <td>Number of times assigned</td>
+                <td>Number of times translated</td>
+                <td>Number of times reviewed</td>
+                <td>Number of times voted on</td>
                 <td>Action</td>
             </tr>
         </thead>
@@ -30,6 +50,10 @@
             {% for t in data.section.terms %}
                 <tr>
                     <td>{{t.term}}</td>
+                    <td>Number of times assigned</td>
+                    <td>Number of times translated</td>
+                    <td>Number of times reviewed</td>
+                    <td>Number of times voted on</td>
                     <td>
                         {% if data.section.status == "Not prepared" %}
                         <form action="{{preface~url_for('delete_term')}}" method="POST">
