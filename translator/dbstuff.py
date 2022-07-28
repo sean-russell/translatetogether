@@ -6,7 +6,7 @@ from typing import Dict, List
 mysql = MySQL()
 
 from typing import Dict, List, Any
-from constants import *
+from translator.constants import *
 
 def prep(app):
     mysql.init_app(app)

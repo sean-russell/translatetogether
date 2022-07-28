@@ -5,7 +5,7 @@ import pprint
 import json
 import pymysql
 from translator import dbstuff
-
+from translator.constants import *
 from typing import Dict, List
 
 from collections import namedtuple
@@ -23,9 +23,6 @@ from pylti1p3.grade import Grade
 from pylti1p3.lineitem import LineItem
 from pylti1p3.tool_config import ToolConfJsonFile
 from pylti1p3.registration import Registration
-
-
-from constants import *
 
 class ReverseProxied(object):
     def __init__(self, app):
