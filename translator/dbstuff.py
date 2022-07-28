@@ -424,7 +424,7 @@ def get_term_translations_for_section(iss: str, course: str, section: int) -> Li
     print(section)
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    query = "SELECT * FROM translations WHERE id IN (SELECT MAX(id) FROM translations GROUP BY vle_user_id WHERE iss = %s AND course = %s AND section = %s)"
+    query = "SELECT * FROM translations WHERE id IN (SELECT MAX(id) FROM translations GROUP BY vle_user_id HAVING iss = %s AND course = %s AND section = %s)"
     print(query % (iss, course, section))
     cursor.execute(query, (iss, course, str(section)))
     rows = cursor.fetchall()
