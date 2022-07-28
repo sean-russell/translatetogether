@@ -441,7 +441,7 @@ def add_participant_to_course(user_id: str, email: str, name: str, role: str, is
 def get_assigned_term(data: Dict) -> str:
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT term_id, term FROM assignments WHERE iss = %s AND vle_user_id = %s AND course = %s AND section = %s", 
+    cursor.execute("SELECT term_id, term FROM trans_assignments WHERE iss = %s AND vle_user_id = %s AND course = %s AND section = %s", 
         (data['iss'], data['id'], data['course'], data['section_num']))
     rows = cursor.fetchall()
     if len(rows) == 1:
