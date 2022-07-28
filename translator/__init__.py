@@ -189,7 +189,7 @@ def delete_term():
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], success=success)
 
-def assign_terms(data: Dict):
+def assign_terms(data: Dict) -> None:
     """ assign a term to every student in a course for the current section """
     terms_with_ids = dbstuff.get_terms_for_section_of_course(data['iss'], data['course'], data['section_num'])
     terms = [ term['term'] for term in terms_with_ids ]
@@ -197,12 +197,12 @@ def assign_terms(data: Dict):
     student_ids = [ student['id'] for student in students ]
 
     random_terms = random.choices(terms, k = len(student_ids))
-    student_ids = random.shuffle(student_ids)
+    random.shuffle(student_ids)
     for student in student_ids:
         term = random_terms.pop()
         dbstuff.assign_term_to_student(data['iss'], data['course'], data['section_num'], term, student)
 
-def assign_term(data: Dict) -> Dict:
+def assign_term(data: Dict) -> None:
     """ This is for when a student was not in the list when terms were being assigned
     so we need to assign them a term. It finds the term that has the lowsest number of students
     assigned to it and assigns that one to the student. """
