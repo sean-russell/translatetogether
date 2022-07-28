@@ -8,6 +8,8 @@ PHASE_TRANSLATE= "translate"
 PHASE_REVIEW = "review"
 PHASE_VOTE = "vote"
 
+NUM_REVIEWS = 3
+
 CLAIM_EXT = 'https://purl.imsglobal.org/spec/lti/claim/ext'
 CLAIM_CONTEXT = 'https://purl.imsglobal.org/spec/lti/claim/context'
 CLAIM_CUSTOM = "https://purl.imsglobal.org/spec/lti/claim/custom"

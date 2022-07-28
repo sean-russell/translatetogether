@@ -204,13 +204,29 @@ def start_review():
     section_num = request.form['section']
     iss = data['iss']
     course = data['course']
-    students = dbstuff.get_student_details_for_course(iss, course)
+    students =  { s['vle_user_id'] : {'name' : s['fullname'], 'reviews' : [], 'term': None } for s in dbstuff.get_student_details_for_course(iss, course) }
     tas = dbstuff.get_ta_details_for_course(iss, course)
     translations = dbstuff.get_term_translations_for_section(iss, course, section_num)
+    term_lists = {}
+    for t in translations:
+        if t['vle_user_id'] in students:
+            students[t['vle_user_id']]['term'] = t['term']
+        if t['term'] not in term_lists:
+            term_lists[t['term']] = [t]
+        else:
+            term_lists[t['term']].append(t)
+    for t in term_lists:
+        term_lists[t] = term_lists[t] * NUM_REVIEWS
+        random.shuffle(term_lists[t])
 
+    """ now assign reviews to each student """
+    for s in students:
+        for t in term_lists:
+            if students[s]['term'] != t:
+                students[s]['reviews'].append(term_lists[t].pop())
 
-
-    pass
+    for s in students:
+        print(s, students[s]['term'], students[s]['reviews'])
 
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
