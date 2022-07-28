@@ -90,14 +90,28 @@ def login():
 
 @app.route('/init/', methods=['POST'])
 def main_page():
-    id_token = request.form['id_token']
+    """ This is the main page of the application. """
+    id_token = None
+    state = None
+    data = None
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     flask_request = FlaskRequest()
     launch_data_storage = get_launch_data_storage()
-    message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
+    message_launch = None
+    if 'datajson' in request.form:
+        data = json.loads(request.form['datajson'])
+        state = data['state']
+        id_token = data['id_token']
+        launch_id = request.form['launch_id']
+        message_launch = FlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf, launch_data_storage=launch_data_storage)
+    else:
+        message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
+        state = request.form['state']
+        id_token = request.form['id_token']
+    
     message_launch_data = message_launch.get_launch_data()  
     launch_id = message_launch.get_launch_id()
-    data = build_launch_dict(message_launch_data)
+    data = build_launch_dict(message_launch_data, id_token, state, launch_id)
     dbstuff.create_course(data)
     dbstuff.add_participant_to_course(data['id'], data['email'], data['full_name'], data['role'], data['iss'], data['course'])
     dbstuff.record_action(data, "Initiated the translation tool")
@@ -109,7 +123,7 @@ def main_page():
             data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
             data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
             print(data) #TODO: remove this
-            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token, launch_id=launch_id)
+            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
 
     elif data['role'] == LEARNER:
         data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
@@ -295,7 +309,7 @@ def update_students():
 # Functions for building the core data carried through the program ###################################################################################################
 ######################################################################################################################################################################
 
-def build_launch_dict(mld)-> Dict:
+def build_launch_dict(mld, id_token, state, launch_id)-> Dict:
     iss = mld.get('iss')
     user_vle_id = mld.get('sub')
     user_email = mld.get('email')
@@ -323,7 +337,10 @@ def build_launch_dict(mld)-> Dict:
         'course'        : course_code,
         'phase'         : phase,
         'section_num'   : section,
-        'language'      : language
+        'language'      : language,
+        'id_token'      : id_token,
+        'state'         : state,
+        'launch_id'     : launch_id
     }
 
 ######################################################################################################################################################################
