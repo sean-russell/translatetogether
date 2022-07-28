@@ -142,8 +142,11 @@ def add_section():
 def delete_section():
     """ delete a section from the database and refresh the page """
     data = json.loads(request.form['datajson'])
-    data['section'] = request.form['section']
-    data['terms'] = dbstuff.get_terms_for_section_of_course(data['iss'], data['course'], data['section_num'])
+    iss = request.form['iss']
+    course = request.form['course']
+    section_num = request.form['section']
+    # data['section'] = request.form['section']
+    data['terms'] = dbstuff.get_terms_for_section_of_course(iss, course, section_num)
     return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
 @app.route('/section/manage/', methods=['POST'])

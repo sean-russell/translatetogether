@@ -34,7 +34,7 @@
                             <input type="submit" value="Manage Section">
                         </form>
                         {% if s.status == "Not prepared" %}
-                        <form action="{{preface~url_for('delete_section')}}" method="POST">
+                        <form action="{{preface~url_for('delete_section')}}" method="POST" onsubmit="return confirm('This will delete all terms, translations, reviews and votes. Are you sure?');">
                             <input type="hidden" name="iss" value="{{data.iss}}">
                             <input type="hidden" name="course" value="{{data.course}}">
                             <input type="hidden" name="section" value="{{s.section}}">

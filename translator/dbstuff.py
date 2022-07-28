@@ -35,6 +35,64 @@ def create_section(data: Dict, sec: str) -> None:
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = get_student_details_for_course(data['iss'], data['course'])
 
+def delete_section(iss: str, course: str, section: str) -> None:
+    """ delete the votes for this iss, course, and section"""
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM votes WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    """ delete the vote assignments for this iss, course, and section"""
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM vote_assignments WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    """ delete the reviews for this iss, course, and section"""
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM reviews WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    """ delete the review assignments for this iss, course, and section"""
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM review_assignments WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    """ delete the translations for this iss, course, and section"""
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM translations WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    """ delete the translation assignments for this iss, course, and section"""
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM translation_assignments WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    """ delete the terms for this iss, course, and section"""
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM terms WHERE iss = %s AND course = %s AND section = %s", (iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    """ delete the section from a course """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("DELETE FROM sections WHERE iss = %s AND course = %s AND section_number = %s", (iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+
 def get_sections_for_course(iss: str, course: str) -> List:
     """ Get all sections for a course """
     conn = mysql.connect()
