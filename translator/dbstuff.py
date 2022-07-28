@@ -167,6 +167,25 @@ def delete_term_from_database(term_id : int) -> bool:
     print("term was not found so it couldn't be deleted")
     return False
 
+def assign_term_to_student(iss: str, course: str, section: str, term: str, vle_user_id: str) -> None:
+    """ Assign a term to a student """
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT IGNORE INTO trans_assignments (term, iss, section, course, vle_user_id) VALUES (%s, %s, %s, %s, %s)", (
+        term, iss, section, course, vle_user_id))
+    conn.commit()
+    conn.close()
+
+def count_term_assignments_for_section(iss: str, course: str, section: str) -> List:
+    """ Get all term assignments for a section """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT t.term, count(a.vle_user_id) as num FROM terms t LEFT OUTER JOIN trans_assignments a ON t.iss = a.iss AND t.course = a.course AND t.section = a.section AND t.term = a.term where a.iss = %s AND a.course = %s AND a.section = %s GROUP BY t.term ORDER BY num DESC", (iss, course, section))
+    terms = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    return terms
+
 def add_tas_to_course(iss: str, course: str, tas : List) -> None:
     """ Add TAs to a course """
     conn = mysql.connect()
@@ -240,14 +259,6 @@ def add_participant_to_course(user_id: str, email: str, name: str, role: str, is
     conn.commit()
     conn.close()
 
-def assign_term_to_student(iss: str, course: str, section: str, term: str, vle_user_id: str) -> None:
-    """ Assign a term to a student """
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute("INSERT IGNORE INTO trans_assignments (term, iss, section, course, vle_user_id) VALUES (%s, %s, %s, %s, %s)", (
-        term, iss, section, course, vle_user_id))
-    conn.commit()
-    conn.close()
 
 #########################################
 # def course_exists(iss: str, course: str) -> bool:

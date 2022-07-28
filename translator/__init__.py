@@ -73,6 +73,12 @@ def get_lti_config_path():
 def get_launch_data_storage():
     return FlaskCacheDataStorage(cache)
 
+@app.route('/jwks/', methods=['GET'])
+def get_jwks():
+    """ This is a route that is used to get the JWKS for the LTI 1.3 Tool. """
+    tool_conf = ToolConfJsonFile(get_lti_config_path())
+    return jsonify(tool_conf.get_jwks())
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     """ Initiation of the LTI 1.3 login process. """
@@ -84,106 +90,6 @@ def login():
         raise Exception('Missing "target_link_uri" param')
     oidc_login = FlaskOIDCLogin(flask_request, tool_conf, launch_data_storage=launch_data_storage)
     return oidc_login.enable_check_cookies().redirect(target_link_uri)
-
-@app.route('/addsection/', methods=['POST'])
-def add_section():
-    """ add a section to the database """
-    data = json.loads(request.form['datajson'])
-    dbstuff.create_section(data, request.form['sec_number'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-@app.route('/managesection/', methods=['POST'])
-def manage_section():
-    data = json.loads(request.form['datajson'])
-    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-@app.route('/finalisesection/', methods=['POST'])
-def finalise_section():
-    data = json.loads(request.form['datajson'])
-    dbstuff.set_status_of_section(data['iss'], data['course'], data['section']['section'], STATUS_TERMS_PREPARED)
-    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-@app.route('/assignterms/', methods=['POST'])
-def asign_terms():
-    data = json.loads(request.form['datajson'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-@app.route('/addtas/', methods=['POST'])
-def add_tas():
-    data = json.loads(request.form['datajson'])
-    ta_emails = request.form['tas'].split(',') 
-    dbstuff.add_tas_to_course(data['iss'], data['course'], ta_emails)
-    data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
-    data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
-    data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-@app.route('/updatestudents/', methods=['POST'])
-def update_students():
-    data = json.loads(request.form['datajson'])
-    launch_id = request.form['launch_id']
-    tool_conf = ToolConfJsonFile(get_lti_config_path())
-    flask_request = FlaskRequest()
-    launch_data_storage = get_launch_data_storage()
-    message_launch = FlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf, launch_data_storage=launch_data_storage)
-    
-    if message_launch.has_nrps():
-        nrps = message_launch.get_nrps()
-        members = nrps.get_members()
-        for member in members:
-            role = 'none'
-            roles = member['roles']
-            if LEARNER in roles or 'Learner' in roles:
-                role = LEARNER
-            elif INSTRUCTOR in roles or 'Instructor' in roles:
-                role = INSTRUCTOR
-            dbstuff.add_participant_to_course(member['user_id'], member['email'],member["name"],  role, data['iss'], data['course'])
-        print(members)
-    else:
-        print('No NRPS')
-    
-    data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
-    data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
-    data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-    print("current students: " + str(data['students']))
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-
-@app.route('/removeta/', methods=['POST'])
-def remove_ta():
-    data = json.loads(request.form['datajson'])
-    ta_id = request.form['ta_id']
-    dbstuff.remove_ta_from_course(ta_id)
-    data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
-    data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
-    data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-@app.route('/deletesection/', methods=['POST'])
-def delete_section():
-    data = json.loads(request.form['datajson'])
-    data['section'] = request.form['section']
-    data['terms'] = dbstuff.get_terms_for_section_of_course(data['iss'], data['course'], data['section_num'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-@app.route('/addterm/', methods=['POST'])
-def add_term():
-    data = json.loads(request.form['datajson'])
-    term = request.form['term']
-    dbstuff.add_term_to_section_of_course(data['iss'], data['course'], data['section_num'], term)
-    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
-
-@app.route('/deleteterm/', methods=['POST'])
-def delete_term():
-    data = json.loads(request.form['datajson'])
-    term_id = request.form['term_id']
-    success = dbstuff.delete_term_from_database(term_id)
-    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], success=success)
-
 
 @app.route('/init/', methods=['POST'])
 def main_page():
@@ -218,91 +124,167 @@ def main_page():
                 term = dbstuff.get_assigned_term(data)
                 if term == None:
                     assign_term(data)
-                    term = get_assigned_term(data)
+                    term = dbstuff.get_assigned_term(data)
                 
                 
                 return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token, term=term)
 
+######################################################################################################################################################################
+# Functions for managing the sections in a course ####################################################################################################################
+######################################################################################################################################################################
+
+@app.route('/section/add/', methods=['POST'])
+def add_section():
+    """ add a section to the database and refresh the page """
+    data = json.loads(request.form['datajson'])
+    dbstuff.create_section(data, request.form['sec_number'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+@app.route('/section/delete/', methods=['POST'])
+def delete_section():
+    """ delete a section from the database and refresh the page """
+    data = json.loads(request.form['datajson'])
+    data['section'] = request.form['section']
+    data['terms'] = dbstuff.get_terms_for_section_of_course(data['iss'], data['course'], data['section_num'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+@app.route('/section/manage/', methods=['POST'])
+def manage_section():
+    """ change to the page for managing a section """
+    data = json.loads(request.form['datajson'])
+    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+@app.route('/section/finalise/', methods=['POST'])
+def finalise_section():
+    """ finalise the list of terms that are used in a section"""
+    data = json.loads(request.form['datajson'])
+    dbstuff.set_status_of_section(data['iss'], data['course'], data['section']['section'], STATUS_TERMS_PREPARED)
+    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+@app.route('/section/assign/', methods=['POST'])
+def asign_terms():
+    """ assign terms to all registered students within a section TODO finish this"""
+    data = json.loads(request.form['datajson'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+######################################################################################################################################################################
+# Functions for administering the terms within in a section ##########################################################################################################
+######################################################################################################################################################################
 
 
+@app.route('/term/add/', methods=['POST'])
+def add_term():
+    """ add a term to the database and refresh the page """
+    data = json.loads(request.form['datajson'])
+    term = request.form['term']
+    dbstuff.add_term_to_section_of_course(data['iss'], data['course'], data['section_num'], term)
+    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
 
-    if message_launch.is_resource_launch():
-        pprint.pprint("is_resource_launch")
-    
+@app.route('/term/delete/', methods=['POST'])
+def delete_term():
+    """ delete a term from the database and refresh the page """
+    data = json.loads(request.form['datajson'])
+    term_id = request.form['term_id']
+    success = dbstuff.delete_term_from_database(term_id)
+    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
+    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'], success=success)
 
+def assign_terms(data: Dict):
+    """ assign a term to every student in a course for the current section """
+    terms_with_ids = dbstuff.get_terms_for_section_of_course(data['iss'], data['course'], data['section_num'])
+    terms = [ term['term'] for term in terms_with_ids ]
+    students = dbstuff.get_student_details_for_course(data['iss'], data['course'])
+    student_ids = [ student['id'] for student in students ]
 
-    return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data), id_token=id_token, term="hello")
+    random_terms = random.choices(terms, k = len(student_ids))
+    student_ids = random.shuffle(student_ids)
+    for student in student_ids:
+        term = random_terms.pop()
+        dbstuff.assign_term_to_student(data['iss'], data['course'], data['section_num'], term, student)
 
-# @app.route('/translate/', methods=['POST'])
-# def process_translation():
-#     user=json.loads(request.form['user'])
-#     config=json.loads(request.form['config'])
-#     term=request.form['term']
-#     termtrans=request.form['termtrans']
-#     translation=request.form['translation']
-
-#     print(request.form)
-#     dbstuff.record_action(user, "submitted translation")
-#     translate_term(user, config, term, termtrans, translation)
-#     return render_template('config.html', preface=preface, user=user ,config = config)
-#     pass
-
-
-@app.route('/jwks/', methods=['GET'])
-def get_jwks():
-    tool_conf = ToolConfJsonFile(get_lti_config_path())
-    return jsonify(tool_conf.get_jwks())
-
-# def distribute_terms(config, message_launch: FlaskMessageLaunch):
-#     members = []
-#     if message_launch.has_nrps():
-#         nrps = message_launch.get_nrps()
-#         members = nrps.get_members()
-#     print(members)
-#     teaching_assistants= ['ta@example.com']
-#     students = [ m for m in members if 'Learner' in m.get('roles') ]
-#     print("students at the start", students)
-#     students = [ s for s in students if s.get('email') not in teaching_assistants ]
-#     print("students after removing teaching assistants", students)
-#     conn = mysql.connect()
-#     """ load the assignments from the database for this course and section """ 
-#     cursor = conn.cursor(pymysql.cursors.DictCursor)
-#     cursor.execute("SELECT * FROM assignments WHERE course_id = %s AND section = %s", (config['course'], config['section']))
-#     assignments = cursor.fetchall()
-#     cursor.close()
-#     print("assignments", assignments)
-#     """ load the terms from the database"""
-#     cursor = conn.cursor(pymysql.cursors.DictCursor)
-#     cursor.execute("SELECT * FROM terms where course_id = %s and section = %s", (config['course'], config['section']))
-#     rows = cursor.fetchall()
-#     cursor.close()
-#     conn.close()
-#     print("terms", rows)
-#     """ remove students from the list if they have already been assigned a term for this section of the course"""
-#     assigned_ids = [ a.get('vle_id') for a in assignments ]
-#     students = [ s for s in students if s.get('user_id') not in assigned_ids ]
-#     print("students after assigned are removed", students)
-#     """ distribute the terms to the students """
-#     num_students = len(students)
-#     term_list = random.choices(rows, k = num_students)
-#     for student in students:
-#         term = term_list[0]
-#         term_list.remove(term)
-#         assign_term(student, term, config)
-
-#     """ set the status in the database to indicate that the terms have been distributed """
-#     conn = mysql.connect()
-#     cursor = conn.cursor()
-#     cursor.execute("UPDATE status SET status = %s WHERE course_id = %s AND section = %s", (STATUS_TERMS_ASSIGNED, config['course'], config['section_num']))
-
-def choose_term(data: Dict) -> Dict:
+def assign_term(data: Dict) -> Dict:
+    """ This is for when a student was not in the list when terms were being assigned
+    so we need to assign them a term. It finds the term that has the lowsest number of students
+    assigned to it and assigns that one to the student. """
     terms: List[str] = dbstuff.get_terms_for_section_of_course(data['iss'], data['course'], data['section_num'])
-    members = []
+    term_counts = dbstuff.count_term_assignments_for_section(data['iss'], data['course'], data['section_num'])	
+    if len(terms) > len(term_counts):
+        raise Exception("Here we have a problem. There are more terms than term counts. This should be impossible!")
+    elif len(term_counts) == 0:
+        raise Exception("There were no values returned, this should be impossible!")
+    else:
+        term = term_counts[0]['term']
+        dbstuff.assign_term_to_student(data['iss'], data['course'], data['section_num'], term, data['id'])
+
+######################################################################################################################################################################
+# Functions for administering the teaching assistants in a course ####################################################################################################
+######################################################################################################################################################################
+
+@app.route('/tas/add/', methods=['POST'])
+def add_teaching_assistants():
+    data = json.loads(request.form['datajson'])
+    ta_emails = request.form['tas'].split(',') 
+    dbstuff.add_tas_to_course(data['iss'], data['course'], ta_emails)
+    data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
+    data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+@app.route('/tas/remove/', methods=['POST'])
+def remove_teaching_assistant():
+    data = json.loads(request.form['datajson'])
+    ta_id = request.form['ta_id']
+    dbstuff.remove_ta_from_course(ta_id)
+    data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
+    data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+######################################################################################################################################################################
+# Functions for administering the students in a course ###############################################################################################################
+######################################################################################################################################################################
+
+@app.route('/students/update/', methods=['POST'])
+def update_students():
+    """ Get the Names and Roles Provisioning Service. 
+        Read the list of students from the service. 
+        Remove any students that are listed as teaching assistants in the course.
+        Add remaining list as participants in the database."""
+    data = json.loads(request.form['datajson'])
+    launch_id = request.form['launch_id']
+    tool_conf = ToolConfJsonFile(get_lti_config_path())
+    flask_request = FlaskRequest()
+    launch_data_storage = get_launch_data_storage()
+    message_launch = FlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf, launch_data_storage=launch_data_storage)
+    
     if message_launch.has_nrps():
         nrps = message_launch.get_nrps()
         members = nrps.get_members()
-    print(members)
-    teaching_assistants= ['
+        for member in members:
+            role = 'none'
+            roles = member['roles']
+            if LEARNER in roles or 'Learner' in roles:
+                role = LEARNER
+            elif INSTRUCTOR in roles or 'Instructor' in roles:
+                role = INSTRUCTOR
+            dbstuff.add_participant_to_course(member['user_id'], member['email'],member["name"],  role, data['iss'], data['course'])
+        print(members)
+    else:
+        raise Exception('No NRPS found in message launch')
+    
+    data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
+    data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
+    print("current students: " + str(data['students']))
+    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data), id_token=request.form['id_token'])
+
+
+######################################################################################################################################################################
+# Functions for building the core data carried through the program ###################################################################################################
+######################################################################################################################################################################
 
 
 def build_launch_dict(mld)-> Dict:
