@@ -1,7 +1,7 @@
 import pymysql
 
 from flaskext.mysql import MySQL
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 mysql = MySQL()
 
@@ -143,7 +143,11 @@ def get_section_for_course(iss: str, course: str, section_number: str) -> Dict[s
         section_description['section'] = rows[0]['section_number']
         section_description['status'] = convert_status(rows[0]['status'])
         section_description['terms'] = get_terms_for_section_of_course(iss, course, rows[0]['section_number'])
-        section_description['trans_assignments'] = get_trans_assignments_for_section_of_course(iss, course, section_number)
+        temp = get_trans_assignments_for_section_of_course(iss, course, section_number)
+        for term in temp:
+            lt = temp[term]
+            temp[term] = [ a[1] for a in lt ]
+        section_description['trans_assignments'] = temp
         section_description['trans_numbers'] = get_num_translations_for_section_of_course(iss, course, section_number)
         section_description['review_numbers'] = get_num_reviews_for_section_of_course(iss, course, section_number)
         section_description['vote_numbers'] = get_num_votes_for_section_of_course(iss, course, section_number)
@@ -192,7 +196,7 @@ def get_terms_for_section_of_course(iss: str, course: str, section: str) -> List
     cursor.close()
     return [ r for r in rows ]
 
-def get_trans_assignments_for_section_of_course(iss: str, course: str, section: str) -> List:
+def get_trans_assignments_for_section_of_course(iss: str, course: str, section: str) -> Dict[str,List[Tuple[str,str]]]:
     """ Get all term assignments for a section of a course """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -203,9 +207,9 @@ def get_trans_assignments_for_section_of_course(iss: str, course: str, section: 
     ass_dict = {}
     for r in rows:
         if r['term'] not in ass_dict:
-            ass_dict[r['term']] = [get_name_for_vle_user_id(r['vle_user_id'])]
+            ass_dict[r['term']] = [ (r['vle_user_id'], get_name_for_vle_user_id(r['vle_user_id']))]
         else:
-            ass_dict[r['term']].append(get_name_for_vle_user_id(r['vle_user_id']))
+            ass_dict[r['term']].append((r['vle_user_id'], get_name_for_vle_user_id(r['vle_user_id'])))
     return ass_dict
 
 def get_num_translations_for_section_of_course(iss: str, course: str, section: str) -> Dict[str,int]:
@@ -420,16 +424,14 @@ def add_term_translation(vle_user_id, trans_ass_id, term, transterm, translation
     conn.close()
 
 def get_term_translations_for_section(iss: str, course: str, section: int) -> List:
-    """ load the most recent translation for each student """
+    """ load the most recent translation for each student. TODO This will only work if students are assigned 1 term!"""
     print(section)
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    query = "SELECT * FROM translations WHERE id IN (SELECT MAX(id) FROM translations GROUP BY vle_user_id HAVING iss = %s AND course = %s AND section = %s)"
+    query = "SELECT vle_user_id, term, transterm, transdescription FROM translations WHERE id IN (SELECT MAX(id) FROM translations GROUP BY vle_user_id HAVING iss = %s AND course = %s AND section = %s)"
     print(query % (iss, course, section))
     cursor.execute(query, (iss, course, str(section)))
     rows = cursor.fetchall()
-    for r in rows:
-        r['submit_time'] = str(r['submit_time'])
     conn.close()
     cursor.close()
     return [ r for r in rows ]
