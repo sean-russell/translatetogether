@@ -255,6 +255,7 @@ def start_review():
                 print("-1", "term list len", len(term_lists[t]))
             else:
                 print("term list len", len(term_lists[t]))
+        print("student", s, len(d['reviews']))
             
 
     print("first pass completed")
