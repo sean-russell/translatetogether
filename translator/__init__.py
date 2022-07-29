@@ -236,6 +236,7 @@ def start_review():
     for t in term_lists:
         term_lists[t] = term_lists[t] * NUM_REVIEWS
         random.shuffle(term_lists[t])
+        print(t, "term list len", len(term_lists[t]))
 
 
     """ now assign reviews to each student """
