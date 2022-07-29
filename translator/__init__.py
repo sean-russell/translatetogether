@@ -219,7 +219,7 @@ def start_review():
     term_lists = {}
     term_set = set()
     for t in translations:
-        term_set.add(t)
+        term_set.add(t['term'])
         if t['vle_user_id'] in student_assignments:
             student_reviews[t['vle_user_id']]['term'] = student_assignments[t['vle_user_id']]['term']
         if t['vle_user_id'] not in student_assignments:
