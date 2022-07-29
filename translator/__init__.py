@@ -273,6 +273,8 @@ def start_review():
                 temp_term = term_lists[t].pop(0)
                 while temp_term['completed'] == False:
                     temp_term = term_lists[t].pop(0)
+                    if len(term_lists[t]) == 0:
+                        raise Exception("Error: ran out of terms for student")
                 d['reviews'].append(temp_term)
 
     print("second pass completed")
