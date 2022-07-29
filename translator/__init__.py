@@ -297,7 +297,9 @@ def assign_terms(iss, course, section_num) -> None:
     student_ids = [ student['vle_user_id'] for student in students ]
     print("terms list", terms)
     print("student ids", student_ids)
-    random_terms = random.choices(terms, k = len(student_ids))
+    random_terms = []
+    while len(random_terms) < len(student_ids):
+        random_terms.extend(terms)
     print("random terms", len(random_terms), random_terms)
     random.shuffle(random_terms)
     random.shuffle(student_ids)
