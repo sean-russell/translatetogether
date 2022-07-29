@@ -246,11 +246,15 @@ def start_review():
     for s, d in student_reviews.items():
         print("student", s, d)
         for t in term_lists:
-            print(t, "term list len", len(term_lists[t]))
+            print(t, "term list len", len(term_lists[t]), end=" ")
             if d['term'] != t:
                 temp_term = term_lists[t].pop()
                 if temp_term['completed'] == True:
                     d['reviews'].append(temp_term)
+                print("-1", "term list len", len(term_lists[t]))
+            else:
+                print("term list len", len(term_lists[t]))
+            
 
     print("first pass completed")
     for s in student_reviews:
