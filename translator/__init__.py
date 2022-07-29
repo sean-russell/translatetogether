@@ -237,7 +237,7 @@ def start_review():
         term_lists[x['term']].append(x)
 
     for t in term_lists:
-        term_lists[t] = term_lists[t] * NUM_REVIEWS
+        term_lists[t] = term_lists[t] * (NUM_REVIEWS+1)
         random.shuffle(term_lists[t])
         print(t, "term list len", len(term_lists[t]))
 
