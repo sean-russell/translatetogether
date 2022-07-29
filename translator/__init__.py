@@ -237,7 +237,7 @@ def start_review():
 
 
     """ now assign reviews to each student """
-    random.shuffle(students)
+    # random.shuffle(students)
     for s, d in students.items():
         for t in term_lists:
             if d['term'] != t:
@@ -295,12 +295,12 @@ def assign_terms(iss, course, section_num) -> None:
     terms = [ term['term'] for term in terms_with_ids ]
     students = dbstuff.get_student_details_for_course(iss, course)
     student_ids = [ student['vle_user_id'] for student in students ]
-    print("terms list", terms)
-    print("student ids", student_ids)
+    # print("terms list", terms)
+    # print("student ids", student_ids)
     random_terms = []
     while len(random_terms) < len(student_ids):
         random_terms.extend(terms)
-    print("random terms", len(random_terms), random_terms)
+    # print("random terms", len(random_terms), random_terms)
     random.shuffle(random_terms)
     random.shuffle(student_ids)
     for student in student_ids:

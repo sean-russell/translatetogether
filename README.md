@@ -29,6 +29,7 @@
 - [] Add check on term input that it is not an empty string
 - [] Add start and end dates for phases
 - [] Include check box for making vote phase optional
+- [] Add ability to input multiple terms ar the same time
 
 ## Course Management
 
