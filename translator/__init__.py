@@ -212,6 +212,7 @@ def start_review():
     for term in term_assignments:
         for t in term_assignments[term]:
             student_assignments[t[0]] = { 'completed' : False, 'term' : term, 'transterm' : '', 'transdescription' : '' } 
+            student_reviews[t[0]]['term'] = term
     print("student_assignments length", len(student_assignments))
     tas = dbstuff.get_ta_details_for_course(iss, course)
 
