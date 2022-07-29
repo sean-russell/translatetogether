@@ -18,3 +18,19 @@
 
 11. vote_assignments(<ins>id</ins>, *voter_id*, *translator_id*, term, transterm, transdescription, *iss*, *course*, *section* )
 12. votes(<ins>id</ins>, *vote_ass_id*, *voter_id*, *translator_id*, term, transterm, transdescription, vote_score, *iss*, *course*, *section*)
+
+
+# Tasks
+
+## Section Management
+
+- [] Add section config for number of terms and number of reviews
+- [] Add check before finalise that number of terms is correct
+- [] Add check on term input that it is not an empty string
+- [] Add start and end dates for phases
+- [] Include check box for making vote phase optional
+
+## Course Management
+
+- [] Add valid email address check for ta entry
+- [] Add 

@@ -298,9 +298,11 @@ def assign_terms(iss, course, section_num) -> None:
     print("terms list", terms)
     print("student ids", student_ids)
     random_terms = random.choices(terms, k = len(student_ids))
+    print("random terms", len(random_terms), random_terms)
+    random.shuffle(random_terms)
     random.shuffle(student_ids)
     for student in student_ids:
-        term = random_terms.pop()
+        term = random_terms.pop(0)
         dbstuff.assign_term_to_student(iss, course, section_num, term, student)
 
 def assign_term(data: Dict) -> None:
