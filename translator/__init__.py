@@ -255,7 +255,8 @@ def start_review():
             for t in missing_terms:
                 temp_term = term_lists[t].pop(0)
                 while temp_term['completed'] == False:
-                    d['reviews'].append(temp_term)
+                    temp_term = term_lists[t].pop(0)
+                d['reviews'].append(temp_term)
 
     for s in students:
         print(s, students[s]['term'], students[s]['reviews'])
