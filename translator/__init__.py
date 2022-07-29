@@ -212,7 +212,7 @@ def start_review():
     for term in term_assignments:
         for t in term_assignments[term]:
             student_assignments[t[0]] = { 'completed' : False, 'term' : term, 'transterm' : '', 'transdescription' : '' } 
-    print("student_assignments",student_assignments)
+    print("student_assignments length", len(student_assignments))
     tas = dbstuff.get_ta_details_for_course(iss, course)
 
     translations = dbstuff.get_term_translations_for_section(iss, course, section_num)
@@ -229,9 +229,11 @@ def start_review():
             x['completed'] = True
             x['transterm'] = t['transterm']
             x['transdescription'] = t['transdescription']
-            if t['term'] not in term_lists:
-                term_lists[t['term']] = []
-            term_lists[t['term']].append(x)
+    for sid in student_assignments:
+        x = student_assignments[sid]
+        if x['term'] not in term_lists:
+            term_lists[x['term']] = []
+        term_lists[x['term']].append(x)
 
     for t in term_lists:
         term_lists[t] = term_lists[t] * NUM_REVIEWS
