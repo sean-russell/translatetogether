@@ -205,12 +205,14 @@ def start_review():
     print(section_num)
     iss = data['iss']
     course = data['course']
-    students =  { s['vle_user_id'] : {'name' : s['fullname'], 'reviews' : [], 'term': None } for s in dbstuff.get_student_details_for_course(iss, course) }
+    student_reviews =  { s['vle_user_id'] : {'name' : s['fullname'], 'reviews' : [], 'term': None } for s in dbstuff.get_student_details_for_course(iss, course) }
+    print("student_reviews", student_reviews)
     term_assignments = dbstuff.get_trans_assignments_for_section_of_course(iss, course, section_num)
     student_assignments = {}
     for term in term_assignments:
         for t in term_assignments[term]:
             student_assignments[t[0]] = { 'completed' : False, 'term' : term, 'transterm' : '', 'transdescription' : '' } 
+    print("student_assignments",student_assignments)
     tas = dbstuff.get_ta_details_for_course(iss, course)
 
     translations = dbstuff.get_term_translations_for_section(iss, course, section_num)
@@ -218,8 +220,8 @@ def start_review():
     term_set = set()
     for t in translations:
         term_set.add(t)
-        if t['vle_user_id'] in students:
-            students[t['vle_user_id']]['term'] = t['term']
+        if t['vle_user_id'] in student_assignments:
+            student_reviews[t['vle_user_id']]['term'] = student_assignments[t['vle_user_id']]['term']
         if t['vle_user_id'] not in student_assignments:
             raise Exception("Error: translation for student not assigned to a term")
         else:
@@ -238,17 +240,21 @@ def start_review():
 
     """ now assign reviews to each student """
     # random.shuffle(students)
-    for s, d in students.items():
+    for s, d in student_reviews.items():
         for t in term_lists:
             if d['term'] != t:
                 temp_term = term_lists[t].pop()
                 if temp_term['completed'] == True:
                     d['reviews'].append(temp_term)
 
+    print("first pass completed")
+    for s in student_reviews:
+        print(s, student_reviews[s]['term'], student_reviews[s]['reviews'])
+
     for t in term_lists:
         term_lists[t] = term_lists[t] * (NUM_REVIEWS * 2)
         random.shuffle(term_lists[t])
-    for s, d in students.items():
+    for s, d in student_reviews.items():
         if len(d['reviews']) < NUM_REVIEWS:
             s_terms = set([x['term'] for x in d['reviews']]) | set(d['term'])
             missing_terms = term_set - s_terms
@@ -258,8 +264,9 @@ def start_review():
                     temp_term = term_lists[t].pop(0)
                 d['reviews'].append(temp_term)
 
-    for s in students:
-        print(s, students[s]['term'], students[s]['reviews'])
+    print("second pass completed")
+    for s in student_reviews:
+        print(s, student_reviews[s]['term'], student_reviews[s]['reviews'])
 
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
