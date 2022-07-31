@@ -23,6 +23,7 @@ from pylti1p3.tool_config import ToolConfJsonFile
 from pylti1p3.registration import Registration
 
 
+print(os.getcwd())
 _private_key = open("jwtRS256.key", 'rb').read()
 _private_keya = open("jwtRS256a.key", 'rb').read()
 _public_key = open("jwtRS256.key.pub", 'rb').read()
