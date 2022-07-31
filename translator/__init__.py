@@ -24,7 +24,9 @@ from pylti1p3.registration import Registration
 
 
 _private_key = open("jwtRS256.key", 'rb').read()
+_private_keya = open("jwtRS256a.key", 'rb').read()
 _public_key = open("jwtRS256.key.pub", 'rb').read()
+_public_keya = open("jwtRS256a.key.pub", 'rb').read()
 
 class ReverseProxied(object):
     def __init__(self, app):
@@ -156,7 +158,7 @@ def main_page():
 @app.route('/section/add/', methods=['POST'])
 def add_section():
     """ add a section to the database and refresh the page """
-    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
+    data = jwt.decode(request.form['datajson'], _public_keya, algorithms=["RS256"])
     dbstuff.create_section(data, request.form['sec_number'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
