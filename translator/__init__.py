@@ -24,10 +24,10 @@ from pylti1p3.registration import Registration
 
 
 print(os.getcwd())
-_private_key = open("jwtRS256.key", 'rb').read()
-_private_keya = open("jwtRS256a.key", 'rb').read()
-_public_key = open("jwtRS256.key.pub", 'rb').read()
-_public_keya = open("jwtRS256a.key.pub", 'rb').read()
+_private_key = open("translator/config/jwtRS256.key", 'rb').read()
+_private_keya = open("translator/config/jwtRS256a.key", 'rb').read()
+_public_key = open("translator/config/jwtRS256.key.pub", 'rb').read()
+_public_keya = open("translator/config/jwtRS256a.key.pub", 'rb').read()
 
 class ReverseProxied(object):
     def __init__(self, app):
