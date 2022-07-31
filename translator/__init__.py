@@ -1,9 +1,7 @@
-import datetime
 import os
 import random
-import pprint
-import json
-import pymysql
+import jwt
+
 from translator import dbstuff
 from translator.constants import *
 from typing import Dict, List
@@ -23,6 +21,10 @@ from pylti1p3.grade import Grade
 from pylti1p3.lineitem import LineItem
 from pylti1p3.tool_config import ToolConfJsonFile
 from pylti1p3.registration import Registration
+
+
+_private_key = open("jwtRS256.key", 'rb').read()
+_public_key = open("jwtRS256.key.pub", 'rb').read()
 
 class ReverseProxied(object):
     def __init__(self, app):
@@ -99,7 +101,7 @@ def main_page():
     launch_data_storage = get_launch_data_storage()
     message_launch = None
     if 'datajson' in request.form:
-        data = json.loads(request.form['datajson'])
+        data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
         state = data['state']
         id_token = data['id_token']
         launch_id = data['launch_id']
@@ -123,13 +125,12 @@ def main_page():
             data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
             data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
             data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-            print(data) #TODO: remove this
-            return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
+            return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
         else:
             data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
             data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
             data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-            return render_template('view_course.html', preface=preface, data=data, datajson=json.dumps(data))
+            return render_template('view_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
     elif data['role'] == LEARNER:
         if dbstuff.section_exists(data['iss'], data['course'], data['section_num']):
@@ -144,9 +145,9 @@ def main_page():
                     if term == None:
                         assign_term(data)
                         term = dbstuff.get_assigned_term(data)
-                    return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data),term=term)
+                    return render_template('term.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
         else:
-            return render_template('config.html', preface=preface, data=data, datajson=json.dumps(data))
+            return render_template('config.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 ######################################################################################################################################################################
 # Functions for managing the sections in a course ####################################################################################################################
@@ -155,52 +156,52 @@ def main_page():
 @app.route('/section/add/', methods=['POST'])
 def add_section():
     """ add a section to the database and refresh the page """
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     dbstuff.create_section(data, request.form['sec_number'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/section/delete/', methods=['POST'])
 def delete_section():
     """ delete a section from the database and refresh the page """
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     iss = data['iss']
     course = data['course']
     section_num = request.form['section']
     dbstuff.delete_section(iss, course, section_num)
     data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/section/manage/', methods=['POST'])
 def manage_section():
     """ change to the page for managing a section """
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/section/finalise/', methods=['POST'])
 def finalise_section():
     """ finalise the list of terms that are used in a section"""
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     dbstuff.set_status_of_section(data['iss'], data['course'], request.form['section'], STATUS_TERMS_PREPARED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/section/assign/', methods=['POST'])
 def asign_terms():
     """ assign terms to all registered students within a section TODO finish this"""
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     section_num = request.form['section']
     assign_terms(data['iss'], data['course'], section_num)
     dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_TERMS_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/section/review/', methods=['POST'])
 def start_review():
     """ assign reviews to all registered students within a section """
 
     """ first find the list of translations completed for this section (only most recent by each student) """
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     section_num = request.form['section']
     print(section_num)
     iss = data['iss']
@@ -288,26 +289,26 @@ def start_review():
 @app.route('/term/add/', methods=['POST'])
 def add_term():
     """ add a term to the database and refresh the page """
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     iss = data['iss']
     course = data['course']
     section = request.form['section']
     term = request.form['term']
     dbstuff.add_term_to_section_of_course(iss, course, section, term)
     data['section'] = dbstuff.get_section_for_course(iss, course, section)
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/term/delete/', methods=['POST'])
 def delete_term():
     """ delete a term from the database and refresh the page """
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     iss = data['iss']
     course = data['course']
     section = request.form['section']
     term_id = request.form['term_id']
     dbstuff.delete_term_from_database(term_id)
     data['section'] = dbstuff.get_section_for_course(iss, course, section)
-    return render_template('manage_section.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 def assign_terms(iss, course, section_num) -> None:
     """ assign a term to every student in a course for the current section """
@@ -348,23 +349,23 @@ def assign_term(data: Dict) -> None:
 
 @app.route('/tas/add/', methods=['POST'])
 def add_teaching_assistants():
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     ta_emails = [ a.strip() for a in request.form['tas'].split(',') if a.strip() != '' ] 
     dbstuff.add_tas_to_course(data['iss'], data['course'], ta_emails)
     data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/tas/remove/', methods=['POST'])
 def remove_teaching_assistant():
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     ta_id = request.form['ta_id']
     dbstuff.remove_ta_from_course(ta_id)
     data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 ######################################################################################################################################################################
 # Functions for administering the students in a course ###############################################################################################################
@@ -376,7 +377,7 @@ def update_students():
         Read the list of students from the service. 
         Remove any students that are listed as teaching assistants in the course.
         Add remaining list as participants in the database."""
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     launch_id = data['launch_id']
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     flask_request = FlaskRequest()
@@ -409,7 +410,7 @@ def update_students():
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
     print("current students: " + str(data['students']))
-    return render_template('manage_course.html', preface=preface, data=data, datajson=json.dumps(data))
+    return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 ######################################################################################################################################################################
 # Functions for building the core data carried through the program ###################################################################################################
@@ -459,10 +460,10 @@ def add_new_translation():
     trans_ass_id = request.form['trans_ass_id']
     termtrans = request.form['termtrans']
     translation = request.form['translation']
-    data = json.loads(request.form['datajson'])
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     dbstuff.add_term_translation(data['id'], trans_ass_id, term, termtrans, translation, data['iss'], data['course'], data['section_num'])
     term = dbstuff.get_assigned_term(data)
-    return render_template('term.html', preface=preface, data=data, datajson=json.dumps(data),term=term)
+    return render_template('term.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
 
 
 if __name__ == '__main__':

@@ -130,3 +130,5 @@ dmypy.json
 translator/config/jwtRS256.key
 translator/config/jwtRS256.key.pub
 .idea/*
+translator/jwtRS256.key
+translator/jwtRS256.key.pub
