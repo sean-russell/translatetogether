@@ -25,9 +25,7 @@ from pylti1p3.registration import Registration
 
 print(os.getcwd())
 _private_key = open("translator/config/jwtRS256.key", 'rb').read()
-_private_keya = open("translator/config/jwtRS256a.key", 'rb').read()
 _public_key = open("translator/config/jwtRS256.key.pub", 'rb').read()
-_public_keya = open("translator/config/jwtRS256a.key.pub", 'rb').read()
 
 class ReverseProxied(object):
     def __init__(self, app):
@@ -96,8 +94,6 @@ def login():
 @app.route('/init/', methods=['POST'])
 def main_page():
     """ This is the main page of the application. """
-    id_token = None
-    state = None
     data = None
     tool_conf = ToolConfJsonFile(get_lti_config_path())
     flask_request = FlaskRequest()
@@ -105,18 +101,14 @@ def main_page():
     message_launch = None
     if 'datajson' in request.form:
         data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
-        state = data['state']
-        id_token = data['id_token']
         launch_id = data['launch_id']
         message_launch = FlaskMessageLaunch.from_cache(launch_id, flask_request, tool_conf, launch_data_storage=launch_data_storage)
     else:
         message_launch = FlaskMessageLaunch(flask_request, tool_conf, launch_data_storage=launch_data_storage)
-        state = request.form['state']
-        id_token = request.form['id_token']
     
     message_launch_data = message_launch.get_launch_data()  
     launch_id = message_launch.get_launch_id()
-    data = build_launch_dict(message_launch_data, id_token, state, launch_id)
+    data = build_launch_dict(message_launch_data, launch_id)
     dbstuff.create_course(data)
     dbstuff.add_participant_to_course(data['id'], data['email'], data['full_name'], data['role'], data['iss'], data['course'])
     dbstuff.record_action(data, "Initiated the translation tool")
@@ -419,7 +411,7 @@ def update_students():
 # Functions for building the core data carried through the program ###################################################################################################
 ######################################################################################################################################################################
 
-def build_launch_dict(mld, id_token, state, launch_id)-> Dict:
+def build_launch_dict(mld, launch_id)-> Dict:
     iss = mld.get('iss')
     user_vle_id = mld.get('sub')
     user_email = mld.get('email')
@@ -448,8 +440,6 @@ def build_launch_dict(mld, id_token, state, launch_id)-> Dict:
         'phase'         : phase,
         'section_num'   : section,
         'language'      : language,
-        'id_token'      : id_token,
-        'state'         : state,
         'launch_id'     : launch_id
     }
 
