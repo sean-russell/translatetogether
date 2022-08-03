@@ -1,3 +1,8 @@
+from collections import namedtuple
+
+TranslationAssignment = namedtuple("TranslationAssignment", "id name term")
+TranslatedTerm = namedtuple("TranslatedTerm", "id term transterm transdescription")
+
 STATUS_NOT_PREPARED = 0
 STATUS_TERMS_PREPARED = 1
 STATUS_TERMS_ASSIGNED = 2

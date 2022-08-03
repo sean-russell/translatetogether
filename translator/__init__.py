@@ -10,8 +10,6 @@ from typing import Dict, List
 from collections import namedtuple
 from flask import Flask, jsonify, request, render_template, url_for, redirect, escape
 
-
-
 from tempfile import mkdtemp
 from flask_caching import Cache
 from importlib.resources import is_resource
@@ -221,11 +219,10 @@ def start_review():
     """ first find the list of translations completed for this section (only most recent by each student) """
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     section_num = request.form['section']
-    print(section_num)
     iss = data['iss']
     course = data['course']
     student_reviews =  { s['vle_user_id'] : {'name' : s['fullname'], 'reviews' : [], 'term': None } for s in dbstuff.get_student_details_for_course(iss, course) }
-    print("student_reviews", student_reviews)
+    
     term_assignments = dbstuff.get_trans_assignments_for_section_of_course(iss, course, section_num)
     student_assignments = {}
     for term in term_assignments:
