@@ -35,3 +35,18 @@
 
 - [X] Add valid email address check for ta entry
 - [] Add 
+
+
+# Student Side
+
+- [] View list of assigned translations
+- [] Select individual translation for completion
+- [] Review translation
+- [] Show completed translations in list
+
+# Teaching Assistant Side
+
+- [] View list of assigned translations
+- [] Select individual translation for completion
+- [] Review translation
+- [] Show completed translations in list
