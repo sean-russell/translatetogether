@@ -24,14 +24,14 @@
 
 ## Section Management
 
-- [] Add section config for number of terms and number of reviews
-- [] Add check before finalise that number of terms is correct
-- [] Add check on term input that it is not an empty string
+- [X] Add section config for number of terms and number of reviews
+- [X] Add check before finalise that number of terms is correct
+- [X] Add check on term input that it is not an empty string
 - [] Add start and end dates for phases
 - [] Include check box for making vote phase optional
-- [] Add ability to input multiple terms ar the same time
+- [X] Add ability to input multiple terms ar the same time
 
 ## Course Management
 
-- [] Add valid email address check for ta entry
+- [X] Add valid email address check for ta entry
 - [] Add 

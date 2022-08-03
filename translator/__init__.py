@@ -1,6 +1,7 @@
 import os
 import random
 import jwt
+import re
 
 from translator import dbstuff
 from translator.constants import *
@@ -26,6 +27,7 @@ from pylti1p3.registration import Registration
 print(os.getcwd())
 _private_key = open("translator/config/jwtRS256.key", 'rb').read()
 _public_key = open("translator/config/jwtRS256.key.pub", 'rb').read()
+email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 class ReverseProxied(object):
     def __init__(self, app):
@@ -303,9 +305,9 @@ def add_term():
     section = request.form['section']
     term = request.form['term']
     if ',' in term:
-        terms = term.split(',')
+        terms = [ t.strip() for t in term.split(',') ]
     else:
-        terms = [term]
+        terms = [term.strip()]
     for t in terms:
         if t:
             dbstuff.add_term_to_section_of_course(iss, course, section, t)
@@ -364,7 +366,7 @@ def assign_term(data: Dict) -> None:
 @app.route('/tas/add/', methods=['POST'])
 def add_teaching_assistants():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
-    ta_emails = [ a.strip() for a in request.form['tas'].split(',') if a.strip() != '' ] 
+    ta_emails = [ a.strip() for a in request.form['tas'].split(',') if a.strip() != '' and re.fullmatch(email_regex, a.strip()) ] 
     dbstuff.add_tas_to_course(data['iss'], data['course'], ta_emails)
     data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
