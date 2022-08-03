@@ -143,6 +143,14 @@ def main_page():
                         assign_term(data)
                         term = dbstuff.get_assigned_term(data)
                     return render_template('term.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
+            elif data['phase'] == PHASE_REVIEW:
+                if data['section']['status'] in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
+                    term = dbstuff.get_assigned_reviews(data)
+                    if term == None:
+                        assign_term(data)
+                        term = dbstuff.get_assigned_term(data)
+                    return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
+            
         else:
             return render_template('config.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
