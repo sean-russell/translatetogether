@@ -29,8 +29,9 @@
 - [X] Add check on term input that it is not an empty string
 - [] Add start and end dates for phases
 - [] Include check box for making vote phase optional
+- [] Fix the broken review assignment algorithm
 - [X] Add ability to input multiple terms ar the same time
-
+- [] Add vote assignment algorithm
 ## Course Management
 
 - [X] Add valid email address check for ta entry
@@ -43,6 +44,10 @@
 - [] Select individual translation for completion
 - [] Review translation
 - [] Show completed translations in list
+- [] View list of terms to be voted on
+- [] Select individual term for voting on the translation
+- [] Input votes for the individual terms
+
 
 # Teaching Assistant Side
 
