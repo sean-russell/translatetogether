@@ -37,7 +37,7 @@
                     <form action="{{preface~url_for('set_num_terms')}}" method="POST">
                         <input type="hidden" name="datajson" value="{{datajson}}">
                         <input type="hidden" name="section" value="{{data.section.section}}">
-                        <input type="text" name="num_terms" placeholder="4">
+                        <input type="text" name="num_terms" placeholder="{{data.section.num_terms}}">
                         <input type="submit" value="Set Number of Terms">
                     </form>
                 </td>
@@ -46,7 +46,7 @@
                 <td>
                     Number of Reviews
                 </td>
-                <td>Current:{{data.section.terms|length - 1}}</br></td>
+                <td>Current:{{data.section.num_terms - 1}}</br></td>
                 <td>
                     This is based on the number of terms, such that every student will encounter each term as something to translate or review.
                 </td>
