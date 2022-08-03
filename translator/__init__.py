@@ -186,6 +186,10 @@ def set_num_terms():
 def finalise_section():
     """ finalise the list of terms that are used in a section"""
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
+    num_terms = request.form['form_num_terms']
+    desired_num_terms = request.form['form_desired_terms']
+    if num_terms != desired_num_terms:
+        return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
     dbstuff.set_status_of_section(data['iss'], data['course'], request.form['section'], STATUS_TERMS_PREPARED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
