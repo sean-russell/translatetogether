@@ -302,7 +302,13 @@ def add_term():
     course = data['course']
     section = request.form['section']
     term = request.form['term']
-    dbstuff.add_term_to_section_of_course(iss, course, section, term)
+    if ',' in term:
+        terms = term.split(',')
+    else:
+        terms = [term]
+    for t in terms:
+        if t:
+            dbstuff.add_term_to_section_of_course(iss, course, section, t)
     data['section'] = dbstuff.get_section_for_course(iss, course, section)
     return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
