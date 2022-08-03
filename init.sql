@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `sections` (
   `course` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `section_number` INTEGER NOT NULL,
   `status` INTEGER NOT NULL DEFAULT 0,
+  `num_terms` INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (`iss`,`course`, `section_number`),
   CONSTRAINT fk_mrt_ot FOREIGN KEY (`iss`,`course`) REFERENCES `courses`(`iss`,`course_id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

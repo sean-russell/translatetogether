@@ -173,6 +173,14 @@ def manage_section():
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
     return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
+@app.route('/section/setterms/', methods=['POST'])
+def set_num_terms():
+    """ set the number of terms wanted in a section """
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
+    desired_terms = request.form['num_terms']
+    data['section'] = dbstuff.set_desired_terms_for_section_in_course(data['iss'], data['course'], request.form['section'], desired_terms)
+    return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
+
 @app.route('/section/finalise/', methods=['POST'])
 def finalise_section():
     """ finalise the list of terms that are used in a section"""

@@ -10,26 +10,74 @@
     <table>
         <thead>
             <tr>
-                <td>Section Number</td>
-                <td>Current Status</td>
+                <td>Item</td>
+                <td>Information</td>
                 <td>Action</td>
             </tr>
         </thead>
         <tbody>
-           
-                <tr>
-                    <td>
-                        {{data.section.section}}
-                    </td>
-                    <td>{{data.section.status}}</td>
-                    <td>
-                        <form action="{{preface~url_for('main_page')}}" method="POST">
+            <tr>
+                <td>
+                    Section Number
+                </td>
+                <td>{{data.section.section}}</td>
+                <td>
+                    <form action="{{preface~url_for('main_page')}}" method="POST">
+                        <input type="hidden" name="datajson" value="{{datajson}}">
+                        <input type="submit" value="Return to Course">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number of Terms
+                </td>
+                <td>Current:{{data.section.terms|length}}</br>Wanted:{{data.section.desired_terms}}</td>
+                <td>
+                    <form action="{{preface~url_for('set_num_terms')}}" method="POST">
+                        <input type="hidden" name="datajson" value="{{datajson}}">
+                        <input type="hidden" name="section" value="{{data.section.section}}">
+                        <input type="text" name="num_terms" placeholder="4">
+                        <input type="submit" value="Return to Course">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number of Reviews
+                </td>
+                <td>Current:{{data.section.terms|length - 1}}</br></td>
+                <td>
+                    This is based on the number of terms, such that every student will encounter each term as something to translate or review.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Current Status
+                </td>
+                <td>{{data.section.status}}</td>
+                <td>
+                    {% if data.section.status == "Not prepared" %}
+                        <form action="{{preface~url_for('finalise_section')}}" method="POST">
                             <input type="hidden" name="datajson" value="{{datajson}}">
-                            <input type="submit" value="Return to Course">
+                            <input type="hidden" name="section" value="{{data.section.section}}">
+                            <input type="submit" value="Finalise Terms" data-tooltip="This will prevent further modification of the list of terms and allow terms to be assigned to students for translation.">
                         </form>
-                    </td>
-                </tr>
-            
+                    {% elif data.section.status == "Terms added to section" %}
+                        <form action="{{preface~url_for('asign_terms')}}" method="POST">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" name="section" value="{{data.section.section}}">
+                            <input type="submit" value="Assign Terms" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+                        </form>
+                    {% elif data.section.status == "Terms assigned to students" %}
+                        <form action="{{preface~url_for('start_review')}}" method="POST">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" name="section" value="{{data.section.section}}">
+                            <input type="submit" value="Initiate Review" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
         </tbody>
     </table>
     <h1>Terms</h1>
@@ -73,24 +121,7 @@
         <input type="hidden" name="section" value="{{data.section.section}}">
         <input type="hidden" name="datajson" value="{{datajson}}">
         <input type="text" name="term" placeholder="Term">
-        <input type="submit" value="Add New Term">
-    </form>
-    <form action="{{preface~url_for('finalise_section')}}" method="POST">
-        <input type="hidden" name="datajson" value="{{datajson}}">
-        <input type="hidden" name="section" value="{{data.section.section}}">
-        <input type="submit" value="Finalise Terms" data-tooltip="This will prevent further modification of the list of terms and allow terms to be assigned to students for translation.">
-    </form>
-    {% elif data.section.status == "Terms added to section" %}
-    <form action="{{preface~url_for('asign_terms')}}" method="POST">
-        <input type="hidden" name="datajson" value="{{datajson}}">
-        <input type="hidden" name="section" value="{{data.section.section}}">
-        <input type="submit" value="Assign Terms" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
-    </form>
-    {% elif data.section.status == "Terms assigned to students" %}
-    <form action="{{preface~url_for('start_review')}}" method="POST">
-        <input type="hidden" name="datajson" value="{{datajson}}">
-        <input type="hidden" name="section" value="{{data.section.section}}">
-        <input type="submit" value="Initiate Review" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+        <input type="submit" value="Add New Term(s)">
     </form>
     {% endif %}
    

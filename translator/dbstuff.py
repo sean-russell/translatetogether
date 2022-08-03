@@ -130,6 +130,16 @@ def get_sections_for_course(iss: str, course: str) -> List:
         for r in rows 
     ]
 
+def set_desired_terms_for_section_in_course(iss: str, course: str, section: str, desired_terms: int) -> None:
+    """ Set the desired terms for a section in a course """
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE sections SET num_terms = %s WHERE iss = %s AND course = %s AND section_number = %s", (desired_terms, iss, course, section))
+    conn.commit()
+    conn.close()
+    cursor.close()
+    return get_section_for_course(iss, course, section)
+
 def get_section_for_course(iss: str, course: str, section_number: str) -> Dict[str, Any]:
     """ Get a specific section for a course """
     conn = mysql.connect()
@@ -143,6 +153,7 @@ def get_section_for_course(iss: str, course: str, section_number: str) -> Dict[s
         section_description['section'] = rows[0]['section_number']
         section_description['status'] = convert_status(rows[0]['status'])
         section_description['terms'] = get_terms_for_section_of_course(iss, course, rows[0]['section_number'])
+        section_description['desired_terms'] = rows[0]['num_terms']
         temp = get_trans_assignments_for_section_of_course(iss, course, section_number)
         for term in temp:
             lt = temp[term]
