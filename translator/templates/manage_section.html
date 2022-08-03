@@ -71,8 +71,8 @@
                     {% if data.section.status == "Not prepared" %}
                         <form action="{{preface~url_for('finalise_section')}}" method="POST" onsubmit="return validateForm()">
                             <input type="hidden" name="datajson" value="{{datajson}}">
-                            <input type="hidden" id="form_num_terms" name="num_terms" value="{{data.section.terms|length}}">
-                            <input type="hidden" id="form_desired_terms" name="desired_terms" value="{{data.section.desired_terms}}">
+                            <input type="hidden" id="form_num_terms" name="form_num_terms" value="{{data.section.terms|length}}">
+                            <input type="hidden" id="form_desired_terms" name="form_desired_terms" value="{{data.section.desired_terms}}">
                             <input type="hidden" name="section" value="{{data.section.section}}">
                             <input type="submit" value="Finalise Terms" data-tooltip="This will prevent further modification of the list of terms and allow terms to be assigned to students for translation.">
                         </form>
