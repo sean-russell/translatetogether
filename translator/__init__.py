@@ -142,6 +142,7 @@ def main_page():
                         term = dbstuff.get_assigned_term(data)
                     return render_template('term.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
             elif data['phase'] == PHASE_REVIEW:
+                print("phase is review")
                 if data['section']['status'] in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
                     reviews = dbstuff.get_assigned_reviews_for_section(data['id'], data['iss'], data['course'], data['section_num'])
                     if reviews == None:
@@ -475,6 +476,10 @@ def add_new_translation():
     dbstuff.add_term_translation(data['id'], trans_ass_id, term, termtrans, translation, data['iss'], data['course'], data['section_num'])
     term = dbstuff.get_assigned_term(data)
     return render_template('term.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
+
+@app.route('/translation/review/', methods=['POST'])
+def show_review():
+    return render_template('review.html', preface=preface, data=jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"]))
 
 
 if __name__ == '__main__':
