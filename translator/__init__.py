@@ -266,7 +266,7 @@ def start_review():
             else:
                 print("00", "term list len", len(term_lists_variable[t]))
         print("student", s, len(d.reviews))
-
+    print("map thing", list(map(lambda x: len(x.reviews), student_reviews.values())))
     print("first pass completed")    
     if not all(all_assigned.values()):
         remaining_terms = [ a for l in term_lists_variable if not all_assigned[l] for a in term_lists_variable[l] ]
@@ -294,7 +294,7 @@ def start_review():
                     student.add_extra_review(temp)
                 if len(student.reviews) == NUM_REVIEWS + 1:
                     i = i + 1
-
+        print("map thing", list(map(lambda x: len(x.reviews), student_reviews.values())))
 
     print("second pass completed")
     for s in student_reviews:
