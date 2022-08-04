@@ -279,6 +279,7 @@ def start_review():
                 if not student.add_extra_review(temp):
                     remaining_terms.append(temp)
             i = i + 1
+        print("map thing", map(lambda x: len(x.reviews) == NUM_REVIEWS+1, student_reviews.values()))
         if all(map(lambda x: len(x.reviews) == NUM_REVIEWS+1, student_reviews.values())):
             print("all students have been assigned reviews")
         else:
