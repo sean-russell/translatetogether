@@ -446,7 +446,14 @@ def get_term_translations_for_section(iss: str, course: str, section: int) -> Li
     #"id term transterm transdescription"
     return [ TranslatedTerm(r['vle_user_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
 
-
+def add_review_assignment(reviewer_id: str, translator_id: str, term: str, transterm: str, transdescription: str, iss: str, course: str, section_num: str) -> None:
+    #<ins>id</ins>, *reviewer_id*, *translator_id*, term, transterm, transdescription, *iss*, *course*, *section* 
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT IGNORE INTO review_assignments (reviewer_id, translator_id, term, transterm, transdescription, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+    (reviewer_id, translator_id, term, transterm, transdescription, iss, course, section_num))
+    conn.commit()
+    conn.close()
 
 #########################################
 # def course_exists(iss: str, course: str) -> bool:

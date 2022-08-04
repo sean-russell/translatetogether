@@ -2,8 +2,8 @@ from collections import namedtuple
 from typing import List, Dict, Set
 
 TranslationAssignment = namedtuple("TranslationAssignment", "id name term")
-ReviewAssignment = namedtuple("ReviewAssignment", "id name term transterm transdescription")
 TranslatedTerm = namedtuple("TranslatedTerm", "id term transterm transdescription")
+ReviewAssignment = namedtuple("ReviewAssignment", "r_id t_id term transterm transdescription")
 
 class ReviewAssignments:
     def __init__(self, id, name, term):

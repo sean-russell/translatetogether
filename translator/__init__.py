@@ -301,8 +301,11 @@ def start_review():
         print("map thing", list(map(lambda x: len(x.reviews), student_reviews.values())))
 
     print("second pass completed")
-    for s in student_reviews:
-        print(s, student_reviews[s])
+    for id, s in student_reviews.items():
+        for r in s.reviews:
+            dbstuff.add_review_assignment(id, r.id, r.term, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
+    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
+    return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
