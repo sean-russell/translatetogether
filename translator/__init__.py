@@ -289,7 +289,7 @@ def start_review():
                 if len(terms_variable) == 0:
                     terms_variable = [ a for v in term_lists.values() for a in v ]
                 if len(student.reviews) < NUM_REVIEWS + 1:
-                    temp = remaining_terms.pop()
+                    temp = terms_variable.pop()
                     student.add_extra_review(temp)
                 if len(student.reviews) == NUM_REVIEWS + 1:
                     i = i + 1
