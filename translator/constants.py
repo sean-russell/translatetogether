@@ -33,7 +33,7 @@ class ReviewAssignments:
         return [ ReviewAssignment(self.id, self.name, r.term, r.transterm, r.transdescription) for r in self.reviews ]
 
     def __str__(self):
-        return f"ReviewAssignments ({self.id} {self.name} {self.term} {self.reviews})"
+        return f"ReviewAssignments ({self.id} {self.name} {self.term} {len(self.reviews)})"
 
     def __repr__(self):
         return self.__str__()
