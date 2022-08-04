@@ -143,11 +143,11 @@ def main_page():
                     return render_template('term.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
             elif data['phase'] == PHASE_REVIEW:
                 if data['section']['status'] in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
-                    term = dbstuff.get_assigned_reviews(data)
-                    if term == None:
-                        assign_term(data)
-                        term = dbstuff.get_assigned_term(data)
-                    return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
+                    reviews = dbstuff.get_assigned_reviews_for_section(data['id'], data['iss'], data['course'], data['section_num'])
+                    if reviews == None:
+                        raise Exception("No reviews assigned!!!")
+
+                    return render_template('reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),reviews=reviews)
             
         else:
             return render_template('config.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
@@ -226,8 +226,8 @@ def start_review():
     for term in term_assignments:
         for t in term_assignments[term]:
             student_reviews[t.id] = ReviewAssignments(t.id, t.name, term)
-    # print("student_reviews length", len(student_reviews))
-    # tas = dbstuff.get_ta_details_for_course(iss, course)
+    print("student_reviews length", len(student_reviews))
+    tas = dbstuff.get_ta_details_for_course(iss, course)
 
     translations = dbstuff.get_term_translations_for_section(iss, course, section_num)
     term_lists: Dict[str,List[TranslatedTerm]] = {}
@@ -249,29 +249,16 @@ def start_review():
         term_lists_variable[t] = term_lists[t] * NUM_REVIEWS
         random.shuffle(term_lists_variable[t])
 
-    
-
     """ now assign reviews to each student """
-    # random.shuffle(students)
     for s, d in student_reviews.items():
-        print("student", s, d)
         for t in term_lists_variable:
             if len(term_lists_variable[t]) == 0:
                 term_lists_variable[t].extend(term_lists[t]) #reup when empty
                 all_assigned[t] = True
-            print(t, "term list len", len(term_lists_variable[t]), end=" ")
             if d.term != t:
                 temp_term = term_lists_variable[t].pop()
                 d.add_review(temp_term)
-                print("-1", "term list len", len(term_lists_variable[t]))
-            else:
-                print("00", "term list len", len(term_lists_variable[t]))
-        print("student", s, len(d.reviews))
-    print("map thing", list(map(lambda x: len(x.reviews), student_reviews.values())))
-    print("first pass completed")  
-    for s in student_reviews:
-        print(s, student_reviews[s])
-    print("all assigned", all_assigned.items())
+    
     if not all(all_assigned.values()):
         remaining_terms = [ a for l in term_lists_variable if not all_assigned[l] for a in term_lists_variable[l] ]
         student_ids = list(student_reviews.keys())
@@ -283,10 +270,7 @@ def start_review():
                 if not student.add_extra_review(temp):
                     remaining_terms.append(temp)
             i = i + 1
-        print("map thing", list(map(lambda x: len(x.reviews), student_reviews.values())))
-        if all(map(lambda x: len(x.reviews) == NUM_REVIEWS+1, student_reviews.values())):
-            print("all students have been assigned reviews")
-        else:
+        if not all(map(lambda x: len(x.reviews) == NUM_REVIEWS+1, student_reviews.values())):
             terms_variable = [ a for v in term_lists.values() for a in v ] 
             i = 0
             while i < len(student_reviews):
@@ -298,9 +282,7 @@ def start_review():
                     student.add_extra_review(temp)
                 if len(student.reviews) == NUM_REVIEWS + 1:
                     i = i + 1
-        print("map thing", list(map(lambda x: len(x.reviews), student_reviews.values())))
-
-    print("second pass completed")
+ 
     for id, s in student_reviews.items():
         for r in s.reviews:
             dbstuff.add_review_assignment(id, r.id, r.term, r.transterm, r.transdescription, data['iss'], data['course'], section_num)

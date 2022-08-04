@@ -29,7 +29,9 @@
 - [X] Add check on term input that it is not an empty string
 - [] Add start and end dates for phases
 - [] Include check box for making vote phase optional
-- [] Fix the broken review assignment algorithm
+- [X] Fix the broken review assignment algorithm
+- [] Add teaching assistant review assignment
+- [] Add teaching assistant top 5 identification
 - [X] Add ability to input multiple terms ar the same time
 - [] Add vote assignment algorithm
 ## Course Management

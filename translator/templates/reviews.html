@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+</head>
+<body>
+    <h1>Reviews</h1>
+    <p>This is the list of translated terms that you need to review. Your reviews will be graded, so please make them as accurate as possible. For an introduction to the assessment criteria see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+    {% for review in reviews %}
+    <article>
+        <header>
+            {{review.term}}
+        </header>
+        <form action="{{ preface~url_for('open_review') }}" method="post">
+            <input type="hidden" id="term" name="term" value="{{ term.term }}">
+            <input type="hidden" id="trans_ass_id" name="trans_ass_id" value="{{ term.id }}">
+            <input type="hidden" name="datajson" value="{{datajson}}">
+            <label for="termtrans" data-tooltip="This should be the best translation of the term that you can come up with.">
+                Translated Term:
+                <input type="text" id="termtrans" name="termtrans" value="{{term.transterm}}" placeholder="{{term.transterm}}">
+            </label>
+            <label for="translation" data-tooltip="This should be an explanation of definition for the term in {{language}}. You should make this as clear as you can, but should try and write less than 5 sentences.">
+                Description:
+                <textarea id="translation" name="translation" rows="8" cols="40">{{term.transdescription}}</textarea>
+            </label>
+            <input type="submit" value="Update Translation">
+        </form>
+        <footer>
+            
+        </footer>
+    </article>
+
+    {% endfor %}
+    
+    <footer>
+        &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
+    </footer>
+</body>
+</html>
