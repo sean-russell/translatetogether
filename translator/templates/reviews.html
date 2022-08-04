@@ -13,7 +13,7 @@
             <!-- r_id t_id term transterm transdescription -->
             {{review.term}}
         </header>
-        <p>{{ review.term }}</p>
+        <p>{{ review.transterm }}</p>
         <form action="{{ preface~url_for('show_review') }}" method="post">
             <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
             <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
