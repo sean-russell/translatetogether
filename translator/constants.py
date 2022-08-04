@@ -33,7 +33,7 @@ class ReviewAssignments:
         return [ ReviewAssignment(self.id, self.name, r.term, r.transterm, r.transdescription) for r in self.reviews ]
 
     def __str__(self):
-        terms = ", ". join([ a.term for a in self.reviews])
+        terms = "[ " + ", ". join([ a.term for a in self.reviews]) + " ]"
         return f"ReviewAssignments ({self.id} {self.name} {self.term} {terms})"
 
     def __repr__(self):
