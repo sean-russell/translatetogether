@@ -297,7 +297,7 @@ def start_review():
 
     print("second pass completed")
     for s in student_reviews:
-        print(s, student_reviews[s].term, student_reviews[s].reviews)
+        print(s, student_reviews[s])
 
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
