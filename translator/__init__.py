@@ -271,8 +271,7 @@ def start_review():
     print("first pass completed")  
     for s in student_reviews:
         print(s, student_reviews[s])
-    for t in term_lists_variable:
-        print(t, term_lists_variable[t])
+    print("all assigned", all_assigned.items())
     if not all(all_assigned.values()):
         remaining_terms = [ a for l in term_lists_variable if not all_assigned[l] for a in term_lists_variable[l] ]
         student_ids = list(student_reviews.keys())
