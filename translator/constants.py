@@ -35,6 +35,9 @@ class ReviewAssignments:
     def __str__(self):
         return f"ReviewAssignments ({self.id} {self.name} {self.term} {self.reviews})"
 
+    def __repr__(self):
+        return self.__str__()
+
 STATUS_NOT_PREPARED = 0
 STATUS_TERMS_PREPARED = 1
 STATUS_TERMS_ASSIGNED = 2
