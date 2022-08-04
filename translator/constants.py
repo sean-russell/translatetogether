@@ -32,6 +32,8 @@ class ReviewAssignments:
     def get_as_review_assignments(self) -> List[ReviewAssignment]:
         return [ ReviewAssignment(self.id, self.name, r.term, r.transterm, r.transdescription) for r in self.reviews ]
 
+    def __str__(self):
+        return f"ReviewAssignments ({self.id} {self.name} {self.term} {self.reviews})"
 
 STATUS_NOT_PREPARED = 0
 STATUS_TERMS_PREPARED = 1
