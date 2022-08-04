@@ -258,7 +258,7 @@ def start_review():
         for t in term_lists_variable:
             if len(term_lists_variable[t]) == 0:
                 term_lists_variable[t].extend(term_lists[t]) #reup when empty
-                all_assigned[x.term] = True
+                all_assigned[t] = True
             print(t, "term list len", len(term_lists_variable[t]), end=" ")
             if d.term != t:
                 temp_term = term_lists_variable[t].pop()
