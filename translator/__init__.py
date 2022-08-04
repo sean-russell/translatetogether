@@ -5,7 +5,7 @@ import re
 
 from translator import dbstuff
 from translator.constants import *
-from typing import Dict, List
+from typing import Dict, List, Set
 
 from collections import namedtuple
 from flask import Flask, jsonify, request, render_template, url_for, redirect, escape
@@ -221,77 +221,79 @@ def start_review():
     section_num = request.form['section']
     iss = data['iss']
     course = data['course']
-    student_reviews =  { s['vle_user_id'] : {'name' : s['fullname'], 'reviews' : [], 'term': None } for s in dbstuff.get_student_details_for_course(iss, course) }
-    
     term_assignments = dbstuff.get_trans_assignments_for_section_of_course(iss, course, section_num)
-    student_assignments = {}
+    student_reviews: Dict[str, ReviewAssignments] = {}
     for term in term_assignments:
         for t in term_assignments[term]:
-            student_assignments[t[0]] = { 'completed' : False, 'term' : term, 'transterm' : '', 'transdescription' : '' } 
-            student_reviews[t[0]]['term'] = term
-    print("student_assignments length", len(student_assignments))
-    tas = dbstuff.get_ta_details_for_course(iss, course)
+            student_reviews[t.id] = ReviewAssignments(t.id, t.name, term)
+    # print("student_reviews length", len(student_reviews))
+    # tas = dbstuff.get_ta_details_for_course(iss, course)
 
     translations = dbstuff.get_term_translations_for_section(iss, course, section_num)
-    term_lists = {}
-    term_set = set()
+    term_lists: Dict[str,List[TranslatedTerm]] = {}
+    term_lists_variable: Dict[str,List[TranslatedTerm]] = {}
+    all_assigned: Dict[str,bool] = {}
+    term_set: Set[str] = set()
     for t in translations:
         term_set.add(t['term'])
-        if t['vle_user_id'] in student_assignments:
-            student_reviews[t['vle_user_id']]['term'] = student_assignments[t['vle_user_id']]['term']
-        if t['vle_user_id'] not in student_assignments:
-            raise Exception("Error: translation for student not assigned to a term")
-        else:
-            x = student_assignments[t['vle_user_id']]
-            x['completed'] = True
-            x['transterm'] = t['transterm']
-            x['transdescription'] = t['transdescription']
-    for sid in student_assignments:
-        x = student_assignments[sid]
-        if x['term'] not in term_lists:
-            term_lists[x['term']] = []
-        term_lists[x['term']].append(x)
+    for sid in student_reviews:
+        x = student_reviews[sid]
+        if x.term not in term_lists:
+            term_lists[x.term] = []
+            term_lists_variable[x.term] = []
+            all_assigned[x.term] = False
+        term_lists[x.term].append(x)
 
     for t in term_lists:
-        term_lists[t] = term_lists[t] * (NUM_REVIEWS+1)
-        random.shuffle(term_lists[t])
-        print(t, "term list len", len(term_lists[t]))
+        term_lists_variable[t] = term_lists[t] * NUM_REVIEWS
+        random.shuffle(term_lists_variable[t])
 
+    
 
     """ now assign reviews to each student """
     # random.shuffle(students)
     for s, d in student_reviews.items():
         print("student", s, d)
-        for t in term_lists:
-            print(t, "term list len", len(term_lists[t]), end=" ")
-            if d['term'] != t:
-                temp_term = term_lists[t].pop()
-                if temp_term['completed'] == True:
-                    d['reviews'].append(temp_term)
-                print("-1", "term list len", len(term_lists[t]))
+        for t in term_lists_variable:
+            if len(term_lists_variable[t]) == 0:
+                term_lists_variable[t].extend(term_lists[t]) #reup when empty
+                all_assigned[x.term] = True
+            print(t, "term list len", len(term_lists_variable[t]), end=" ")
+            if d.term != t:
+                temp_term = term_lists_variable[t].pop()
+                d.add_review(temp_term)
+                print("-1", "term list len", len(term_lists_variable[t]))
             else:
-                print("term list len", len(term_lists[t]))
+                print("00", "term list len", len(term_lists_variable[t]))
         print("student", s, len(d['reviews']))
-            
 
-    print("first pass completed")
-    for s in student_reviews:
-        print(s, student_reviews[s]['term'], student_reviews[s]['reviews'])
+    print("first pass completed")    
+    if not all(all_assigned.values()):
+        remaining_terms = [ a for l in term_lists_variable if not all_assigned[l] for a in term_lists_variable[l] ]
+        student_ids = list(student_reviews.keys())
+        i = 0
+        while i < len(student_reviews):
+            if len(remaining_terms) != 0:
+                student = student_reviews[student_ids[i]]
+                temp = remaining_terms.pop()
+                if not student.add_extra_review(temp):
+                    remaining_terms.append(temp)
+            i = i + 1
+        if all(map(lambda x: len(x.reviews) == NUM_REVIEWS+1, student_reviews.values())):
+            print("all students have been assigned reviews")
+        else:
+            terms_variable = [ a for v in term_lists.values() for a in v ] 
+            i = 0
+            while i < len(student_reviews):
+                student = student_reviews[student_ids[i]]
+                if len(terms_variable) == 0:
+                    terms_variable = [ a for v in term_lists.values() for a in v ]
+                if len(student.reviews) < NUM_REVIEWS + 1:
+                    temp = remaining_terms.pop()
+                    student.add_extra_review(temp)
+                if len(student.reviews) == NUM_REVIEWS + 1:
+                    i = i + 1
 
-    for t in term_lists:
-        term_lists[t] = term_lists[t] * (NUM_REVIEWS * 2)
-        random.shuffle(term_lists[t])
-    for s, d in student_reviews.items():
-        if len(d['reviews']) < NUM_REVIEWS:
-            s_terms = set([x['term'] for x in d['reviews']]) | set(d['term'])
-            missing_terms = term_set - s_terms
-            for t in missing_terms:
-                temp_term = term_lists[t].pop(0)
-                while temp_term['completed'] == False:
-                    temp_term = term_lists[t].pop(0)
-                    if len(term_lists[t]) == 0:
-                        raise Exception("Error: ran out of terms for student")
-                d['reviews'].append(temp_term)
 
     print("second pass completed")
     for s in student_reviews:

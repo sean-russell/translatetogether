@@ -1,7 +1,37 @@
 from collections import namedtuple
+from typing import List, Dict, Set
 
 TranslationAssignment = namedtuple("TranslationAssignment", "id name term")
+ReviewAssignment = namedtuple("ReviewAssignment", "id name term transterm transdescription")
 TranslatedTerm = namedtuple("TranslatedTerm", "id term transterm transdescription")
+
+class ReviewAssignments:
+    def __init__(self, id, name, term):
+        self.id: str = id
+        self.name: str = name
+        self.term: str = term
+        self.reviews: List[TranslatedTerm] = []
+
+    def add_review(self, trans: TranslatedTerm) -> bool:
+        if trans.term != self.term and trans.term not in ( r.term for r in self.reviews ):
+            self.reviews.append(trans)
+            return True
+        return False
+
+    def add_extra_review(self, trans: TranslatedTerm) -> bool:
+        """ Adds a term to be reviewed. This version of the method allows addition of reviews 
+        when the same term has been previously added """
+        if trans.term != self.term and trans not in self.reviews:
+            self.reviews.append(trans)
+            return True
+        return False
+
+    def get_num_assigned(self) -> int:
+        return len(self.reviews)
+
+    def get_as_review_assignments(self) -> List[ReviewAssignment]:
+        return [ ReviewAssignment(self.id, self.name, r.term, r.transterm, r.transdescription) for r in self.reviews ]
+
 
 STATUS_NOT_PREPARED = 0
 STATUS_TERMS_PREPARED = 1
