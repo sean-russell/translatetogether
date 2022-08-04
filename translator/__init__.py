@@ -265,7 +265,7 @@ def start_review():
                 print("-1", "term list len", len(term_lists_variable[t]))
             else:
                 print("00", "term list len", len(term_lists_variable[t]))
-        print("student", s, len(d['reviews']))
+        print("student", s, len(d.reviews))
 
     print("first pass completed")    
     if not all(all_assigned.values()):
@@ -297,7 +297,7 @@ def start_review():
 
     print("second pass completed")
     for s in student_reviews:
-        print(s, student_reviews[s]['term'], student_reviews[s]['reviews'])
+        print(s, student_reviews[s].term, student_reviews[s].reviews)
 
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
