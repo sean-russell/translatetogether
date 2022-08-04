@@ -234,16 +234,17 @@ def start_review():
     term_lists_variable: Dict[str,List[TranslatedTerm]] = {}
     all_assigned: Dict[str,bool] = {}
     term_set: Set[str] = set()
-    for t in translations:
-        term_set.add(t.term)
+
     for sid in student_reviews:
         x = student_reviews[sid]
         if x.term not in term_lists:
             term_lists[x.term] = []
             term_lists_variable[x.term] = []
             all_assigned[x.term] = False
-        term_lists[x.term].append(x)
-
+        
+    for t in translations:
+        term_set.add(t.term)
+        term_lists[t.term].append(t)
     for t in term_lists:
         term_lists_variable[t] = term_lists[t] * NUM_REVIEWS
         random.shuffle(term_lists_variable[t])
