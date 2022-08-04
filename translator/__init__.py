@@ -235,7 +235,7 @@ def start_review():
     all_assigned: Dict[str,bool] = {}
     term_set: Set[str] = set()
     for t in translations:
-        term_set.add(t['term'])
+        term_set.add(t.term)
     for sid in student_reviews:
         x = student_reviews[sid]
         if x.term not in term_lists:
