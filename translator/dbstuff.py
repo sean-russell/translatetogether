@@ -463,7 +463,7 @@ def get_assigned_reviews_for_section(id:str, iss:str, course:str, section:int) -
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
-    return [ ReviewAssignment(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
+    return [ ReviewAssignment(r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
 #########################################
 # def course_exists(iss: str, course: str) -> bool:
 #     """ Check if a course exists in the database """
