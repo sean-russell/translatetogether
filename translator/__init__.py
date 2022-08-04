@@ -269,7 +269,9 @@ def start_review():
     print("map thing", list(map(lambda x: len(x.reviews), student_reviews.values())))
     print("first pass completed")  
     for s in student_reviews:
-        print(s, student_reviews[s])  
+        print(s, student_reviews[s])
+    for t in term_lists_variable:
+        print(t, term_lists_variable[t])
     if not all(all_assigned.values()):
         remaining_terms = [ a for l in term_lists_variable if not all_assigned[l] for a in term_lists_variable[l] ]
         student_ids = list(student_reviews.keys())
