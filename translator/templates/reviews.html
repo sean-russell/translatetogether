@@ -14,7 +14,7 @@
             {{review.term}}
         </header>
         <p>{{ review.term }}</p>
-        <form action="{{ preface~url_for('open_review') }}" method="post">
+        <form action="{{ preface~url_for('show_review') }}" method="post">
             <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
             <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
             <input type="hidden" id="term" name="term" value="{{ review.term }}">
