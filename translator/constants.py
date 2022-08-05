@@ -3,7 +3,18 @@ from typing import List, Dict, Set
 
 TranslationAssignment = namedtuple("TranslationAssignment", "id name term")
 TranslatedTerm = namedtuple("TranslatedTerm", "id term transterm transdescription")
-ReviewAssignment = namedtuple("ReviewAssignment", "r_id t_id term transterm transdescription")
+# ReviewAssignment = namedtuple("ReviewAssignment", "r_id t_id term transterm transdescription")
+
+class ReviewAssignment:
+    def __init__(self, r_id, t_id, term, transterm, transdescription):
+        self.r_id = r_id
+        self.t_id = t_id
+        self.term = term
+        self.transterm = transterm
+        self.transdescription = transdescription
+        self.completed = False
+
+    
 
 class ReviewAssignments:
     def __init__(self, id, name, term):

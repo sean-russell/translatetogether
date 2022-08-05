@@ -14,14 +14,26 @@
             {{review.term}}
         </header>
         <p>{{ review.transterm }}</p>
+        <p>
+            {% if review.completed %}
+                Status: Completed
+            {% else %}
+                Status: Not completed
+            {% endif %}
+        </p>
         <form action="{{ preface~url_for('show_review') }}" method="post">
             <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
             <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
             <input type="hidden" id="term" name="term" value="{{ review.term }}">
             <input type="hidden" id="transterm" name="transterm" value="{{ review.transterm }}">
             <input type="hidden" id="transdescription" name="transdescription" value="{{ review.transdescription }}">
+            <input type="hidden" id="completed" name="completed" value="{{ review.completed }}">
             <input type="hidden" name="datajson" value="{{datajson}}">
-            <input type="submit" value="Review Translation">
+            {% if review.completed %}
+                <input type="submit" value="Update Review">
+            {% else %}
+                <input type="submit" value="Review Translation">
+            {% endif %}
         </form>
     </article>
 
