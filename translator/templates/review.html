@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
@@ -51,7 +51,7 @@
                     Comments:
                     <textarea id="review_comment" name="review_comment" rows="8" cols="40"></textarea>
                 </label>
-                <input type="submit" value="Add Translation">
+                <input type="submit" value="Add Translation" class="secondary">
             </form>
             {% else %}
             <form action="{{ preface~url_for('add_new_review') }}" method="post">
@@ -91,7 +91,7 @@
                     Comments:
                     <textarea id="review_comment" name="review_comment" rows="8" cols="40">{{review.review_comment}}</textarea>
                 </label>
-                <input type="submit" value="Add Translation">
+                <input type="submit" value="Add Translation" class="secondary">
             </form>
             {% endif %}
         </footer>
