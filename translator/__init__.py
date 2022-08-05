@@ -5,7 +5,7 @@ import re
 
 from translator import dbstuff
 from translator.constants import *
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Any
 
 from collections import namedtuple
 from flask import Flask, jsonify, request, render_template, url_for, redirect, escape
@@ -235,7 +235,7 @@ def start_review():
     translations = dbstuff.get_term_translations_for_section(iss, course, section_num)
     term_lists: Dict[str,List[TranslatedTerm]] = {}
     term_lists_variable: Dict[str,List[TranslatedTerm]] = {}
-    ta_term_lists_variable: Dict[str,List[TranslatedTerm]] = {}
+    ta_term_lists_variable: List[Any] = []
     all_assigned: Dict[str,bool] = {}
     term_set: Set[str] = set()
 
@@ -252,22 +252,26 @@ def start_review():
     print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     for t in term_lists:
         term_lists_variable[t] = term_lists[t] * NUM_REVIEWS
-        ta_term_lists_variable[t] = term_lists[t]
-        random.shuffle(ta_term_lists_variable[t])
+        ta_term_lists_variable.append([0 , t, term_lists[t]])
         random.shuffle(term_lists_variable[t])
     print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     
-    tot_ta_assign = len(translations) * NUM_TA_REVIEWS
-    ta_assign_each = tot_ta_assign // len(tas) + 1
-    ta_terms = [ a for t in term_lists_variable for a in term_lists_variable[t] ]
-    reserve = []
-    for tar in ta_reviews.values():
-        while tar.get_num_assigned() < ta_assign_each:
-            if len(ta_terms) == 0:
-                ta_terms = reserve + [ a for t in term_lists_variable for a in term_lists_variable[t] ]
-            temp = ta_terms.pop()
-            if not tar.add_review(temp):# I am making an assumption that duplicates will not be a problem (i.e. they will get assigned later)
-                reserve.append(temp)
+    num_lists = len(term_lists.keys()) * NUM_TA_REVIEWS
+    num_tas = len(tas)
+    if num_lists <= num_tas:
+        for tar in ta_reviews.values():
+            ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
+            tar.assign_reviews(term_lists_variable[0][2])
+            term_lists_variable[0][0] += 1
+    elif num_lists <= num_tas * 2:
+        for tar in ta_reviews.values():
+            ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
+            tar.assign_reviews(term_lists_variable[0][2])
+            term_lists_variable[0][0] += 1
+            ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
+            tar.assign_reviews(term_lists_variable[0][2])
+            term_lists_variable[0][0] += 1
+
     print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
     print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     

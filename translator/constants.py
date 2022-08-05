@@ -73,11 +73,8 @@ class TAReviewAssignments:
         self.id: str = id
         self.reviews: List[TranslatedTerm] = []
 
-    def add_review(self, trans: TranslatedTerm) -> bool:
-        if trans not in self.reviews:
-            self.reviews.append(trans)
-            return True
-        return False
+    def assign_reviews(self, trans: List[TranslatedTerm]):
+        self.reviews = trans.copy()
 
     def get_num_assigned(self) -> int:
         return len(self.reviews)
