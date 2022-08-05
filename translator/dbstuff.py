@@ -491,6 +491,14 @@ def get_review_by_id(rev_id) -> Review:
     
     return review
 
+def update_review(review: Review) -> bool:
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    r = cursor.execute("UPDATE reviews SET review_comment = %s, review_score = %s WHERE rev_ass_id = %s", (review.review_comment, review.review_score, review.rev_ass_id))
+    conn.commit()
+    conn.close()
+    return r == 1
+
 def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[Review]:
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)

@@ -14,10 +14,10 @@ class Review:
         self.transdescription: str = transdescription
         self.completed: bool = False
         self.review_score: int = -1
-        self.comment: str = ""
+        self.review_comment: str = ""
 
-    def set_comment(self, comment):
-        self.comment = comment
+    def set_review_comment(self, comment):
+        self.review_comment = comment
 
     def set_review_score(self, score: int):
         if score not in review_scores:
