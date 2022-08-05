@@ -223,15 +223,19 @@ def start_review():
     course = data['course']
     term_assignments = dbstuff.get_trans_assignments_for_section_of_course(iss, course, section_num)
     student_reviews: Dict[str, ReviewAssignments] = {}
+    ta_reviews: Dict[str, TAReviewAssignments] = {}
     for term in term_assignments:
         for t in term_assignments[term]:
             student_reviews[t.id] = ReviewAssignments(t.id, t.name, term)
     print("student_reviews length", len(student_reviews))
     tas = dbstuff.get_ta_details_for_course(iss, course)
+    for ta in tas:
+        ta_reviews[ta['vle_user_id']] = TAReviewAssignments(ta['vle_user_id'])
 
     translations = dbstuff.get_term_translations_for_section(iss, course, section_num)
     term_lists: Dict[str,List[TranslatedTerm]] = {}
     term_lists_variable: Dict[str,List[TranslatedTerm]] = {}
+    ta_term_lists_variable: Dict[str,List[TranslatedTerm]] = {}
     all_assigned: Dict[str,bool] = {}
     term_set: Set[str] = set()
 
@@ -247,8 +251,20 @@ def start_review():
         term_lists[t.term].append(t)
     for t in term_lists:
         term_lists_variable[t] = term_lists[t] * NUM_REVIEWS
+        ta_term_lists_variable[t] = term_lists[t] * NUM_TA_REVIEWS
+        random.shuffle(ta_term_lists_variable[t])
         random.shuffle(term_lists_variable[t])
 
+    tot_ta_assign = len(translations) * NUM_TA_REVIEWS
+    ta_assign_each = tot_ta_assign // len(tas) + 1
+    ta_terms = [ a for t in term_lists_variable for a in term_lists_variable[t] ]
+    for tar in ta_reviews.values():
+        while tar.get_num_assigned() < ta_assign_each:
+            if len(ta_terms) == 0:
+                ta_terms = [ a for t in term_lists_variable for a in term_lists_variable[t] ]
+            tar.add_review(ta_terms.pop())
+    print("Distribution", list(map(lambda x: len(x.reviews), ta_reviews.values())))
+    
     """ now assign reviews to each student """
     for s, d in student_reviews.items():
         for t in term_lists_variable:
@@ -283,10 +299,10 @@ def start_review():
                 if len(student.reviews) == NUM_REVIEWS + 1:
                     i = i + 1
  
-    for id, s in student_reviews.items():
-        for r in s.reviews:
-            dbstuff.add_review_assignment(id, r.id, r.term, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
-    dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_REVIEWS_ASSIGNED)
+    # for id, s in student_reviews.items():
+    #     for r in s.reviews:
+    #         dbstuff.add_review_assignment(id, r.id, r.term, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
+    # dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_REVIEWS_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
     return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
@@ -332,7 +348,7 @@ def assign_terms(iss, course, section_num) -> None:
     student_ids = [ student['vle_user_id'] for student in students ]
     # print("terms list", terms)
     # print("student ids", student_ids)
-    random_terms = []
+    random_terms: List[str] = []
     while len(random_terms) < len(student_ids):
         random_terms.extend(terms)
     # print("random terms", len(random_terms), random_terms)

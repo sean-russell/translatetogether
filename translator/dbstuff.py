@@ -130,7 +130,7 @@ def get_sections_for_course(iss: str, course: str) -> List:
         for r in rows 
     ]
 
-def set_desired_terms_for_section_in_course(iss: str, course: str, section: str, desired_terms: int) -> None:
+def set_desired_terms_for_section_in_course(iss: str, course: str, section: str, desired_terms: int) -> Dict[str,Any]:
     """ Set the desired terms for a section in a course """
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -561,7 +561,7 @@ def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, c
 #     conn.close()
 #     return
 
-def get_assigned_term(data: Dict) -> str:
+def get_assigned_term(data: Dict) -> Dict[str,str]:
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT id, term, status FROM trans_assignments WHERE iss = %s AND vle_user_id = %s AND course = %s AND section = %s LIMIT 1", 

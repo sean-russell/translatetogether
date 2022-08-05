@@ -20,6 +20,7 @@ PHASE_REVIEW = "review"
 PHASE_VOTE = "vote"
 
 NUM_REVIEWS = 3
+NUM_TA_REVIEWS = 2
 
 CLAIM_EXT = 'https://purl.imsglobal.org/spec/lti/claim/ext'
 CLAIM_CONTEXT = 'https://purl.imsglobal.org/spec/lti/claim/context'
@@ -67,7 +68,19 @@ class ReviewAssignment:
     def get_review(self) -> Review:
         return Review(self.rev_ass_id, self.r_id, self.t_id, self.term, self.transterm, self.transdescription)
 
+class TAReviewAssignments:
+    def __init__(self, id):
+        self.id: str = id
+        self.reviews: List[TranslatedTerm] = []
 
+    def add_review(self, trans: TranslatedTerm) -> bool:
+        if trans not in self.reviews:
+            self.reviews.append(trans)
+            return True
+        return False
+
+    def get_num_assigned(self) -> int:
+        return len(self.reviews)
 
 class ReviewAssignments:
     def __init__(self, id, name, term):
@@ -93,15 +106,6 @@ class ReviewAssignments:
     def get_num_assigned(self) -> int:
         return len(self.reviews)
 
-    def get_as_review_assignments(self) -> List[ReviewAssignment]:
-        return [ ReviewAssignment(self.id, self.name, r.term, r.transterm, r.transdescription) for r in self.reviews ]
-
-    def __str__(self):
-        terms = "[ " + ", ". join([ a.term for a in self.reviews]) + " ]"
-        return f"ReviewAssignments ({self.id} {self.name} {self.term} {terms})"
-
-    def __repr__(self):
-        return self.__str__()
 
 
 
