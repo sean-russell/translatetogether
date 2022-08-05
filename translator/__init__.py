@@ -483,6 +483,7 @@ def show_review():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     rev_ass_id = request.form['rev_ass_id']
     review = dbstuff.get_review_by_id(rev_ass_id)
+    print("rev_ass_id", rev_ass_id, "review", review)
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 @app.route('/review/add/', methods=['POST'])
