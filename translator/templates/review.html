@@ -6,13 +6,14 @@
     {% if review.completed %}<link rel="stylesheet" href="{{preface~url_for('static', filename='custom.css')}}">{% endif %}
 </head>
 <body>
+    <header>
+        {{review.term}}
+    </header>
     <main class="container secondary" >
-        <header>
-            {{review.term}}
-        </header>
+
         <h3>{{ review.transterm }}</h3>
         <p>{{review.transdescription}}</p>
-        <footer>
+        
             {% if not review.completed %}
             <form action="{{ preface~url_for('add_new_review') }}" method="post">
                 <p>You are requested to review the translation of the term {{ review.term }} that was completed by one of your classmates. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
@@ -94,7 +95,7 @@
                 <input type="submit" value="Add Translation" class="secondary">
             </form>
             {% endif %}
-        </footer>
+        
     </main>
     
     <footer>
