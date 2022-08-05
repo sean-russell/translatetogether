@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+    <style>
+        {% if review.completed %}
+        :root {
+            --primary: #43a047;
+        }
+        {% else %}
+        :root {
+            --primary: #e53935;
+        }
+        {% endif %}
+    </style>
 </head>
 <body>
     <article>
