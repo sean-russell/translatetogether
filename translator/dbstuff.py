@@ -463,7 +463,7 @@ def get_assigned_reviews_for_student_in_section(id:str, iss:str, course:str, sec
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
-    return [ ReviewAssignment(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
+    return [ ReviewAssignment(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
 
 def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[Review]:
     conn = mysql.connect()
@@ -472,7 +472,7 @@ def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, c
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
-    assignments = [ ReviewAssignment(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
+    assignments = [ ReviewAssignment(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     query = "SELECT reviewer_id, translator_id, term, transterm, transdescription, review_score, review_comment FROM reviews WHERE id IN (SELECT MAX(id) FROM reviews GROUP BY vle_user_id HAVING iss = %s AND course = %s AND section = %s)"
