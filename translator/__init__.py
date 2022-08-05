@@ -227,7 +227,7 @@ def start_review():
     for term in term_assignments:
         for t in term_assignments[term]:
             student_reviews[t.id] = ReviewAssignments(t.id, t.name, term)
-    print("student_reviews length", len(student_reviews))
+    # print("student_reviews length", len(student_reviews))
     tas = dbstuff.get_ta_details_for_course(iss, course)
     for ta in tas:
         ta_reviews[ta['vle_user_id']] = TAReviewAssignments(ta['vle_user_id'])
@@ -245,44 +245,44 @@ def start_review():
             term_lists[x.term] = []
             term_lists_variable[x.term] = []
             all_assigned[x.term] = False
-    print("translations", translations)
+    # print("translations", translations)
     for t in translations:
         term_set.add(t.term)
         term_lists[t.term].append(t)
-    print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
+    # print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
     for t in term_lists:
         term_lists_variable[t] = term_lists[t] * NUM_REVIEWS
         ta_term_lists_variable.append([0 , t, term_lists[t]])
         random.shuffle(term_lists_variable[t])
-    print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
+    # print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
     
     num_lists = len(term_lists.keys()) * NUM_TA_REVIEWS
     num_tas = len(tas)
-    print("num_lists", num_lists, "num_tas", num_tas)
+    # print("num_lists", num_lists, "num_tas", num_tas)
     if num_lists <= num_tas:
-        print("everyone gets 1")
+        # print("everyone gets 1")
         for tar in ta_reviews.values():
-            print("assigning a list to ta", tar.id)
+            # print("assigning a list to ta", tar.id)
             ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
-            print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
+            # print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
             tar.assign_reviews(ta_term_lists_variable[0][2])
             ta_term_lists_variable[0][0] += 1
     elif num_lists <= num_tas * 2:
-        print("doubling up")
+        # print("doubling up")
         for tar in ta_reviews.values():
-            print("assigning 2 lists to ta", tar.id)
+            # print("assigning 2 lists to ta", tar.id)
             ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
-            print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
+            # print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
             tar.assign_reviews(ta_term_lists_variable[0][2])
             ta_term_lists_variable[0][0] += 1
             ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
-            print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
+            # print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
             tar.assign_reviews(ta_term_lists_variable[0][2])
             ta_term_lists_variable[0][0] += 1
-            print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
+            # print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
 
-    print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
-    print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
+    # print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
+    # print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
     
     for id, ta in ta_reviews.items():
         for r in ta.reviews:
@@ -323,10 +323,10 @@ def start_review():
                 if len(student.reviews) == NUM_REVIEWS + 1:
                     i = i + 1
  
-    # for id, s in student_reviews.items():
-    #     for r in s.reviews:
-    #         dbstuff.add_review_assignment(id, r.id, r.term, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
-    # dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_REVIEWS_ASSIGNED)
+    for id, s in student_reviews.items():
+        for r in s.reviews:
+            dbstuff.add_review_assignment(id, r.id, r.term, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
+    dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_REVIEWS_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
     return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
