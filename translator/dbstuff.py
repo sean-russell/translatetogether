@@ -455,8 +455,8 @@ def add_review_assignment(reviewer_id: str, translator_id: str, term: str, trans
     conn.commit()
     conn.close()
 
-def get_assigned_reviews_for_section(id:str, iss:str, course:str, section:int) -> List[ReviewAssignment]:
-    """ Get all assigned reviews for a student """
+def get_assigned_reviews_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[ReviewAssignment]:
+    """ Get all assigned reviews for a section """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT * FROM review_assignments WHERE reviewer_id = %s AND iss = %s AND course = %s AND section = %s", (id, iss, course, section))
@@ -464,6 +464,8 @@ def get_assigned_reviews_for_section(id:str, iss:str, course:str, section:int) -
     conn.close()
     cursor.close()
     return [ ReviewAssignment(r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
+
+def get_assigned_and_completed_reviews_for_section(id:str, iss:str, course:str, section:int) -> List[Review]:
 #########################################
 # def course_exists(iss: str, course: str) -> bool:
 #     """ Check if a course exists in the database """

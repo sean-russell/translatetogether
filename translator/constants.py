@@ -5,16 +5,39 @@ TranslationAssignment = namedtuple("TranslationAssignment", "id name term")
 TranslatedTerm = namedtuple("TranslatedTerm", "id term transterm transdescription")
 # ReviewAssignment = namedtuple("ReviewAssignment", "r_id t_id term transterm transdescription")
 
-class ReviewAssignment:
-    def __init__(self, r_id, t_id, term, transterm, transdescription):
-        self.r_id = r_id
-        self.t_id = t_id
-        self.term = term
-        self.transterm = transterm
-        self.transdescription = transdescription
-        self.completed = False
+class Review:
+    def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term: str, transterm: str, transdescription: str):
+        self.rev_ass_id = rev_ass_id
+        self.r_id: str = r_id
+        self.t_id: str = t_id
+        self.term: str = term
+        self.transterm: str = transterm
+        self.transdescription: str = transdescription
+        self.completed: bool = False
+        self.review_score: int = -1
+        self.comment: str = ""
 
-    
+    def set_comment(self, comment):
+        self.comment = comment
+
+    def set_review(self, score: int):
+        if score not in review_scores:
+            raise ValueError("Invalid review level")
+        self.review_score = score
+
+class ReviewAssignment:
+    def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term: str, transterm: str, transdescription: str):
+        self.rev_ass_id = rev_ass_id
+        self.r_id: str = r_id
+        self.t_id: str = t_id
+        self.term: str = term
+        self.transterm: str = transterm
+        self.transdescription: str = transdescription
+
+    def get_review(self) -> Review:
+        return Review(self.rev_ass_id, self.r_id, self.t_id, self.term, self.transterm, self.transdescription)
+
+
 
 class ReviewAssignments:
     def __init__(self, id, name, term):
@@ -49,6 +72,14 @@ class ReviewAssignments:
 
     def __repr__(self):
         return self.__str__()
+
+REVIEW_INADEQUATE = 0
+REVIEW_ADEQUATE = 1
+REVIEW_PROFICIENT = 2
+REVIEW_SKILLED = 3
+REVIEW_EXCEPTIONAL = 4
+
+review_scores = (REVIEW_INADEQUATE, REVIEW_ADEQUATE, REVIEW_PROFICIENT, REVIEW_SKILLED, REVIEW_EXCEPTIONAL)
 
 STATUS_NOT_PREPARED = 0
 STATUS_TERMS_PREPARED = 1
