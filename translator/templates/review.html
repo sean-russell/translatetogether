@@ -7,11 +7,11 @@
     {% if not review.completed %}
         {% set trans_placeholder = 'Translated term' %}
         {% set button_text = 'Add Review' %}
-        {% set st_insert = 'style="background-color:#e6ffe6"' %}
+        {% set st_insert = 'style="background-color:#ffe6e6"' %}
         {% else %}
         {% set trans_placeholder = '{{term.transterm}}' %}
         {% set button_text = 'Update Review' %}
-        {% set st_insert = 'style="background-color:#ffe6e6"' %}
+        {% set st_insert = 'style="background-color:#e6ffe6"' %}
     {% endif %}
     <body>
         <article {{st_insert|safe}}>
