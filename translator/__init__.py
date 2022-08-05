@@ -258,19 +258,28 @@ def start_review():
     
     num_lists = len(term_lists.keys()) * NUM_TA_REVIEWS
     num_tas = len(tas)
+    print("num_lists", num_lists, "num_tas", num_tas)
     if num_lists <= num_tas:
+        print("everyone gets 1")
         for tar in ta_reviews.values():
+            print("assigning a list to ta", tar.id)
             ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
+            print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
             tar.assign_reviews(ta_term_lists_variable[0][2])
             ta_term_lists_variable[0][0] += 1
     elif num_lists <= num_tas * 2:
+        print("doubling up")
         for tar in ta_reviews.values():
+            print("assigning 2 lists to ta", tar.id)
             ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
+            print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
             tar.assign_reviews(ta_term_lists_variable[0][2])
             ta_term_lists_variable[0][0] += 1
             ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
+            print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
             tar.assign_reviews(ta_term_lists_variable[0][2])
             ta_term_lists_variable[0][0] += 1
+            print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
 
     print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
     print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
