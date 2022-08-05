@@ -20,7 +20,8 @@ class Review:
         self.review_comment = comment
 
     def set_review_score(self, score: int):
-        print("Setting score to:" ,score, "has type:", type(score))
+        if type(score) == int:
+            score = int(score)
         if score not in review_scores:
             raise ValueError("Invalid review level")
         self.review_score = score
