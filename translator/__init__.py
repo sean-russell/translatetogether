@@ -261,15 +261,15 @@ def start_review():
     if num_lists <= num_tas:
         for tar in ta_reviews.values():
             ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
-            tar.assign_reviews(term_lists_variable[0][2])
+            tar.assign_reviews(ta_term_lists_variable[0][2])
             term_lists_variable[0][0] += 1
     elif num_lists <= num_tas * 2:
         for tar in ta_reviews.values():
             ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
-            tar.assign_reviews(term_lists_variable[0][2])
+            tar.assign_reviews(ta_term_lists_variable[0][2])
             term_lists_variable[0][0] += 1
             ta_term_lists_variable.sort(key=lambda x: (x[0], len(x[2])))
-            tar.assign_reviews(term_lists_variable[0][2])
+            tar.assign_reviews(ta_term_lists_variable[0][2])
             term_lists_variable[0][0] += 1
 
     print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
