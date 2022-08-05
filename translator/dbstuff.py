@@ -504,7 +504,7 @@ def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, c
     reviews: List[Review] = []
     assigned_reviews = get_assigned_reviews_for_student_in_section(id, iss, course, section)
     for ar in assigned_reviews:
-        review = get_latest_review_by_review_assignment_id(ar.id)
+        review = get_latest_review_by_review_assignment_id(ar.rev_ass_id)
         if review is not None:
             reviews.append(review)
         else:
