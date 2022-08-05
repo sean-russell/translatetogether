@@ -488,6 +488,7 @@ def show_review():
 
 @app.route('/review/add/', methods=['POST'])
 def add_new_review():
+    print("add_new_review", request.form)
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     rev_ass_id = request.form['rev_ass_id']
     review = dbstuff.get_review_by_id(rev_ass_id)
