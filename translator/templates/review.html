@@ -24,25 +24,25 @@
                 <input type="hidden" id="transdescription" name="transdescription" value="{{ review.transdescription }}">
                 <input type="hidden" id="completed" name="completed" value="{{ review.completed }}">
                 <fieldset>
-                    <legend>Size</legend>
+                    <legend>Review Assessment:</legend>
                     <label for="Inadequate">
-                        <input type="radio" id="Inadequate" name="size" value="0">
+                        <input type="radio" id="Inadequate" name="review_score" value="0">
                         Inadequate
                     </label>
                     <label for="Adequate">
-                        <input type="radio" id="Adequate" name="size" value="1">
+                        <input type="radio" id="Adequate" name="review_score" value="1">
                         Adequate
                     </label>
                     <label for="Proficient">
-                        <input type="radio" id="Proficient" name="size" value="2">
+                        <input type="radio" id="Proficient" name="review_score" value="2">
                         Proficient
                     </label>
                     <label for="Skilled">
-                        <input type="radio" id="Skilled" name="size" value="3">
+                        <input type="radio" id="Skilled" name="review_score" value="3">
                         Skilled
                     </label>
                     <label for="Exceptional">
-                        <input type="radio" id="Exceptional" name="size" value="4">
+                        <input type="radio" id="Exceptional" name="review_score" value="4">
                         Exceptional
                     </label>
                 </fieldset>
@@ -64,25 +64,25 @@
                 <input type="hidden" id="transdescription" name="transdescription" value="{{ review.transdescription }}">
                 <input type="hidden" id="completed" name="completed" value="{{ review.completed }}">
                 <fieldset>
-                    <legend>Size</legend>
+                    <legend>Review Assessment:</legend>
                     <label for="Inadequate">
-                        <input type="radio" id="Inadequate" name="size" value="0" {% if review.review_score == 0 %}checked{% endif %}>
+                        <input type="radio" id="Inadequate" name="review_score" value="0" {% if review.review_score == 0 %}checked{% endif %}>
                         Inadequate
                     </label>
                     <label for="Adequate">
-                        <input type="radio" id="Adequate" name="size" value="1" {% if review.review_score == 1 %}checked{% endif %}>
+                        <input type="radio" id="Adequate" name="review_score" value="1" {% if review.review_score == 1 %}checked{% endif %}>
                         Adequate
                     </label>
                     <label for="Proficient">
-                        <input type="radio" id="Proficient" name="size" value="2" {% if review.review_score == 2 %}checked{% endif %}>
+                        <input type="radio" id="Proficient" name="review_score" value="2" {% if review.review_score == 2 %}checked{% endif %}>
                         Proficient
                     </label>
                     <label for="Skilled">
-                        <input type="radio" id="Skilled" name="size" value="3" {% if review.review_score == 3 %}checked{% endif %}>
+                        <input type="radio" id="Skilled" name="review_score" value="3" {% if review.review_score == 3 %}checked{% endif %}>
                         Skilled
                     </label>
                     <label for="Exceptional">
-                        <input type="radio" id="Exceptional" name="size" value="4" {% if review.review_score == 4 %}checked{% endif %}>
+                        <input type="radio" id="Exceptional" name="review_score" value="4" {% if review.review_score == 4 %}checked{% endif %}>
                         Exceptional
                     </label>
                 </fieldset>
