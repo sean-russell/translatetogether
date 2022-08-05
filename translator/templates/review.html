@@ -15,6 +15,7 @@
             {% if not review.completed %}
             <form action="{{ preface~url_for('add_new_review') }}" method="post">
                 <p>You are requested to review the translation of the term {{ review.term }} that was completed by one of your classmates. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+                <input type="hidden" id="rev_ass_id" name="rev_ass_id" value="{{ review.rev_ass_id }}">
                 <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
                 <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
                 <input type="hidden" id="term" name="term" value="{{ review.term }}">
@@ -54,6 +55,7 @@
             {% else %}
             <form action="{{ preface~url_for('add_new_review') }}" method="post">
                 <p>You have already completed the review of the translation of the term {{ review.term }} that was submitted by one of your classmates.  You can updated this review before the final deadline. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+                <input type="hidden" id="rev_ass_id" name="rev_ass_id" value="{{ review.rev_ass_id }}">
                 <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
                 <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
                 <input type="hidden" id="term" name="term" value="{{ review.term }}">
