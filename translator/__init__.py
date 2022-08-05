@@ -482,7 +482,7 @@ def add_new_translation():
 def show_review():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     rev_ass_id = request.form['rev_ass_id']
-    review = dbstuff.get_review_by_id(rev_ass_id)
+    review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
     print("rev_ass_id", rev_ass_id, "review", review)
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
@@ -491,10 +491,10 @@ def add_new_review():
     print("add_new_review", request.form)
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     rev_ass_id = request.form['rev_ass_id']
-    review = dbstuff.get_review_by_id(rev_ass_id)
+    review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
     review.set_review_score(request.form['review_score'])
     review.set_review_comment(request.form['review_comment'])
-    dbstuff.update_review(review)
+    dbstuff.add_review(review, data['iss'], data['course'], data['section_num'])
     print(review)
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
