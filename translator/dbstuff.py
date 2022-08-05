@@ -478,6 +478,17 @@ def get_review_by_id(rev_id) -> Review:
         review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
         review.set_comment(r['review_comment'])
         review.set_review_score(r['review_score'])
+    else:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM review_assignments WHERE id = %s", (rev_id))
+        rows = cursor.fetchall()
+        conn.close()
+        cursor.close()
+        if len(rows) == 1:
+            r = rows[0]
+            review = Review(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
+    
     return review
 
 def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[Review]:
