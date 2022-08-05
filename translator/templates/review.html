@@ -10,7 +10,7 @@
             {{review.term}}
         </header>
         <h3>{{ review.transterm }}</h3>
-        <p>{[review.transdescription}}</p>
+        <p>{{review.transdescription}}</p>
         <footer>
             {% if review.completed %}
             <form action="{{ preface~url_for('add_new_review') }}" method="post">
