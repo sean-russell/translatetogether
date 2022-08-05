@@ -501,20 +501,15 @@ def add_review(review: Review, iss: str, course: str, section: str):
     conn.close()
 
 def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[Review]:
-    conn = mysql.connect()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM review_assignments WHERE reviewer_id = %s AND iss = %s AND course = %s AND section = %s", (id, iss, course, section))
-    rows = cursor.fetchall()
-    conn.close()
-    cursor.close()
-    assignments = [ ReviewAssignment(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
-    conn = mysql.connect()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-    query = "SELECT reviewer_id, translator_id, term, transterm, transdescription, review_score, review_comment FROM reviews WHERE id IN (SELECT MAX(id) FROM reviews GROUP BY vle_user_id HAVING iss = %s AND course = %s AND section = %s)"
-    cursor.execute(query, (iss, course, str(section)))
-    rows = cursor.fetchall()
-    conn.close()
-    cursor.close()
+    reviews: List[Review] = []
+    assigned_reviews = get_assigned_reviews_for_student_in_section(id, iss, course, section)
+    for ar in assigned_reviews:
+        review = get_latest_review_by_review_assignment_id(ar.id)
+        if review is not None:
+            reviews.append(review)
+        else:
+            reviews.append(ar.get_review())
+    return reviews
 
 #########################################
 # def course_exists(iss: str, course: str) -> bool:
