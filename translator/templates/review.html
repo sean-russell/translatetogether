@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
-    <style>
+    <script>
         {% if review.completed %}
-        :root {
-            --primary: #43a047;
-        }
+            var cssRule = ':root {--primary: #43a047;}';
         {% else %}
-        :root {
-            --primary: #e53935;
-        }
+            var cssRule = ':root {--primary: #e53935;}';
         {% endif %}
-    </style>
+        var styleElement = document.createElement('style');
+        styleElement.appendChild(document.createTextNode(cssRule));
+        document.getElementsByTagName('head')[0].appendChild(styleElement);
+    </script>
 </head>
 <body>
     <article>
