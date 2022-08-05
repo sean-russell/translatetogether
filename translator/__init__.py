@@ -252,7 +252,7 @@ def start_review():
     print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     for t in term_lists:
         term_lists_variable[t] = term_lists[t] * NUM_REVIEWS
-        ta_term_lists_variable[t] = term_lists[t] * NUM_TA_REVIEWS
+        ta_term_lists_variable[t] = term_lists[t]
         random.shuffle(ta_term_lists_variable[t])
         random.shuffle(term_lists_variable[t])
     print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
@@ -264,7 +264,8 @@ def start_review():
         while tar.get_num_assigned() < ta_assign_each:
             if len(ta_terms) == 0:
                 ta_terms = [ a for t in term_lists_variable for a in term_lists_variable[t] ]
-            tar.add_review(ta_terms.pop())
+            tar.add_review(ta_terms.pop())# I am making an assumption that duplicates will not be a problem (i.e. they will get assigned later)
+
     print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
     print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     
