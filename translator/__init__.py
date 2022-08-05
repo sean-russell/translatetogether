@@ -144,7 +144,7 @@ def main_page():
             elif data['phase'] == PHASE_REVIEW:
                 print("phase is review")
                 if data['section']['status'] in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
-                    review_assignments = dbstuff.get_assigned_reviews_for_section(data['id'], data['iss'], data['course'], data['section_num'])
+                    review_assignments = dbstuff.get_assigned_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
                     if review_assignments == None:
                         raise Exception("No reviews assigned!!!")
                     reviews = [ r.get_review() for r in review_assignments]
