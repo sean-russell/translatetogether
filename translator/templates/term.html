@@ -4,8 +4,15 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
     </head>
+    {% if term.status == 1 %}
+        {% set st_insert = 'style="background-color:#e6ffe6"' %}
+    {% elif term.status == 0 %}
+        {% set st_insert = 'style="background-color:#ffe6e6"' %}
+    {% else %}
+        {% set st_insert = '' %}
+    {% endif %}
     <body>
-        <article {% if term.status == 1 %}style="background-color:#e6ffe6"{% elif term.status == 0 %}style="background-color:#ffe6e6"{% endif %}>
+        <article {{st_insert}}>
             <header>
                 {{term.term}}
             </header>
