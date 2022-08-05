@@ -249,12 +249,12 @@ def start_review():
     for t in translations:
         term_set.add(t.term)
         term_lists[t.term].append(t)
-    print("Distribution Terms", list(map(lambda x: (x[0], len(x[1][2])), ta_term_lists_variable.items() )))
+    print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
     for t in term_lists:
         term_lists_variable[t] = term_lists[t] * NUM_REVIEWS
         ta_term_lists_variable.append([0 , t, term_lists[t]])
         random.shuffle(term_lists_variable[t])
-    print("Distribution Terms", list(map(lambda x: (x[0], len(x[1][2])), ta_term_lists_variable.items() )))
+    print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
     
     num_lists = len(term_lists.keys()) * NUM_TA_REVIEWS
     num_tas = len(tas)
@@ -273,7 +273,7 @@ def start_review():
             term_lists_variable[0][0] += 1
 
     print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
-    print("Distribution Terms", list(map(lambda x: (x[0], len(x[1][2])), ta_term_lists_variable.items() )))
+    print("Distribution Terms", list(map(lambda x: (x[0], x[1], len(x[2])), ta_term_lists_variable )))
     
     for id, ta in ta_reviews.items():
         for r in ta.reviews:
