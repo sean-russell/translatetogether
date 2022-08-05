@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
-    <link rel="stylesheet" href="url_for('static', filename='custom.css')">
+    {% if review.completed %}<link rel="stylesheet" href="{{preface~url_for('static', filename='custom.css')}}">{% endif %}
 </head>
 <body>
-    <article {% if review.completed %}class="secondary"{% endif %}>
+    <article >
         <header>
             {{review.term}}
         </header>
