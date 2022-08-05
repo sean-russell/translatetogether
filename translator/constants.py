@@ -3,7 +3,6 @@ from typing import List, Dict, Set
 
 TranslationAssignment = namedtuple("TranslationAssignment", "id name term")
 TranslatedTerm = namedtuple("TranslatedTerm", "id term transterm transdescription")
-# ReviewAssignment = namedtuple("ReviewAssignment", "r_id t_id term transterm transdescription")
 
 class Review:
     def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term: str, transterm: str, transdescription: str):
@@ -20,10 +19,11 @@ class Review:
     def set_comment(self, comment):
         self.comment = comment
 
-    def set_review(self, score: int):
+    def set_review_score(self, score: int):
         if score not in review_scores:
             raise ValueError("Invalid review level")
         self.review_score = score
+        self.completed = True
 
 class ReviewAssignment:
     def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term: str, transterm: str, transdescription: str):
