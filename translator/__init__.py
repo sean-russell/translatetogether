@@ -147,8 +147,7 @@ def main_page():
                     review_assignments = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
                     if review_assignments == None:
                         raise Exception("No reviews assigned!!!")
-                    reviews = [ r.get_review() for r in review_assignments]
-                    return render_template('reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),reviews=reviews)
+                    return render_template('reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),reviews=review_assignments)
             
         else:
             return render_template('config.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
