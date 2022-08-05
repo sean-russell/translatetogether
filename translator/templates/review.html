@@ -5,83 +5,93 @@
     <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
 </head>
 <body>
-    {% if review.completed %}
-    <form action="{{ preface~url_for('add_new_review') }}" method="post">
-        <p>You are requested to review the translation of the term {{ review.term }} that was completed by one of your classmates. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
-        <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
-        <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
-        <input type="hidden" id="term" name="term" value="{{ review.term }}">
-        <input type="hidden" id="transterm" name="transterm" value="{{ review.transterm }}">
-        <input type="hidden" id="transdescription" name="transdescription" value="{{ review.transdescription }}">
-        <input type="hidden" id="completed" name="completed" value="{{ review.completed }}">
-        <fieldset>
-            <legend>Size</legend>
-            <label for="Inadequate">
-                <input type="radio" id="Inadequate" name="size" value="0">
-                Inadequate
-            </label>
-            <label for="Adequate">
-                <input type="radio" id="Adequate" name="size" value="1">
-                Adequate
-            </label>
-            <label for="Proficient">
-                <input type="radio" id="Proficient" name="size" value="2">
-                Proficient
-            </label>
-            <label for="Skilled">
-                <input type="radio" id="Skilled" name="size" value="3">
-                Skilled
-            </label>
-            <label for="Exceptional">
-                <input type="radio" id="Exceptional" name="size" value="4">
-                Exceptional
-            </label>
-        </fieldset>
-        <label for="comments" data-tooltip="This section is completely optional. But you can add some constructive feedback here.">
-            Comments:
-            <textarea id="comments" name="comments" rows="8" cols="40"></textarea>
-        </label>
-        <input type="submit" value="Add Translation">
-    </form>
-    {% else %}
-    <form action="{{ preface~url_for('add_new_review') }}" method="post">
-        <p>You have already completed the review of the translation of the term {{ review.term }} that was submitted by one of your classmates.  You can updated this review before the final deadline. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
-        <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
-        <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
-        <input type="hidden" id="term" name="term" value="{{ review.term }}">
-        <input type="hidden" id="transterm" name="transterm" value="{{ review.transterm }}">
-        <input type="hidden" id="transdescription" name="transdescription" value="{{ review.transdescription }}">
-        <input type="hidden" id="completed" name="completed" value="{{ review.completed }}">
-        <fieldset>
-            <legend>Size</legend>
-            <label for="Inadequate">
-                <input type="radio" id="Inadequate" name="size" value="0" {% if review.review_score == 0 %}checked{% endif %}>
-                Inadequate
-            </label>
-            <label for="Adequate">
-                <input type="radio" id="Adequate" name="size" value="1" {% if review.review_score == 1 %}checked{% endif %}>
-                Adequate
-            </label>
-            <label for="Proficient">
-                <input type="radio" id="Proficient" name="size" value="2" {% if review.review_score == 2 %}checked{% endif %}>
-                Proficient
-            </label>
-            <label for="Skilled">
-                <input type="radio" id="Skilled" name="size" value="3" {% if review.review_score == 3 %}checked{% endif %}>
-                Skilled
-            </label>
-            <label for="Exceptional">
-                <input type="radio" id="Exceptional" name="size" value="4" {% if review.review_score == 4 %}checked{% endif %}>
-                Exceptional
-            </label>
-        </fieldset>
-        <label for="comments" data-tooltip="This section is completely optional. But you can add some constructive feedback here.">
-            Comments:
-            <textarea id="comments" name="comments" rows="8" cols="40">{{review.comments}}</textarea>
-        </label>
-        <input type="submit" value="Add Translation">
-    </form>
-    {% endif %}
+    <article>
+        <header>
+            {{review.term}}
+        </header>
+        <h3>{{ review.transterm }}</h3>
+        <p>{[review.transdescription}}</p>
+        <footer>
+            {% if review.completed %}
+            <form action="{{ preface~url_for('add_new_review') }}" method="post">
+                <p>You are requested to review the translation of the term {{ review.term }} that was completed by one of your classmates. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+                <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
+                <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
+                <input type="hidden" id="term" name="term" value="{{ review.term }}">
+                <input type="hidden" id="transterm" name="transterm" value="{{ review.transterm }}">
+                <input type="hidden" id="transdescription" name="transdescription" value="{{ review.transdescription }}">
+                <input type="hidden" id="completed" name="completed" value="{{ review.completed }}">
+                <fieldset>
+                    <legend>Size</legend>
+                    <label for="Inadequate">
+                        <input type="radio" id="Inadequate" name="size" value="0">
+                        Inadequate
+                    </label>
+                    <label for="Adequate">
+                        <input type="radio" id="Adequate" name="size" value="1">
+                        Adequate
+                    </label>
+                    <label for="Proficient">
+                        <input type="radio" id="Proficient" name="size" value="2">
+                        Proficient
+                    </label>
+                    <label for="Skilled">
+                        <input type="radio" id="Skilled" name="size" value="3">
+                        Skilled
+                    </label>
+                    <label for="Exceptional">
+                        <input type="radio" id="Exceptional" name="size" value="4">
+                        Exceptional
+                    </label>
+                </fieldset>
+                <label for="comments" data-tooltip="This section is completely optional. But you can add some constructive feedback here.">
+                    Comments:
+                    <textarea id="comments" name="comments" rows="8" cols="40"></textarea>
+                </label>
+                <input type="submit" value="Add Translation">
+            </form>
+            {% else %}
+            <form action="{{ preface~url_for('add_new_review') }}" method="post">
+                <p>You have already completed the review of the translation of the term {{ review.term }} that was submitted by one of your classmates.  You can updated this review before the final deadline. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+                <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
+                <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
+                <input type="hidden" id="term" name="term" value="{{ review.term }}">
+                <input type="hidden" id="transterm" name="transterm" value="{{ review.transterm }}">
+                <input type="hidden" id="transdescription" name="transdescription" value="{{ review.transdescription }}">
+                <input type="hidden" id="completed" name="completed" value="{{ review.completed }}">
+                <fieldset>
+                    <legend>Size</legend>
+                    <label for="Inadequate">
+                        <input type="radio" id="Inadequate" name="size" value="0" {% if review.review_score == 0 %}checked{% endif %}>
+                        Inadequate
+                    </label>
+                    <label for="Adequate">
+                        <input type="radio" id="Adequate" name="size" value="1" {% if review.review_score == 1 %}checked{% endif %}>
+                        Adequate
+                    </label>
+                    <label for="Proficient">
+                        <input type="radio" id="Proficient" name="size" value="2" {% if review.review_score == 2 %}checked{% endif %}>
+                        Proficient
+                    </label>
+                    <label for="Skilled">
+                        <input type="radio" id="Skilled" name="size" value="3" {% if review.review_score == 3 %}checked{% endif %}>
+                        Skilled
+                    </label>
+                    <label for="Exceptional">
+                        <input type="radio" id="Exceptional" name="size" value="4" {% if review.review_score == 4 %}checked{% endif %}>
+                        Exceptional
+                    </label>
+                </fieldset>
+                <label for="comments" data-tooltip="This section is completely optional. But you can add some constructive feedback here.">
+                    Comments:
+                    <textarea id="comments" name="comments" rows="8" cols="40">{{review.comments}}</textarea>
+                </label>
+                <input type="submit" value="Add Translation">
+            </form>
+            {% endif %}
+        </footer>
+    </article>
+    
     <footer>
         &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
     </footer>
