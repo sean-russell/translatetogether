@@ -74,7 +74,7 @@ class TAReviewAssignments:
         self.reviews: List[TranslatedTerm] = []
 
     def assign_reviews(self, trans: List[TranslatedTerm]):
-        self.reviews = trans.copy()
+        self.reviews.extend(trans)
 
     def get_num_assigned(self) -> int:
         return len(self.reviews)
