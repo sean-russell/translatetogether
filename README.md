@@ -37,15 +37,15 @@
 ## Course Management
 
 - [X] Add valid email address check for ta entry
-- [] Add 
+
 
 
 # Student Side
-
-- [] View list of assigned translations
-- [] Select individual translation for completion
-- [] Review translation
-- [] Show completed translations in list
+- [X] Add colour to term translation to indicate completion of term translation
+- [X] View list of assigned translation reviews
+- [X] Select individual translation for review
+- [X] Review translation
+- [X] Show completed translations in list (indicated by colour and text)
 - [] View list of terms to be voted on
 - [] Select individual term for voting on the translation
 - [] Input votes for the individual terms
