@@ -245,10 +245,11 @@ def start_review():
             term_lists[x.term] = []
             term_lists_variable[x.term] = []
             all_assigned[x.term] = False
-        
+    print("translations", translations)
     for t in translations:
         term_set.add(t.term)
         term_lists[t.term].append(t)
+    print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     for t in term_lists:
         term_lists_variable[t] = term_lists[t] * NUM_REVIEWS
         ta_term_lists_variable[t] = term_lists[t] * NUM_TA_REVIEWS
