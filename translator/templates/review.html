@@ -6,7 +6,7 @@
     {% if review.completed %}<link rel="stylesheet" href="{{preface~url_for('static', filename='custom.css')}}">{% endif %}
 </head>
 <body>
-    <article >
+    <main class="container secondary" >
         <header>
             {{review.term}}
         </header>
@@ -95,7 +95,7 @@
             </form>
             {% endif %}
         </footer>
-    </article>
+    </main>
     
     <footer>
         &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
