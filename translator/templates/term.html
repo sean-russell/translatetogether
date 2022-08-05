@@ -10,9 +10,20 @@
                 {{term.term}}
             </header>
             <article>
+                <article>
+                    {% if term.status == 0 %}
+                        <p>You are requested to translate the term "{{ term.term }}" into {{ data.language }}. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+                    {% elif term.status == 1 %}
+                        <p>You have already completed the translation of "{{ term.term }}" into {{ data.language }}. You can updated this translation before the final deadline. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+                    {% elif term.status == 2 %}
+                        <p>You have already completed the translation of {{ term.term }} into {{ data.language }}. This can no longer be updated. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+                        <h3>Translated Term: {{term.transterm}}</h3>
+                        <h3>Description:</h3>
+                        <p>{{term.transdescription}}</p>
+                    {% endif %}
+                </article>
                 {% if term.status == 0 %}
                     <form action="{{ preface~url_for('add_new_translation') }}" method="post">
-                        <p>You are requested to translate the term "{{ term.term }}" into {{ data.language }}. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
                         <input type="hidden" id="term" name="term" value="{{ term.term }}">
                         <input type="hidden" id="trans_ass_id" name="trans_ass_id" value="{{ term.id }}">
                         <input type="hidden" name="datajson" value="{{datajson}}">
@@ -28,7 +39,6 @@
                     </form>
                 {% elif term.status == 1 %}
                     <form action="{{ preface~url_for('add_new_translation') }}" method="post">
-                        <p>You have already completed the translation of "{{ term.term }}" into {{ data.language }}. You can updated this translation before the final deadline. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
                         <input type="hidden" id="term" name="term" value="{{ term.term }}">
                         <input type="hidden" id="trans_ass_id" name="trans_ass_id" value="{{ term.id }}">
                         <input type="hidden" name="datajson" value="{{datajson}}">
@@ -42,11 +52,6 @@
                         </label>
                         <input type="submit" value="Update Translation">
                     </form>
-                {% elif term.status == 2 %}
-                    <p>You have already completed the translation of {{ term.term }} into {{ data.language }}. This can no longer be updated. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
-                    <h3>Translated Term: {{term.transterm}}</h3>
-                    <h3>Description:</h3>
-                    <p>{{term.transdescription}}</p>
                 {% endif %}
             </article>
         </article>
