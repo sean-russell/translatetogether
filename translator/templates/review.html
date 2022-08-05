@@ -101,6 +101,10 @@
         </section>
     </article>
     
+    <form action="{{ preface~url_for('main_page') }}" method="post">
+        <input type="hidden" name="datajson" value="{{datajson}}">
+        <input type="submit" value="Return to Review List">
+    </form>
     <footer>
         &copy; 2022 <a href="https://people.ucd.ie/sean.russell">Seán Russell</a>
     </footer>
