@@ -4,11 +4,27 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
     </head>
+    {% if not review.completed %}
+        {% set trans_placeholder = 'Translated term' %}
+        {% set button_text = 'Add Review' %}
+        {% set st_insert = 'style="background-color:#e6ffe6"' %}
+        {% else %}
+        {% set trans_placeholder = '{{term.transterm}}' %}
+        {% set button_text = 'Update Review' %}
+        {% set st_insert = 'style="background-color:#ffe6e6"' %}
+    {% endif %}
     <body>
-        <article {% if review.completed %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
+        <article {{st_insert|safe}}>
             <header>
                 {{review.term}}
             </header>
+            <article>
+                {% if not review.completed %}
+                <p>You are requested to review the translation of the term "{{ review.term }}" below.  It was translated by one of your classmates. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+                {% else %}
+                <p>You have already completed ypur review of the translation of the term "{{ review.term }}" below. It was translated by one of your classmates. You can update this review before the final deadline. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
+                {% endif %}
+            </article>
             <article>
                 <header>
                     "{{ review.transterm }}"
@@ -16,49 +32,7 @@
                 {{review.transdescription}}
             </article>
             <article>
-                {% if not review.completed %}
                 <form action="{{ preface~url_for('add_new_review') }}" method="post">
-                    <p>You are requested to review the translation of the term "{{ review.term }}" that was completed by one of your classmates. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
-                    <input type="hidden" id="rev_ass_id" name="rev_ass_id" value="{{ review.rev_ass_id }}">
-                    <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
-                    <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
-                    <input type="hidden" id="term" name="term" value="{{ review.term }}">
-                    <input type="hidden" name="datajson" value="{{datajson}}">
-                    <input type="hidden" id="transterm" name="transterm" value="{{ review.transterm }}">
-                    <input type="hidden" id="transdescription" name="transdescription" value="{{ review.transdescription }}">
-                    <input type="hidden" id="completed" name="completed" value="{{ review.completed }}">
-                    <fieldset>
-                        <legend>Review Assessment:</legend>
-                        <label for="Inadequate">
-                            <input type="radio" id="Inadequate" name="review_score" value="0">
-                            Inadequate
-                        </label>
-                        <label for="Adequate">
-                            <input type="radio" id="Adequate" name="review_score" value="1">
-                            Adequate
-                        </label>
-                        <label for="Proficient">
-                            <input type="radio" id="Proficient" name="review_score" value="2">
-                            Proficient
-                        </label>
-                        <label for="Skilled">
-                            <input type="radio" id="Skilled" name="review_score" value="3">
-                            Skilled
-                        </label>
-                        <label for="Exceptional">
-                            <input type="radio" id="Exceptional" name="review_score" value="4">
-                            Exceptional
-                        </label>
-                    </fieldset>
-                    <label for="review_comment" data-tooltip="This section is completely optional. But you can add some constructive feedback here.">
-                        Comments:
-                        <textarea id="review_comment" name="review_comment" rows="8" cols="40"></textarea>
-                    </label>
-                    <input type="submit" value="Add Review">
-                </form>
-                {% else %}
-                <form action="{{ preface~url_for('add_new_review') }}" method="post">
-                    <p>You have already completed the review of the translation of the term {{ review.term }} that was submitted by one of your classmates.  You can updated this review before the final deadline. Your grade will be based on how accutately you complete the review. For an introduction to the assessment process see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
                     <input type="hidden" id="rev_ass_id" name="rev_ass_id" value="{{ review.rev_ass_id }}">
                     <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
                     <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
@@ -92,14 +66,12 @@
                     </fieldset>
                     <label for="review_comment" data-tooltip="This section is completely optional. But you can add some constructive feedback here.">
                         Comments:
-                        <textarea id="review_comment" name="review_comment" rows="8" cols="40">{{review.review_comment}}</textarea>
+                        <textarea id="review_comment" name="review_comment" rows="8" cols="40"></textarea>
                     </label>
-                    <input type="submit" value="Update Review" class="secondary">
-                </form>
-                {% endif %}
+                    <input type="submit" value="{{button_text}}">
+                </form>             
             </article>
-        </article>
-        
+        </article>   
         <form action="{{ preface~url_for('main_page') }}" method="post">
             <input type="hidden" name="datajson" value="{{datajson}}">
             <input type="submit" value="Return to Review List">
