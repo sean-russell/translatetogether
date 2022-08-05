@@ -8,7 +8,7 @@
     <h1>Reviews</h1>
     <p>This is the list of translated terms that you need to review. Your reviews will be graded, so please make them as accurate as possible. For an introduction to the assessment criteria see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>.</p>
     {% for review in reviews %}
-    <article>
+    <article {% if review.completed %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
         <header>
             <!-- r_id t_id term transterm transdescription -->
             {{review.term}}

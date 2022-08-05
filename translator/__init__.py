@@ -495,6 +495,7 @@ def add_new_review():
     review.set_review_score(request.form['review_score'])
     review.set_review_comment(request.form['review_comment'])
     dbstuff.update_review(review)
+    print(review)
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 if __name__ == '__main__':
