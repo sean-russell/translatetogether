@@ -254,7 +254,7 @@ def start_review():
         ta_term_lists_variable[t] = term_lists[t] * NUM_TA_REVIEWS
         random.shuffle(ta_term_lists_variable[t])
         random.shuffle(term_lists_variable[t])
-    print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable )))
+    print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     
     tot_ta_assign = len(translations) * NUM_TA_REVIEWS
     ta_assign_each = tot_ta_assign // len(tas) + 1
@@ -265,7 +265,7 @@ def start_review():
                 ta_terms = [ a for t in term_lists_variable for a in term_lists_variable[t] ]
             tar.add_review(ta_terms.pop())
     print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
-    print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable )))
+    print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     
     """ now assign reviews to each student """
     for s, d in student_reviews.items():
