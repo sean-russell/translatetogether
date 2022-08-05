@@ -12,7 +12,7 @@
         {% set st_insert = '' %}
     {% endif %}
     <body>
-        <article {{st_insert}}>
+        <article {{st_insert|safe}}>
             <header>
                 {{term.term}}
             </header>
