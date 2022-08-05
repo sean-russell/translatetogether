@@ -42,7 +42,7 @@
                         Translated Term:
                         <input type="text" id="termtrans" name="termtrans" value="{{trans_placeholder}}" placeholder="{{trans_placeholder}}">
                     </label>
-                    <label for="translation" data-tooltip="This should be an explanation of definition for the term in {{ data.language }}. \nYou should make this as clear as you can, but should try and write less than 5 sentences.">
+                    <label for="translation" data-html="true" data-tooltip="This should be an explanation of definition for the term in {{ data.language }}. <br/>You should make this as clear as you can, but should try and write less than 5 sentences.">
                         Description:
                         <textarea id="translation" name="translation" rows="4" cols="30" >{{term.transdescription}}</textarea>
                     </label>
