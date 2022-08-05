@@ -260,12 +260,14 @@ def start_review():
     tot_ta_assign = len(translations) * NUM_TA_REVIEWS
     ta_assign_each = tot_ta_assign // len(tas) + 1
     ta_terms = [ a for t in term_lists_variable for a in term_lists_variable[t] ]
+    reserve = []
     for tar in ta_reviews.values():
         while tar.get_num_assigned() < ta_assign_each:
             if len(ta_terms) == 0:
-                ta_terms = [ a for t in term_lists_variable for a in term_lists_variable[t] ]
-            tar.add_review(ta_terms.pop())# I am making an assumption that duplicates will not be a problem (i.e. they will get assigned later)
-
+                ta_terms = reserve + [ a for t in term_lists_variable for a in term_lists_variable[t] ]
+            temp = ta_terms.pop()
+            if not tar.add_review(temp):# I am making an assumption that duplicates will not be a problem (i.e. they will get assigned later)
+                reserve.append(temp)
     print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
     print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     
