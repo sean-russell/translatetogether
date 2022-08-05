@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <link rel="stylesheet" href="url_for('static', filename='custom.css')">
 </head>
 <body>
     <article {% if review.completed %}class="secondary"{% endif %}>
