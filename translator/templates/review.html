@@ -3,19 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
-    <script>
-        {% if review.completed %}
-            var cssRule = ':root {--primary: #43a047;}';
-        {% else %}
-            var cssRule = ':root {--primary: #e53935;}';
-        {% endif %}
-        var styleElement = document.createElement('style');
-        styleElement.appendChild(document.createTextNode(cssRule));
-        document.getElementsByTagName('head')[0].appendChild(styleElement);
-    </script>
 </head>
 <body>
-    <article>
+    <article {% if review.completed %}class="secondary"{% endif %}>
         <header>
             {{review.term}}
         </header>
