@@ -5,11 +5,9 @@
         <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
     </head>
     {% if term.status == 1 %}
-        {% set trans_placeholder = 'Translated term' %}
         {% set button_text = 'Update Translation' %}
         {% set st_insert = 'style="background-color:#e6ffe6"' %}
     {% elif term.status == 0 %}
-        {% set trans_placeholder = '{{term.transterm}}' %}
         {% set button_text = 'Add Translation' %}
         {% set st_insert = 'style="background-color:#ffe6e6"' %}
     {% else %}
