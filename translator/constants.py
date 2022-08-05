@@ -33,8 +33,7 @@ TranslationAssignment = namedtuple("TranslationAssignment", "id name term")
 TranslatedTerm = namedtuple("TranslatedTerm", "id term transterm transdescription")
 
 class Review:
-    def __init__(self,rev_id :str, rev_ass_id: str, r_id: str, t_id: str, term: str, transterm: str, transdescription: str):
-        self.id = rev_id
+    def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term: str, transterm: str, transdescription: str):
         self.rev_ass_id = rev_ass_id
         self.r_id: str = r_id
         self.t_id: str = t_id
@@ -65,8 +64,8 @@ class ReviewAssignment:
         self.transterm: str = transterm
         self.transdescription: str = transdescription
 
-    # def get_review(self) -> Review:
-    #     return Review(self.rev_ass_id, self.r_id, self.t_id, self.term, self.transterm, self.transdescription)
+    def get_review(self) -> Review:
+        return Review(self.rev_ass_id, self.r_id, self.t_id, self.term, self.transterm, self.transdescription)
 
 
 

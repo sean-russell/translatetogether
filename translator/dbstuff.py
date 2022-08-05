@@ -476,7 +476,7 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
     review = None
     if len(rows) == 1:
         r = rows[0]
-        review = Review(r['id'], r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
+        review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
         review.set_comment(r['review_comment'])
         review.set_review_score(r['review_score'])
     else:
@@ -488,7 +488,7 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
         cursor.close()
         if len(rows) == 1:
             r = rows[0]
-            review = Review(None, r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
+            review = Review(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
     
     return review
 
