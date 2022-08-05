@@ -268,6 +268,11 @@ def start_review():
     print("Distribution TAs", list(map(lambda x: len(x.reviews), ta_reviews.values())))
     print("Distribution Terms", list(map(lambda x: (x[0], len(x[1])), ta_term_lists_variable.items() )))
     
+    for id, ta in ta_reviews.items():
+        for r in ta.reviews:
+            dbstuff.add_review_assignment(id, r.id, r.term, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
+    # dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_REVIEWS_ASSIGNED)
+
     """ now assign reviews to each student """
     for s, d in student_reviews.items():
         for t in term_lists_variable:
