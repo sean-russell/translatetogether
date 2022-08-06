@@ -67,7 +67,7 @@
                     Current Status
                 </td>
                 <td>{{data.section.status}}</td>
-                <td>
+                <td>start_voting
                     {% if data.section.status == "Not prepared" %}
                         <form action="{{preface~url_for('finalise_section')}}" method="POST" onsubmit="return validateForm()">
                             <input type="hidden" name="datajson" value="{{datajson}}">
@@ -86,8 +86,16 @@
                         <form action="{{preface~url_for('start_review')}}" method="POST">
                             <input type="hidden" name="datajson" value="{{datajson}}">
                             <input type="hidden" name="section" value="{{data.section.section}}">
-                            <input type="submit" value="Initiate Review" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+                            <input type="submit" value="Initiate Review Phase" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
                         </form>
+                    {% elif data.section.status == "Reviews assigned to students" %}
+                        <form action="{{preface~url_for('start_voting')}}" method="POST">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" name="section" value="{{data.section.section}}">
+                            <input type="submit" value="Initiate Voting Phase" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+                        </form>
+                    {% elif data.section.status == "Votes assigned to students" %}
+
                     {% endif %}
                 </td>
             </tr>

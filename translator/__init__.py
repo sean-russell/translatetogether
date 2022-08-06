@@ -149,8 +149,6 @@ def main_page():
                 if review.term not in rll:
                     rll[review.term] = []
                 rll[review.term].append(review)
-            print("reviews", reviews)
-            print("review lists", rll)
             status = dbstuff.get_status_of_section(data['iss'], data['course'], data['section_num'])
             if status in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
                 return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=rll)
@@ -235,6 +233,7 @@ def finalise_section():
 def asign_terms():
     """ assign terms to all registered students within a section TODO finish this"""
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
+    assert data['role'] == INSTRUCTOR
     section_num = request.form['section']
     assign_terms(data['iss'], data['course'], section_num)
     dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_TERMS_ASSIGNED)
@@ -247,6 +246,7 @@ def start_review():
 
     """ first find the list of translations completed for this section (only most recent by each student) """
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
+    assert data['role'] == INSTRUCTOR
     section_num = request.form['section']
     iss = data['iss']
     course = data['course']
@@ -359,6 +359,22 @@ def start_review():
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
     return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
+@app.route('/section/voting/', methods=['POST'])
+def start_voting():
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
+    assert data['role'] == INSTRUCTOR
+    section_num = request.form['section']
+    iss = data['iss']
+    course = data['course']
+    vote_candidates = dbstuff.get_candidates_for_section(iss, course, section_num)
+    term_assignments = dbstuff.get_trans_assignments_for_section_of_course(iss, course, section_num)
+    for term, ass_list in term_assignments.items():
+        for ass in ass_list:
+            for vc in vote_candidates:
+                if vc.term != term:
+                    dbstuff.assign_vote_to_student(ass.id, vc, iss, course, section_num)
+    dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_VOTES_ASSIGNED)
+    data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
 ######################################################################################################################################################################

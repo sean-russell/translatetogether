@@ -476,12 +476,10 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
     review = None
     if len(rows) == 1:
         r = rows[0]
-        print(r)
         review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
         review.set_review_comment(r['review_comment'])
         review.set_review_score(r['review_score'])
         review.set_candidate(r['candidate'] in (1, '1'))
-        print(review)
     else:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -494,6 +492,32 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
             review = Review(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
     
     return review
+
+def get_candidates_for_section(iss:str, course:str, section:int) -> List[Review]:
+    """ Get all candidates for a section """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM reviews WHERE id IN (SELECT MAX(id) from reviews GROUP BY iss, course, section, vle_user_id HAVING iss = %s AND course = %s AND section = %s)", (iss, course, section))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    reviews = []
+    for r in rows:
+        review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
+        review.set_review_comment(r['review_comment'])
+        review.set_review_score(r['review_score'])
+        review.set_candidate(r['candidate'] in (1, '1'))
+        if review.review_candidate:
+            reviews.append(review)
+    return reviews
+
+def assign_vote_to_student(vle_user_id: str, vc: Review, iss: str, course: str, section_num: str):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT IGNORE INTO vote_assignments (voter_id, translator_id, term, transterm, transdescription, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    (vle_user_id, vc.t_id, vc.term, vc.transterm, vc.transdescription, iss, course, section_num))
+    conn.commit()
+    conn.close()
 
 def add_review(review: Review, iss: str, course: str, section: str):
     conn = mysql.connect()
