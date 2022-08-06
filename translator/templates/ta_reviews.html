@@ -12,7 +12,7 @@
         <header>
             {{review.term}}
         </header>
-        <p>{% if review.review_candidate %}<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/2000/xlink" width="25px" height="25px"><path d="m 7.71 9.04 l -2.63 -1.39 l -2.63 1.39 l 0.51 -2.93 l -2.13 -2.08 l 2.94 -0.42 l 1.31 -2.67 l 1.31 2.67 l 2.94 0.42 l -2.13 2.08 l 0.5 2.93 z" style="fill: #ff0;"/></svg>{% endif %}{{ review.transterm }}</p>
+        <p>{% if review.review_candidate %}<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/2000/xlink" width="20px" height="20px"><path d="M 15.42 18.08 L 10.16 15.3 L 4.9 18.08 L 5.92 12.22 L 1.66 8.06 L 7.54 7.22 L 10.16 1.88 L 12.78 7.22 L 18.66 8.06 L 14.4 12.22 L 15.4 18.08 Z" style="fill: #ff0;"/></svg>{% endif %}{{ review.transterm }}</p>
         <p>
             {% if review.completed %}
                 Status: Completed
