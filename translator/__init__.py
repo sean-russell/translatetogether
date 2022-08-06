@@ -574,8 +574,6 @@ def add_new_ta_review():
     review.set_review_comment(request.form['review_comment'])
     review.set_candidate(candidate)
     dbstuff.add_review(review, data['iss'], data['course'], data['section_num'])
-    if candidate:
-        dbstuff.add_candidate(review, data['iss'], data['course'], data['section_num'])
     print(review)
     return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
