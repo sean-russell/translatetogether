@@ -8,8 +8,12 @@
     <main class="container">
         {% for r in resources %}
             <article>
+                <header>
+                    {{r.title}}
+                </header>
+                <p>{{r.description}}</p>
                 <form action="{{deep_link_return_url}}" method="POST">
-                    <input type="hidden" name="JWT" value="{{r.jwt}}" />
+                    <input type="hidden" name="JWT" value="{{r.JWT}}" />
                     <input type="submit" value="Select Item">
                 </form>
             </article>
