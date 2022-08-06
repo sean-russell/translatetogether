@@ -23,7 +23,8 @@
 # Tasks
 
 ## Overall Management
-- [] Implement deep linking
+- [X] Implement deep linking
+- [] Improve deep linking, need a way to allow for selection options
 
 ## Section Management
 

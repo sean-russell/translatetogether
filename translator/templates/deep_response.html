@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
-</head>
-<body>
-    <main class="container">
-        {% for r in resources %}
-            <article>
-                <header>
-                    {{r.title}}
-                </header>
-                <p>{{r.description}}</p>
-                <form action="{{deep_link_return_url}}" method="POST">
-                    <input type="hidden" name="JWT" value="{{r.JWT}}" />
-                    <input type="submit" value="Select Item">
-                </form>
-            </article>
-        {% endfor %}
-    </main>
-    <article>
-        <div class="container">
-            <h1 class="logo">
-                CSTools
-            </h1>
-            <p>This site is a central repository for all tools that are designed and developed within the School of Computer Science for use in computer science education. All tools are authored by or in collaboration with faculty and students within the school.</p>
-        </div>
-    </article>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+    </head>
+    <body>
+        <main class="container">
+            {% for r in resources %}
+                <article>
+                    <header>
+                        {{r.title}}
+                    </header>
+                    <p>{{r.description}}</p>
+                    <form action="{{deep_link_return_url}}" method="POST">
+                        <input type="hidden" name="JWT" value="{{r.JWT}}" />
+                        <input type="submit" value="Select Item">
+                    </form>
+                </article>
+            {% endfor %}
+        </main>
+    </body>
 </html>

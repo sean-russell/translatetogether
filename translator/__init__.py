@@ -119,7 +119,6 @@ def main_page():
         owner = dbstuff.get_course_owner(data['iss'], data['course'])
         if message_launch.is_deep_link_launch():
             section_list =  [ s['section'] for s in dbstuff.get_sections_for_course(data['iss'], data['course'])]
-            # deep_link_response = message_launch.get_deep_link()
             deployment_id = message_launch._get_deployment_id()
             deep_linking_settings = message_launch._get_jwt_body().get('https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings')  
             deep_link_response = DeepLink(message_launch._registration, deployment_id, deep_linking_settings)
@@ -137,12 +136,7 @@ def main_page():
                         r['description'] = phase_descriptions[phase].format(lang)
                         resources.append(r)
 
-            html = render_template('deep_response.html', resources=resources, deep_link_return_url=deep_linking_settings['deep_link_return_url'])
-            print(html)
-            # return deep_link_response.get_response_jwt([resource1, resource2])
-            return html
-            
-            print("deep_link_launch")
+            return render_template('deep_response.html', resources=resources, deep_link_return_url=deep_linking_settings['deep_link_return_url'])
         elif owner == data['id']:
             data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
             data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
