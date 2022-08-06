@@ -175,10 +175,10 @@ def set_status_of_section(iss: str, course: str, section: str, status: int) -> N
     conn.close()
     cursor.close()
 
-def get_status_of_section(data: Dict) -> int:
+def get_status_of_section(iss, course, section) -> int:
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT status FROM status WHERE course_id = %s AND section = %s", (data['course'], data['section']))
+    cursor.execute("SELECT status FROM status WHERE iss = %s AND course_id = %s AND section = %s", (iss, course, section))
     rows = cursor.fetchall()
     status = -1
     if len(rows) == 1:

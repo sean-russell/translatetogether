@@ -142,12 +142,13 @@ def main_page():
             data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
             data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
             return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
-        else:
-            data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
-            data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
-            data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
-            return render_template('view_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
-
+        else: # This is where the teaching assistants should be 
+            reviews = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['iss'], data['course'], data['id'], data['section_num'])
+            status = dbstuff.get_status_of_section(data['iss'], data['course'], data['section_num'])
+            if status in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
+                return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=reviews)
+            else:
+                return render_template('no_action.html')
     elif data['role'] == LEARNER:
         if dbstuff.section_exists(data['iss'], data['course'], data['section_num']):
             data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
