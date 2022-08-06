@@ -7,3 +7,4 @@ PyLTI1p3==1.9.1
 gunicorn==20.1.0
 Flask-MySQL==1.5.1
 PyMySQL==0.10.0
+typing_extensions==4.3.0
