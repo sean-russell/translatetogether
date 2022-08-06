@@ -10,7 +10,7 @@
     {% for review in reviews %}
     <article {% if review.completed %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
         <header>
-            {{review.term}}
+            {% if review.review_candidate %}<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/2000/xlink" width="10px" height="10px"><path d="m 7.71 9.04 l -2.63 -1.39 l -2.63 1.39 l 0.51 -2.93 l -2.13 -2.08 l 2.94 -0.42 l 1.31 -2.67 l 1.31 2.67 l 2.94 0.42 l -2.13 2.08 l 0.5 2.93 z" style="fill: #ff0;"/></svg>{% endif %}{{review.term}}
         </header>
         <p>{{ review.transterm }}</p>
         <p>
