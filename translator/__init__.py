@@ -368,6 +368,8 @@ def start_voting():
     course = data['course']
     vote_candidates = dbstuff.get_candidates_for_section(iss, course, section_num)
     term_assignments = dbstuff.get_trans_assignments_for_section_of_course(iss, course, section_num)
+    print("vote candidates", vote_candidates)
+    print("term assignments", term_assignments)
     for term, ass_list in term_assignments.items():
         for ass in ass_list:
             for vc in vote_candidates:
