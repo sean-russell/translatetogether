@@ -64,13 +64,13 @@
                             Exceptional
                         </label>
                     </fieldset>
-                    <label for="candidate">
-                        <input type="checkbox" id="candidate" name="candidate" data-tooltip="These choices will be used to determine which translations can be voted on.">
+                    <label for="candidate" data-tooltip="These choices will be used to determine which translations can be voted on.">
+                        <input type="checkbox" id="candidate" name="candidate" {% if review.candidate %}checked{% endif %}>
                         One of the best translations. 
                     </label>
                     <label for="review_comment" data-tooltip="This section is completely optional. But you can add some constructive feedback here.">
                         Comments:
-                        <textarea id="review_comment" name="review_comment" rows="8" cols="40"></textarea>
+                        <textarea id="review_comment" name="review_comment" rows="8" cols="40">{{review.review_comment}}</textarea>
                     </label>
                     <input type="submit" value="{{button_text}}">
                 </form>             

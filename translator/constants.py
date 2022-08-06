@@ -50,6 +50,7 @@ class Review:
         self.completed: bool = False
         self.review_score: int = -1
         self.review_comment: str = ""
+        self.review_candidate: bool = False
 
     def set_review_comment(self, comment):
         self.review_comment = comment
@@ -61,6 +62,9 @@ class Review:
             raise ValueError("Invalid review level")
         self.review_score = score
         self.completed = True
+    
+    def set_candidate(self, candidate: bool):
+        self.review_candidate = candidate
 
 class ReviewAssignment:
     def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term: str, transterm: str, transdescription: str):
