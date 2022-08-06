@@ -497,7 +497,7 @@ def get_candidates_for_section(iss:str, course:str, section:int) -> List[Review]
     """ Get all candidates for a section """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM reviews WHERE id IN (SELECT a from (SELECT vote_ass_id, MAX(id) as a from reviews GROUP BY iss, course, section, vote_ass_id HAVING iss = %s AND course = %s AND section = %s))", (iss, course, section))
+    cursor.execute("SELECT * FROM reviews WHERE id IN (SELECT a from (SELECT vote_ass_id, MAX(id) as a from reviews GROUP BY iss, course, section, vote_ass_id HAVING iss = %s AND course = %s AND section = %s) tab )", (iss, course, section))
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
