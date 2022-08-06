@@ -117,15 +117,16 @@ def main_page():
         if message_launch.is_deep_link_launch():
             section_list =  dbstuff.get_sections_for_course(data['iss'], data['course'])
             deep_link_response = message_launch.get_deep_link()
-            resource = DeepLinkResource()
-            resource.set_url('https://cstools.ucd.ie'+preface+'/init/')
-            resource.set_custom_params({'section': '1', 'phase': 'translate', 'language':'Chinese'})
-            resource.set_title('Translate Together (1) - Translation Task')
+            resource1 = DeepLinkResource()
+            resource1.set_url('https://cstools.ucd.ie'+preface+'/init/')
+            resource1.set_custom_params({'section': '1', 'phase': 'translate', 'language':'Chinese'})
+            resource1.set_title('Translate Together (1) - Translation Task')
             resource2 = DeepLinkResource()
             resource2.set_url('https://cstools.ucd.ie'+preface+'/init/')
             resource2.set_custom_params({'section': '1', 'phase': 'review', 'language':'Chinese'})
             resource2.set_title('Translate Together (1) - Review Task')
-            return deep_link_response.output_response_form([resource, resource2])
+            return deep_link_response.get_response_jwt([resource1, resource2])
+            # deep_link_response.output_response_form([resource1, resource2])
             
             print("deep_link_launch")
         elif owner == data['id']:
