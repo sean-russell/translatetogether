@@ -476,9 +476,11 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
     review = None
     if len(rows) == 1:
         r = rows[0]
+        print(r)
         review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
         review.set_review_comment(r['review_comment'])
         review.set_review_score(r['review_score'])
+        review.set_candidate(r['candidate'])
     else:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -495,16 +497,8 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
 def add_review(review: Review, iss: str, course: str, section: str):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT IGNORE INTO reviews (rev_ass_id, reviewer_id, translator_id, term, transterm, transdescription, review_comment, review_score, iss, course, section ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
-    (review.rev_ass_id, review.r_id, review.t_id, review.term, review.transterm, review.transdescription, review.review_comment, review.review_score, iss, course, section))
-    conn.commit()
-    conn.close()
-
-def add_candidate(review: Review, iss: str, course: str, section: str):
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute("INSERT IGNORE INTO candidates (rev_ass_id, reviewer_id, translator_id, term, transterm, transdescription, iss, course, section ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
-    (review.rev_ass_id, review.r_id, review.t_id, review.term, review.transterm, review.transdescription, iss, course, section))
+    cursor.execute("INSERT IGNORE INTO reviews (rev_ass_id, reviewer_id, translator_id, term, transterm, transdescription, review_comment, review_score, candidate, iss, course, section ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    (review.rev_ass_id, review.r_id, review.t_id, review.term, review.transterm, review.transdescription, review.review_comment, review.review_score, review.review_candidate, iss, course, section))
     conn.commit()
     conn.close()
 
