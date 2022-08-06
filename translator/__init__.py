@@ -130,7 +130,7 @@ def main_page():
                 resource.set_url('https://cstools.ucd.ie'+preface+'/init/')
                 resource.set_custom_params({'section': str(sec_num), 'phase': 'translate', 'language':'Chinese'})
                 resource.set_title('Translate Together ({}) - Translation Task'.format(sec_num))
-                r['JWT'] = deep_link_response.get_response_jwt(resource)
+                r['JWT'] = deep_link_response.get_response_jwt([resource])
                 r['title'] = 'Translate Together ({}) - Translation Task'.format(sec_num)
                 r['description'] = "The first phase of the assessment, students will be asked to translate a single term into the target language."
                 resources.append(r)
