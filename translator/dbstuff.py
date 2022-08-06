@@ -3,7 +3,7 @@ import pymysql
 from flaskext.mysql import MySQL
 from typing import Dict, List, Tuple
 
-mysql = MySQL()
+mysql: MySQL = MySQL()
 
 from typing import Dict, List, Any
 from translator.constants import *
