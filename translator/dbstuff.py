@@ -514,7 +514,7 @@ def get_candidates_for_section(iss:str, course:str, section:int) -> List[Review]
 def assign_vote_to_student(vle_user_id: str, vc: Review, iss: str, course: str, section_num: str):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT IGNORE INTO vote_assignments (voter_id, translator_id, term, transterm, transdescription, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    cursor.execute("INSERT IGNORE INTO vote_assignments (voter_id, translator_id, term, transterm, transdescription, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
     (vle_user_id, vc.t_id, vc.term, vc.transterm, vc.transdescription, iss, course, section_num))
     conn.commit()
     conn.close()
