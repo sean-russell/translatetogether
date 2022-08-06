@@ -375,6 +375,7 @@ def start_voting():
                     dbstuff.assign_vote_to_student(ass.id, vc, iss, course, section_num)
     dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_VOTES_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
+    return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 ######################################################################################################################################################################
 # Functions for administering the terms within in a section ##########################################################################################################
 ######################################################################################################################################################################
