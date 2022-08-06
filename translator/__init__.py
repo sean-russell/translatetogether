@@ -543,9 +543,12 @@ def add_new_translation():
 @app.route('/translation/review/', methods=['POST'])
 def show_review():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
+
     rev_ass_id = request.form['rev_ass_id']
     review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
     print("rev_ass_id", rev_ass_id, "review", review)
+    if data['role'] == INSTRUCTOR:
+        return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),review=review)
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 @app.route('/review/add/', methods=['POST'])
