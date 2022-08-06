@@ -22,6 +22,9 @@
 
 # Tasks
 
+## Overall Management
+- [] Implement deep linking
+
 ## Section Management
 
 - [X] Add section config for number of terms and number of reviews

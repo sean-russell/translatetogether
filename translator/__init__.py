@@ -1,3 +1,4 @@
+from importlib import resources
 import os
 import random
 import jwt
@@ -20,6 +21,8 @@ from pylti1p3.grade import Grade
 from pylti1p3.lineitem import LineItem
 from pylti1p3.tool_config import ToolConfJsonFile
 from pylti1p3.registration import Registration
+
+from translator.deep_link import DeepLink
 
 
 print(os.getcwd())
@@ -115,18 +118,27 @@ def main_page():
     if data['role'] == INSTRUCTOR:
         owner = dbstuff.get_course_owner(data['iss'], data['course'])
         if message_launch.is_deep_link_launch():
-            section_list =  dbstuff.get_sections_for_course(data['iss'], data['course'])
-            deep_link_response = message_launch.get_deep_link()
-            resource1 = DeepLinkResource()
-            resource1.set_url('https://cstools.ucd.ie'+preface+'/init/')
-            resource1.set_custom_params({'section': '1', 'phase': 'translate', 'language':'Chinese'})
-            resource1.set_title('Translate Together (1) - Translation Task')
-            resource2 = DeepLinkResource()
-            resource2.set_url('https://cstools.ucd.ie'+preface+'/init/')
-            resource2.set_custom_params({'section': '1', 'phase': 'review', 'language':'Chinese'})
-            resource2.set_title('Translate Together (1) - Review Task')
-            return deep_link_response.get_response_jwt([resource1, resource2])
-            # deep_link_response.output_response_form([resource1, resource2])
+            section_list =  [ s['section'] for s in dbstuff.get_sections_for_course(data['iss'], data['course'])]
+            # deep_link_response = message_launch.get_deep_link()
+            deployment_id = message_launch._get_deployment_id()
+            deep_linking_settings = message_launch._get_jwt_body().get('https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings')  
+            deep_link_response = DeepLink(message_launch._registration, deployment_id, deep_linking_settings)
+            resources = []
+            for sec_num in section_list:
+                r = {}
+                resource = DeepLinkResource()
+                resource.set_url('https://cstools.ucd.ie'+preface+'/init/')
+                resource.set_custom_params({'section': str(sec_num), 'phase': 'translate', 'language':'Chinese'})
+                resource.set_title('Translate Together ({}) - Translation Task'.format(sec_num))
+                r['JWT'] = deep_link_response.get_response_jwt(resource)
+                r['title'] = 'Translate Together ({}) - Translation Task'.format(sec_num)
+                r['description'] = "The first phase of the assessment, students will be asked to translate a single term into the target language."
+                resources.append(r)
+
+            html = render_template('deep_response.html', resources=resources, deep_link_return_url=deep_linking_settings['deep_link_return_url'])
+            print(html)
+            # return deep_link_response.get_response_jwt([resource1, resource2])
+            return html
             
             print("deep_link_launch")
         elif owner == data['id']:
