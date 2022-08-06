@@ -563,5 +563,18 @@ def add_new_review():
     print(review)
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
+@app.route('/review/taadd/', methods=['POST'])
+def add_new_ta_review():
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
+    rev_ass_id = request.form['rev_ass_id']
+    candidate = request.form['candidate']
+    print("candidate",candidate, type(candidate))
+    review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
+    review.set_review_score(request.form['review_score'])
+    review.set_review_comment(request.form['review_comment'])
+    dbstuff.add_review(review, data['iss'], data['course'], data['section_num'])
+    print(review)
+    return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003)

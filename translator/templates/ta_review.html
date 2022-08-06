@@ -32,7 +32,7 @@
                 {{review.transdescription}}
             </article>
             <article>
-                <form action="{{ preface~url_for('add_new_review') }}" method="post">
+                <form action="{{ preface~url_for('add_new_ta_review') }}" method="post">
                     <input type="hidden" id="rev_ass_id" name="rev_ass_id" value="{{ review.rev_ass_id }}">
                     <input type="hidden" id="r_id" name="r_id" value="{{ review.r_id }}">
                     <input type="hidden" id="t_id" name="t_id" value="{{ review.t_id }}">
@@ -65,7 +65,7 @@
                         </label>
                     </fieldset>
                     <label for="candidate">
-                        <input type="checkbox" id="candidate" name="candidate" role="switch" data-tooltip="These choices will be used to determine which translations can be voted on.">
+                        <input type="checkbox" id="candidate" name="candidate" data-tooltip="These choices will be used to determine which translations can be voted on.">
                         One of the best translations. 
                     </label>
                     <label for="review_comment" data-tooltip="This section is completely optional. But you can add some constructive feedback here.">
