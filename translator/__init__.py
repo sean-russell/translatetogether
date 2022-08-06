@@ -144,6 +144,7 @@ def main_page():
             return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
         else: # This is where the teaching assistants should be 
             reviews = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+            print("reviews", reviews)
             status = dbstuff.get_status_of_section(data['iss'], data['course'], data['section_num'])
             if status in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
                 return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=reviews)
