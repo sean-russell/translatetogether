@@ -481,6 +481,7 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
         review.set_review_comment(r['review_comment'])
         review.set_review_score(r['review_score'])
         review.set_candidate(r['candidate'] in (1, '1'))
+        print(review)
     else:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
