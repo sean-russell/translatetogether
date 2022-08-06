@@ -115,6 +115,14 @@ def main_page():
     if data['role'] == INSTRUCTOR:
         owner = dbstuff.get_course_owner(data['iss'], data['course'])
         if message_launch.is_deep_link_launch():
+            section_list =  dbstuff.get_sections_for_course(data['iss'], data['course'])
+            deep_link_response = message_launch.get_deep_link()
+            resource = DeepLinkResource()
+            resource.set_url('https://cstools.ucd.ie'+preface+'/init/')
+            resource.set_custom_params({'section': '1', 'phase': 'translate', 'language':'Chinese'})
+            resource.set_title('Translate Together (1) - Translation Task')
+            return deep_link_response.output_response_form([resource])
+            
             print("deep_link_launch")
         elif owner == data['id']:
             data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
