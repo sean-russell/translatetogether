@@ -567,12 +567,15 @@ def add_new_review():
 def add_new_ta_review():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     rev_ass_id = request.form['rev_ass_id']
-    candidate = request.form['candidate']
+    candidate = request.form.get('candidate')  != None
     print("candidate",candidate, type(candidate))
     review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
     review.set_review_score(request.form['review_score'])
     review.set_review_comment(request.form['review_comment'])
+    review.set_candidate(candidate)
     dbstuff.add_review(review, data['iss'], data['course'], data['section_num'])
+    if candidate:
+        dbstuff.add_candidate(review, data['iss'], data['course'], data['section_num'])
     print(review)
     return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 

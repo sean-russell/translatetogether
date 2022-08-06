@@ -500,6 +500,14 @@ def add_review(review: Review, iss: str, course: str, section: str):
     conn.commit()
     conn.close()
 
+def add_candidate(review: Review, iss: str, course: str, section: str):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT IGNORE INTO candidates (rev_ass_id, reviewer_id, translator_id, term, transterm, transdescription, iss, course, section ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    (review.rev_ass_id, review.r_id, review.t_id, review.term, review.transterm, review.transdescription, iss, course, section))
+    conn.commit()
+    conn.close()
+
 def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[Review]:
     reviews: List[Review] = []
     assigned_reviews = get_assigned_reviews_for_student_in_section(id, iss, course, section)
