@@ -497,7 +497,7 @@ def get_candidates_for_section(iss:str, course:str, section:int) -> List[Review]
     """ Get all candidates for a section """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM reviews WHERE id IN (SELECT MAX(id) from reviews GROUP BY iss, course, section, vle_user_id HAVING iss = %s AND course = %s AND section = %s)", (iss, course, section))
+    cursor.execute("SELECT * FROM reviews WHERE id IN (SELECT MAX(id) from reviews GROUP BY iss, course, section, vote_ass_id HAVING iss = %s AND course = %s AND section = %s)", (iss, course, section))
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
@@ -537,56 +537,6 @@ def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, c
         else:
             reviews.append(ar.get_review())
     return reviews
-
-#########################################
-# def course_exists(iss: str, course: str) -> bool:
-#     """ Check if a course exists in the database """
-#     conn = mysql.connect()
-#     cursor = conn.cursor(pymysql.cursors.DictCursor)
-#     cursor.execute("SELECT * FROM courses WHERE iss = %s AND course_id = %s", (iss, course))
-#     rows = cursor.fetchall()
-#     conn.close()
-#     cursor.close()
-#     return len(rows) == 1
-# def assign_term(data):
-#     """ get list of terms that have been assigned for this iss, course and section
-#     order the list by the number of times they have been assigned descending"""
-#     conn = mysql.connect()
-#     cursor = conn.cursor(pymysql.cursors.DictCursor)
-#     cursor.execute("SELECT term, count(vle_user_id) as c FROM trans_assignments WHERE iss = %s AND course = %s AND section = %s GROUP BY term ORDER BY c DESC", (data['iss'], data['course'], data['section_num']))
-#     rows = cursor.fetchall()
-#     print(rows)
-#     if len(rows) > 0:
-#         term = rows[0]['term']
-#     else:
-#         term = assign_random_term(data)
-#     """ assign the term to the user """
-#     conn = mysql.connect()
-#     cursor = conn.cursor()
-#     cursor.execute("INSERT INTO trans_assignments (vle_user_id, term, iss, course, section) VALUES (%s, %s, %s, %s, %s)", (data['id'], term, data['iss'], data['course'], data['section_num'])  )
-#     conn.commit()
-#     conn.close()
-#     return
-
-# def assign_random_term(data):
-#     conn = mysql.connect()
-#     cursor = conn.cursor(pymysql.cursors.DictCursor)
-#     cursor.execute("SELECT term FROM terms WHERE iss = %s AND course = %s AND section = %s", (data['course'], data['section_num']))
-#     rows = cursor.fetchall()
-#     cursor.close()
-#     conn.close()
-#     term = random.choice([r['term'] for r in rows])
-#     return term
-
-# def translate_term(user, config, term, transterm, translation):
-#     """ add the translation to the database """
-#     conn = mysql.connect()
-#     cursor = conn.cursor()
-#     cursor.execute("INSERT INTO translations (vle_id, term, transterm, transdescription, section, course_id) VALUES (%s, %s, %s, %s, %s, %s)", 
-#         (user['id'], term, transterm, translation, config['section_num'], config['course']))
-#     conn.commit()
-#     conn.close()
-#     return
 
 def get_assigned_term(data: Dict) -> Dict[str,str]:
     conn = mysql.connect()
