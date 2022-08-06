@@ -144,10 +144,15 @@ def main_page():
             return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
         else: # This is where the teaching assistants should be 
             reviews = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+            rll: Dict[str,List[Review]] = {}
+            for review in reviews:
+                if review.term not in rll:
+                    rll[review.term] = []
+                rll[review.term].append(review)
             print("reviews", reviews)
             status = dbstuff.get_status_of_section(data['iss'], data['course'], data['section_num'])
             if status in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
-                return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=reviews)
+                return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=rll)
             else:
                 return render_template('no_action.html')
     elif data['role'] == LEARNER:
@@ -543,24 +548,20 @@ def add_new_translation():
 @app.route('/translation/review/', methods=['POST'])
 def show_review():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
-
     rev_ass_id = request.form['rev_ass_id']
     review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
-    print("rev_ass_id", rev_ass_id, "review", review)
     if data['role'] == INSTRUCTOR:
         return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),review=review)
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 @app.route('/review/add/', methods=['POST'])
 def add_new_review():
-    print("add_new_review", request.form)
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     rev_ass_id = request.form['rev_ass_id']
     review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
     review.set_review_score(request.form['review_score'])
     review.set_review_comment(request.form['review_comment'])
     dbstuff.add_review(review, data['iss'], data['course'], data['section_num'])
-    print(review)
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 @app.route('/review/taadd/', methods=['POST'])
@@ -568,13 +569,11 @@ def add_new_ta_review():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     rev_ass_id = request.form['rev_ass_id']
     candidate = request.form.get('candidate')  != None
-    print("candidate",candidate, type(candidate))
     review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
     review.set_review_score(request.form['review_score'])
     review.set_review_comment(request.form['review_comment'])
     review.set_candidate(candidate)
     dbstuff.add_review(review, data['iss'], data['course'], data['section_num'])
-    print(review)
     return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 if __name__ == '__main__':

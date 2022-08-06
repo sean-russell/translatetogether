@@ -7,28 +7,33 @@
 <body>
     <h1>Reviews</h1>
     <p>This is the list of translated terms that you need to review. A component of the student grade will be based on how closely their reviews match your review. Please complete the reviews carefully so that students can be more accurate. For an introduction to the assessment criteria see this <a href="{{ preface~url_for('static', filename='assessment.html') }}" target="_blank">page</a>. </p>
-    {% for review in reviews %}
+    {% for term in reviews %}
+    
     <article {% if review.completed %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
         <header>
-            {{review.term}}
+            {{term}}
         </header>
-        <p>{% if review.review_candidate %}<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/2000/xlink" width="20px" height="20px"><path d="M 15.42 18.08 L 10.16 15.3 L 4.9 18.08 L 5.92 12.22 L 1.66 8.06 L 7.54 7.22 L 10.16 1.88 L 12.78 7.22 L 18.66 8.06 L 14.4 12.22 L 15.4 18.08 Z" style="fill: #ff0;"/></svg>{% endif %}{{ review.transterm }}</p>
-        <p>
-            {% if review.completed %}
-                Status: Completed
-            {% else %}
-                Status: Not completed
-            {% endif %}
-        </p>
-        <form action="{{ preface~url_for('show_review') }}" method="post">
-            <input type="hidden" id="rev_ass_id" name="rev_ass_id" value="{{ review.rev_ass_id }}">
-            <input type="hidden" name="datajson" value="{{datajson}}">
-            {% if review.completed %}
-                <input type="submit" value="Update Review">
-            {% else %}
-                <input type="submit" value="Review Translation">
-            {% endif %}
-        </form>
+        {% for review in reviews[term] %}
+            <article>
+                <p>{% if review.review_candidate %}<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/2000/xlink" width="20px" height="20px"><path d="M 15.42 18.08 L 10.16 15.3 L 4.9 18.08 L 5.92 12.22 L 1.66 8.06 L 7.54 7.22 L 10.16 1.88 L 12.78 7.22 L 18.66 8.06 L 14.4 12.22 L 15.4 18.08 Z" style="fill: #ff0;"/></svg>{% endif %}{{ review.transterm }}</p>
+                <p>
+                    {% if review.completed %}
+                        Status: Completed
+                    {% else %}
+                        Status: Not completed
+                    {% endif %}
+                </p>
+                <form action="{{ preface~url_for('show_review') }}" method="post">
+                    <input type="hidden" id="rev_ass_id" name="rev_ass_id" value="{{ review.rev_ass_id }}">
+                    <input type="hidden" name="datajson" value="{{datajson}}">
+                    {% if review.completed %}
+                        <input type="submit" value="Update Review">
+                    {% else %}
+                        <input type="submit" value="Review Translation">
+                    {% endif %}
+                </form>
+            </article>
+        {% endfor %}
     </article>
     {% endfor %}
 </body>
