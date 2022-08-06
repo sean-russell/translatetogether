@@ -53,7 +53,7 @@
 
 # Teaching Assistant Side
 
-- [] View list of assigned translations
+- [] View list of assigned review tasks
 - [] Select individual translation for completion
 - [] Review translation
 - [] Show completed translations in list

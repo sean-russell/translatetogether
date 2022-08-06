@@ -121,7 +121,11 @@ def main_page():
             resource.set_url('https://cstools.ucd.ie'+preface+'/init/')
             resource.set_custom_params({'section': '1', 'phase': 'translate', 'language':'Chinese'})
             resource.set_title('Translate Together (1) - Translation Task')
-            return deep_link_response.output_response_form([resource])
+            resource2 = DeepLinkResource()
+            resource2.set_url('https://cstools.ucd.ie'+preface+'/init/')
+            resource2.set_custom_params({'section': '1', 'phase': 'review', 'language':'Chinese'})
+            resource2.set_title('Translate Together (1) - Review Task')
+            return deep_link_response.output_response_form([resource, resource2])
             
             print("deep_link_launch")
         elif owner == data['id']:
