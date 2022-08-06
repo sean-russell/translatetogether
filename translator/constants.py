@@ -19,6 +19,12 @@ PHASE_TRANSLATE= "translate"
 PHASE_REVIEW = "review"
 PHASE_VOTE = "vote"
 
+phase_descriptions={ 
+    PHASE_TRANSLATE: "This phase of the assessment, students will be asked to translate a single term into {}.",
+    PHASE_REVIEW: "This phase of the assessment, students will be asked to review the translation of a number of terms translated into {} by their classmates.",
+    PHASE_VOTE: "This phase of the assessment, students will be asked to vote on a number of terms translated into {} to determine which is considered best."
+}
+
 NUM_REVIEWS = 3
 NUM_TA_REVIEWS = 2
 

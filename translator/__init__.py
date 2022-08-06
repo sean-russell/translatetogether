@@ -125,15 +125,17 @@ def main_page():
             deep_link_response = DeepLink(message_launch._registration, deployment_id, deep_linking_settings)
             resources = []
             for sec_num in section_list:
-                r = {}
-                resource = DeepLinkResource()
-                resource.set_url('https://cstools.ucd.ie'+preface+'/init/')
-                resource.set_custom_params({'section': str(sec_num), 'phase': 'translate', 'language':'Chinese'})
-                resource.set_title('Translate Together ({}) - Translation Task'.format(sec_num))
-                r['JWT'] = deep_link_response.get_response_jwt([resource])
-                r['title'] = 'Translate Together ({}) - Translation Task'.format(sec_num)
-                r['description'] = "The first phase of the assessment, students will be asked to translate a single term into the target language."
-                resources.append(r)
+                for phase in (PHASE_TRANSLATE,PHASE_REVIEW,PHASE_VOTE):
+                    for lang in ("Arabic", "Chinese"):
+                        r = {}
+                        resource = DeepLinkResource()
+                        resource.set_url('https://cstools.ucd.ie'+preface+'/init/')
+                        resource.set_custom_params({'section': str(sec_num), 'phase': phase, 'language': lang})
+                        resource.set_title('Translate Together ({}) - {} task'.format(sec_num, phase))
+                        r['JWT'] = deep_link_response.get_response_jwt([resource])
+                        r['title'] = 'Translate Together ({}) - {} task'.format(sec_num, phase)
+                        r['description'] = phase_descriptions[phase].format(lang)
+                        resources.append(r)
 
             html = render_template('deep_response.html', resources=resources, deep_link_return_url=deep_linking_settings['deep_link_return_url'])
             print(html)
