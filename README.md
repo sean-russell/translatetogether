@@ -37,7 +37,8 @@
 - [] Add teaching assistant review assignment
 - [] Add teaching assistant top 5 identification
 - [X] Add ability to input multiple terms ar the same time
-- [] Add vote assignment algorithm
+- [X] Add vote assignment algorithm
+- [] Fix whatever is broken in vote assignment algorithm...
 ## Course Management
 
 - [X] Add valid email address check for ta entry
