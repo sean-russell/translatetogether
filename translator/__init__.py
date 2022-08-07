@@ -175,6 +175,15 @@ def main_page():
                     if review_assignments == None:
                         raise Exception("No reviews assigned!!!")
                     return render_template('reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),reviews=review_assignments)
+            elif data['phase'] == PHASE_VOTE:
+                if data['section']['status'] in (STATUS_VOTES_ASSIGNED, convert_status(STATUS_VOTES_ASSIGNED)):
+                    all_terms = set()
+                    assignment = dbstuff.get_trans_assignment_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+                    candidates = dbstuff.get_candidates_for_section(data['iss'], data['course'], data['section_num'])
+                    for candidate in candidates:
+                        all_terms.add(candidate.term)
+                    assigned_terms = all_terms - set( (assignment.term,))
+                    return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
             
         else:
             return render_template('config.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
@@ -582,7 +591,11 @@ def add_new_review():
     review.set_review_score(request.form['review_score'])
     review.set_review_comment(request.form['review_comment'])
     dbstuff.add_review(review, data['iss'], data['course'], data['section_num'])
-    return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
+    review_assignments = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+    if review_assignments == None:
+        raise Exception("No reviews assigned!!!")
+    return render_template('reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),reviews=review_assignments)
+    # return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 @app.route('/review/taadd/', methods=['POST'])
 def add_new_ta_review():

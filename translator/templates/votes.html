@@ -24,9 +24,9 @@
             <input type="hidden" id="vot_ass_id" name="rev_ass_id" value="{{ vote.vot_ass_id }}">
             <input type="hidden" name="datajson" value="{{datajson}}">
             {% if review.completed %}
-                <input type="submit" value="Update Review">
+                <input type="submit" value="Update Votes">
             {% else %}
-                <input type="submit" value="Review Translation">
+                <input type="submit" value="Vote on Translations">
             {% endif %}
         </form>
     </article>

@@ -67,7 +67,7 @@
                     Current Status
                 </td>
                 <td>{{data.section.status}}</td>
-                <td>start_voting
+                <td>
                     {% if data.section.status == "Not prepared" %}
                         <form action="{{preface~url_for('finalise_section')}}" method="POST" onsubmit="return validateForm()">
                             <input type="hidden" name="datajson" value="{{datajson}}">

@@ -119,7 +119,23 @@ class ReviewAssignments:
     def get_num_assigned(self) -> int:
         return len(self.reviews)
 
+class Vote:
 
+    def __init__(self, vai: str, v_id, t_id, term, transterm, transdescription):
+        self.vote_assign_id: str = vai
+        self.v_id: str = v_id
+        self.t_id: str = t_id
+        self.term: str = term
+        self.transterm: str = transterm
+        self.transdescription: str = transdescription
+        self.vote_score: int = -1
+        self.completed: bool = False
+
+    def set_vote_score(self, score: int):
+        if type(score) != int:
+            score = int(score)
+        self.vote_score = score
+        self.completed = True
 
 
 def convert_status(status : int) -> str:

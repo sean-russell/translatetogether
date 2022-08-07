@@ -49,6 +49,7 @@
 - [X] View list of assigned translation reviews
 - [X] Select individual translation for review
 - [X] Review translation
+- [] Return to review list after completing review
 - [X] Show completed translations in list (indicated by colour and text)
 - [] View list of terms to be voted on
 - [] Select individual term for voting on the translation

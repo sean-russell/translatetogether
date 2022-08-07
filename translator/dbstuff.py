@@ -45,16 +45,6 @@ def create_section(data: Dict, sec: str) -> None:
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = get_student_details_for_course(data['iss'], data['course'])
 
-def section_exists(iss: str, course: str, section: str) -> bool:
-    """ Check if a section exists """
-    conn = mysql.connect()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM sections WHERE iss = %s AND course = %s AND section_number = %s", (iss, course, section))
-    rows = cursor.fetchall()
-    conn.close()
-    cursor.close()
-    return len(rows) > 0
-
 def delete_section(iss: str, course: str, section: str) -> None:
     """ delete the votes for this iss, course, and section"""
     conn = mysql.connect()
@@ -222,6 +212,17 @@ def get_trans_assignments_for_section_of_course(iss: str, course: str, section: 
         else:
             ass_dict[r['term']].append( TranslationAssignment(r['vle_user_id'], get_name_for_vle_user_id(r['vle_user_id']), r['term']) )
     return ass_dict
+
+# def get_trans_assignment_for_student_in_section(u_id:str, iss: str, course: str, section: str) -> TranslationAssignment:
+#     conn = mysql.connect()
+#     cursor = conn.cursor(pymysql.cursors.DictCursor)
+#     cursor.execute("SELECT * FROM trans_assignments WHERE vle_user_id = %s AND iss = %s AND course = %s AND section = %s", (u_id, iss, course, section))
+#     rows = cursor.fetchall()
+#     conn.close()
+#     cursor.close()
+#     if len(rows) == 1:
+#         return TranslationAssignment(rows[0]['vle_user_id'], get_name_for_vle_user_id(rows[0]['vle_user_id']), rows[0]['term'])
+#     return None
 
 def get_num_translations_for_section_of_course(iss: str, course: str, section: str) -> Dict[str,int]:
     """ Get the number of translations for each term for a section of a course """
@@ -518,6 +519,43 @@ def assign_vote_to_student(vle_user_id: str, vc: Review, iss: str, course: str, 
     (vle_user_id, vc.t_id, vc.term, vc.transterm, vc.transdescription, iss, course, section_num))
     conn.commit()
     conn.close()
+
+def get_assigned_votes_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[Vote]:
+    """ Get all assigned votes for a student """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM vote_assignments WHERE voter_id = %s AND iss = %s AND course = %s AND section = %s", (id, iss, course, section))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    return [ Vote(r['id'], r['voter_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
+
+def get_latest_vote_by_vote_assignment_id(v_id) -> Vote:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    #SELECT * FROM votes WHERE id IN(SELECT MAX(id) FROM votes WHERE v_ass_id = %s)
+    cursor.execute("SELECT * FROM votes WHERE id IN (SELECT MAX(id) FROM votes WHERE v_ass_id = %s)", (v_id))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    vote = None
+    if len(rows) == 1:
+        r = rows[0]
+        vote = Vote(r['v_ass_id'], r['voter_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
+        vote.set_vote_score(r['vote_score'])
+        return vote
+    return None
+
+def get_assigned_and_completed_votes_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[Vote]:
+    votes: List[Vote] = []
+    assigned_votes = get_assigned_votes_for_student_in_section(id, iss, course, section)
+    for av in assigned_votes:
+        vote = get_latest_vote_by_vote_assignment_id(av.vote_assign_id)
+        if vote is not None:
+            votes.append(vote)
+        else:
+            votes.append(av)
+    return votes
 
 def add_review(review: Review, iss: str, course: str, section: str):
     conn = mysql.connect()
