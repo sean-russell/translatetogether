@@ -143,14 +143,14 @@ def main_page():
             data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
             return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
         else: # This is where the teaching assistants should be 
-            reviews = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
-            rll: Dict[str,List[Review]] = {}
-            for review in reviews:
-                if review.term not in rll:
-                    rll[review.term] = []
-                rll[review.term].append(review)
             status = dbstuff.get_status_of_section(data['iss'], data['course'], data['section_num'])
             if status in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
+                reviews = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+                rll: Dict[str,List[Review]] = {}
+                for review in reviews:
+                    if review.term not in rll:
+                        rll[review.term] = []
+                    rll[review.term].append(review)
                 return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=rll)
             else:
                 return render_template('no_action.html')
@@ -607,7 +607,14 @@ def add_new_ta_review():
     review.set_review_comment(request.form['review_comment'])
     review.set_candidate(candidate)
     dbstuff.add_review(review, data['iss'], data['course'], data['section_num'])
-    return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
+    reviews = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+    rll: Dict[str,List[Review]] = {}
+    for review in reviews:
+        if review.term not in rll:
+            rll[review.term] = []
+        rll[review.term].append(review)
+    return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=rll)
+    # return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003)
