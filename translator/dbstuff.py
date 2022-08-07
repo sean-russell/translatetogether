@@ -54,7 +54,7 @@ def section_exists(iss: str, course: str, section: str) -> bool:
     conn.close()
     cursor.close()
     return len(rows) > 0
-    
+
 def delete_section(iss: str, course: str, section: str) -> None:
     """ delete the votes for this iss, course, and section"""
     conn = mysql.connect()
@@ -223,16 +223,16 @@ def get_trans_assignments_for_section_of_course(iss: str, course: str, section: 
             ass_dict[r['term']].append( TranslationAssignment(r['vle_user_id'], get_name_for_vle_user_id(r['vle_user_id']), r['term']) )
     return ass_dict
 
-# def get_trans_assignment_for_student_in_section(u_id:str, iss: str, course: str, section: str) -> TranslationAssignment:
-#     conn = mysql.connect()
-#     cursor = conn.cursor(pymysql.cursors.DictCursor)
-#     cursor.execute("SELECT * FROM trans_assignments WHERE vle_user_id = %s AND iss = %s AND course = %s AND section = %s", (u_id, iss, course, section))
-#     rows = cursor.fetchall()
-#     conn.close()
-#     cursor.close()
-#     if len(rows) == 1:
-#         return TranslationAssignment(rows[0]['vle_user_id'], get_name_for_vle_user_id(rows[0]['vle_user_id']), rows[0]['term'])
-#     return None
+def get_trans_assignment_for_student_in_section(u_id:str, iss: str, course: str, section: str) -> TranslationAssignment:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM trans_assignments WHERE vle_user_id = %s AND iss = %s AND course = %s AND section = %s", (u_id, iss, course, section))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    if len(rows) == 1:
+        return TranslationAssignment(rows[0]['vle_user_id'], get_name_for_vle_user_id(rows[0]['vle_user_id']), rows[0]['term'])
+    return None
 
 def get_num_translations_for_section_of_course(iss: str, course: str, section: str) -> Dict[str,int]:
     """ Get the number of translations for each term for a section of a course """
