@@ -45,6 +45,16 @@ def create_section(data: Dict, sec: str) -> None:
     data['tas'] = get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = get_student_details_for_course(data['iss'], data['course'])
 
+def section_exists(iss: str, course: str, section: str) -> bool:
+    """ Check if a section exists """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM sections WHERE iss = %s AND course = %s AND section_number = %s", (iss, course, section))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    return len(rows) > 0
+    
 def delete_section(iss: str, course: str, section: str) -> None:
     """ delete the votes for this iss, course, and section"""
     conn = mysql.connect()
