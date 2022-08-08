@@ -55,7 +55,7 @@
 - [] View list of terms to be voted on
 - [] Select individual term for voting on the translation
 - [] Input votes for the individual terms
-
+- [] Add alternate landing page for out of phase access
 
 # Teaching Assistant Side
 

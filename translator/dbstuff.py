@@ -466,7 +466,7 @@ def add_review_assignment(reviewer_id: str, translator_id: str, term: str, trans
     conn.commit()
     conn.close()
 
-def get_assigned_reviews_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[ReviewAssignment]:
+def get_assigned_reviews_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[Review]:
     """ Get all assigned reviews for a student """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -474,7 +474,7 @@ def get_assigned_reviews_for_student_in_section(id:str, iss:str, course:str, sec
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
-    return [ ReviewAssignment(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
+    return [ Review(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
 
 def get_latest_review_by_review_assignment_id(rev_id) -> Review:
     conn = mysql.connect()

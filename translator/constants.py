@@ -71,18 +71,7 @@ class Review:
 
     def __repr__(self):
         return self.__str__()
-        
-class ReviewAssignment:
-    def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term: str, transterm: str, transdescription: str):
-        self.rev_ass_id = rev_ass_id
-        self.r_id: str = r_id
-        self.t_id: str = t_id
-        self.term: str = term
-        self.transterm: str = transterm
-        self.transdescription: str = transdescription
 
-    def get_review(self) -> Review:
-        return Review(self.rev_ass_id, self.r_id, self.t_id, self.term, self.transterm, self.transdescription)
 
 class TAReviewAssignments:
     def __init__(self, id):

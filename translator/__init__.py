@@ -70,6 +70,10 @@ config = {
 app.config.from_mapping(config)
 cache = Cache(app)
 
+@app.template_filter()
+def any(dttm):
+    return any(dttm)
+
 def get_lti_config_path():
     return os.path.join(app.root_path, 'config', 'tool.json')
 
@@ -177,12 +181,14 @@ def main_page():
                     return render_template('reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),reviews=review_assignments)
             elif data['phase'] == PHASE_VOTE:
                 if data['section']['status'] in (STATUS_VOTES_ASSIGNED, convert_status(STATUS_VOTES_ASSIGNED)):
-                    all_terms = set()
+                    data['candidates']: Dict[str,List[Vote]] = {}
                     assignment = dbstuff.get_trans_assignment_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
                     candidates = dbstuff.get_candidates_for_section(data['iss'], data['course'], data['section_num'])
                     for candidate in candidates:
-                        all_terms.add(candidate.term)
-                    assigned_terms = all_terms - set( (assignment.term,))
+                        if candidate.term not in data['candidates']:
+                            data['candidates'][candidate.term] = []
+                        if candidate.term != assignment.term:
+                            data['candidates'][candidate.term].append(candidate)
                     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
             
         else:
