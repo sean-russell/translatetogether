@@ -522,6 +522,46 @@ def get_candidates_for_section(iss:str, course:str, section:int) -> List[Review]
             reviews.append(review)
     return reviews
 
+def get_latest_vote_by_vote_assignment_id(rev_id) -> Review:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM votes WHERE id IN (SELECT MAX(id) FROM votes WHERE vote_ass_id = %s)", (rev_id))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    review = None
+    if len(rows) == 1:
+        r = rows[0]
+        review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
+        review.set_review_comment(r['review_comment'])
+        review.set_review_score(r['review_score'])
+        review.set_candidate(r['candidate'] in (1, '1'))
+    else:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM review_assignments WHERE id = %s", (rev_id))
+        rows = cursor.fetchall()
+        conn.close()
+        cursor.close()
+        if len(rows) == 1:
+            r = rows[0]
+            review = Review(r['id'], r['reviewer_id'], r['translator_id'], r['term'], r['transterm'], r['transdescription'])
+    
+    return review
+
+def get_votes_for_student_in_section(id:str, iss:str, course:str, section:int) -> List[Vote]:
+    """ Get all votes for a student in a section """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM votes WHERE voter_id = %s AND iss = %s AND course = %s AND section = %s", (id, iss, course, section))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    votes = []
+    for r in rows:
+        vote = Vote(r['vote_ass_id'], r['voter_id'],r['translator_id'], r['term'], r['transterm'], r['transdescription'])
+    return [  for r in rows ]
+
 def assign_vote_to_student(vle_user_id: str, vc: Review, iss: str, course: str, section_num: str):
     conn = mysql.connect()
     cursor = conn.cursor()
