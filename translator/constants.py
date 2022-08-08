@@ -124,7 +124,17 @@ class Vote:
             score = int(score)
         self.vote_score = score
         self.completed = True
-
+    def toJSON(self):
+        return {
+            "vote_assign_id": self.vote_assign_id,
+            "v_id": self.v_id,
+            "t_id": self.t_id,
+            "term": self.term,
+            "transterm": self.transterm,
+            "transdescription": self.transdescription,
+            "vote_score": self.vote_score,
+            "completed": self.completed
+        }
     def __str__(self):
         return f"{self.transterm} {self.vote_score}"
 
