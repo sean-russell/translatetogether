@@ -109,7 +109,6 @@ class ReviewAssignments:
         return len(self.reviews)
 
 class Vote:
-
     def __init__(self, vai: str, v_id, t_id, term, transterm, transdescription):
         self.vote_assign_id: str = vai
         self.v_id: str = v_id
@@ -125,6 +124,9 @@ class Vote:
             score = int(score)
         self.vote_score = score
         self.completed = True
+
+    def __str__(self):
+        return f"{self.transterm} {self.vote_score}"
 
 
 def convert_status(status : int) -> str:
