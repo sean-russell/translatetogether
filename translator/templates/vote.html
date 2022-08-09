@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+</head>
+    <body>
+        {% set num_votes = votes | length %}
+        <h1>Voting</h1>
+        <p>The list below contains the different translations of the term "" that were nimonated as the best. Please vote by placing a number beside the terms according to how you would rank them. For the term you consider the best you would choose 1, for the next best 2 and so on. </p>
+        <form action="{{ preface~url_for('add_votes') }}" method="post">
+            <input type="hidden" id="term" name="term" value="{{term}}">
+            {% for v in votes %}
+            <article {% if v.completed %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
+                <header>{{v.transterm}}</header>
+                <p>{{v.transdescription}}</p>
+                <details role="list">
+                    <summary aria-haspopup="listbox">Vote</summary>
+                    <ul role="listbox">
+                        {%  for n in range(num_votes) %}
+                        <li>
+                            <label for="vote-{{v.vote_assign_id}}-{{n}}">
+                                <input type="radio" id="vote-{{v.vote_assign_id}}-{{n}}" name="vote-{{v.vote_assign_id}}" value="{{n}}" {% if v.vote_score == n %}checked{% endif %}>
+                                {{n+1}}
+                            </label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </details>
+            </article>
+            {% endfor %}
+            <input type="submit" value="Submit Votes">
+        </form>
+    </body> 
+</html>
