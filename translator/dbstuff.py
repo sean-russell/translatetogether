@@ -197,7 +197,7 @@ def record_action(data: Dict, actioncompleted: str ):
     conn.close()
     return
 
-def get_terms_for_section_of_course(iss: str, course: str, section: str) -> List:
+def get_terms_for_section_of_course(iss: str, course: str, section: str) -> List[Dict[str,str]]:
     """ Get all terms for a section of a course """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -451,20 +451,20 @@ def get_term_translations_for_section(iss: str, course: str, section: int) -> Li
     """ load the most recent translation for each student. TODO This will only work if students are assigned 1 term!"""
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    query = "SELECT vle_user_id, term_id, term, transterm, transdescription FROM translations WHERE id IN (SELECT MAX(id) FROM translations GROUP BY iss, course, section, vle_user_id HAVING iss = %s AND course = %s AND section = %s)"
+    query = "SELECT id, vle_user_id, term_id, term, transterm, transdescription FROM translations WHERE id IN (SELECT MAX(id) FROM translations GROUP BY iss, course, section, vle_user_id HAVING iss = %s AND course = %s AND section = %s)"
     cursor.execute(query, (iss, course, str(section)))
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
     #"id term transterm transdescription"
-    return [ TranslatedTerm(r['vle_user_id'], r['term_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
+    return [ TranslatedTerm(r['vle_user_id'], r['term_id'], r['term'], r['id'], r['transterm'], r['transdescription']) for r in rows ]
 
-def add_review_assignment(reviewer_id: str, translator_id: str, term: str, term_id: str, transterm: str, transdescription: str, iss: str, course: str, section_num: str) -> None:
+def add_review_assignment(reviewer_id: str, translator_id: str, term: str, term_id: str, trans_id: str, transterm: str, transdescription: str, iss: str, course: str, section_num: str) -> None:
     #<ins>id</ins>, *reviewer_id*, *translator_id*, term, transterm, transdescription, *iss*, *course*, *section* 
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT IGNORE INTO review_assignments (reviewer_id, translator_id, term_id, term, transterm, transdescription, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
-    (reviewer_id, translator_id, term_id, term, transterm, transdescription, iss, course, section_num))
+    cursor.execute("INSERT IGNORE INTO review_assignments (reviewer_id, translator_id, term_id, term, trans_id, transterm, transdescription, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    (reviewer_id, translator_id, term_id, term, trans_id, transterm, transdescription, iss, course, section_num))
     conn.commit()
     conn.close()
 
@@ -476,7 +476,7 @@ def get_assigned_reviews_for_student_in_section(id:str, iss:str, course:str, sec
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
-    return [ Review(r['id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
+    return [ Review(r['id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription']) for r in rows ]
 
 def get_latest_review_by_review_assignment_id(rev_id) -> Review:
     conn = mysql.connect()
@@ -489,7 +489,7 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
     review = None
     if len(rows) == 1:
         r = rows[0]
-        review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription'])
+        review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription'])
         review.set_review_comment(r['review_comment'])
         review.set_review_score(r['review_score'])
         review.set_candidate(r['candidate'] in (1, '1'))
@@ -502,7 +502,7 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
         cursor.close()
         if len(rows) == 1:
             r = rows[0]
-            review = Review(r['id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription'])
+            review = Review(r['id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription'])
     
     return review
 
@@ -516,7 +516,7 @@ def get_candidates_for_section(iss:str, course:str, section:int) -> List[Review]
     cursor.close()
     reviews = []
     for r in rows:
-        review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription'])
+        review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription'])
         review.set_review_comment(r['review_comment'])
         review.set_review_score(r['review_score'])
         review.set_candidate(r['candidate'] in (1, '1'))
@@ -534,7 +534,7 @@ def get_latest_vote_by_vote_assignment_id(rev_id) -> Review:
     review = None
     if len(rows) == 1:
         r = rows[0]
-        review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription'])
+        review = Review(r['rev_ass_id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription'])
         review.set_review_comment(r['review_comment'])
         review.set_review_score(r['review_score'])
         review.set_candidate(r['candidate'] in (1, '1'))
@@ -547,7 +547,8 @@ def get_latest_vote_by_vote_assignment_id(rev_id) -> Review:
         cursor.close()
         if len(rows) == 1:
             r = rows[0]
-            review = Review(r['id'], r['reviewer_id'], r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription'])
+            review = Review(r['id'], r['reviewer_id'], r['translator_id'], r['term_id'], 
+                            r['term'], r['trans_id'], r['transterm'], r['transdescription'])
     
     return review
 
@@ -609,9 +610,8 @@ def get_latest_vote_by_vote_assignment_id(v_id) -> Vote:
         r = rows[0]
         vote = Vote(r['v_ass_id'], r['voter_id'], r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription'])
         vote.set_vote_score(r['vote_score'])
-        return vote
-    return None
-
+    return vote
+    
 def update_vote(vote: Vote, iss: str, course: str, section: int):
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -634,8 +634,8 @@ def get_assigned_and_completed_votes_for_student_in_section(id:str, iss:str, cou
 def add_review(review: Review, iss: str, course: str, section: str):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT IGNORE INTO reviews (rev_ass_id, reviewer_id, translator_id, term_id, term, transterm, transdescription, review_comment, review_score, candidate, iss, course, section ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
-    (review.rev_ass_id, review.r_id, review.t_id, review.term_id, review.term, review.transterm, review.transdescription, review.review_comment, review.review_score, review.review_candidate, iss, course, section))
+    cursor.execute("INSERT IGNORE INTO reviews (rev_ass_id, reviewer_id, translator_id, term_id, term, trans_id, transterm, transdescription, review_comment, review_score, candidate, iss, course, section ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    (review.rev_ass_id, review.r_id, review.t_id, review.term_id, review.term, review.trans_id, review.transterm, review.transdescription, review.review_comment, review.review_score, review.review_candidate, iss, course, section))
     conn.commit()
     conn.close()
 
@@ -647,7 +647,7 @@ def get_assigned_and_completed_reviews_for_student_in_section(id:str, iss:str, c
         if review is not None:
             reviews.append(review)
         else:
-            reviews.append(ar.get_review())
+            reviews.append(ar)
     return reviews
 
 def get_assigned_term(data: Dict) -> Dict[str,str]:

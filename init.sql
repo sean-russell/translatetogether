@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS `review_assignments` (
   `translator_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL, /*duplication of term in terms table*/
+  `trans_id` bigint(20) NOT NULL,
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,/*duplication of transterm in translations table*/
   `transdescription` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transdescription in translations table*/
   `iss` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
@@ -116,6 +117,7 @@ CREATE TABLE IF NOT EXISTS `review_assignments` (
   `section` INTEGER NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`trans_id`) REFERENCES `translations`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`reviewer_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`translator_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_mrt_ot8 FOREIGN KEY (`iss`,`course`, `section`) REFERENCES `sections`(`iss`,`course`, `section_number`) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -129,6 +131,7 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   `translator_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL, /*duplication of term in terms table*/
+  `trans_id` bigint(20) NOT NULL,
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transterm in translations table*/
   `transdescription` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transdescription in translations table*/
   `review_score` INTEGER NOT NULL,
@@ -139,6 +142,7 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   `section` INTEGER NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`trans_id`) REFERENCES `translations`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`reviewer_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`translator_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`rev_ass_id`) REFERENCES `review_assignments`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -152,6 +156,7 @@ CREATE TABLE IF NOT EXISTS `vote_assignments` (
   `translator_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL, /*duplication of term in terms table*/
+  `trans_id` bigint(20) NOT NULL,
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,/*duplication of transterm in translations table*/
   `transdescription` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transdescription in translations table*/
   `iss` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
@@ -159,6 +164,7 @@ CREATE TABLE IF NOT EXISTS `vote_assignments` (
   `section` INTEGER NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`trans_id`) REFERENCES `translations`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`voter_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`translator_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_mrt_ot10 FOREIGN KEY (`iss`,`course`, `section`) REFERENCES `sections`(`iss`,`course`, `section_number`) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -172,6 +178,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   `translator_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL, /*duplication of term in terms table*/
+  `trans_id` bigint(20) NOT NULL,
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transterm in translations table*/
   `transdescription` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transdescription in translations table*/
   `vote_score` INTEGER NOT NULL,
@@ -180,6 +187,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   `section` INTEGER NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`trans_id`) REFERENCES `translations`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`voter_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`translator_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`vote_ass_id`) REFERENCES `vote_assignments`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,

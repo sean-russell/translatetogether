@@ -37,15 +37,16 @@ INSTRUCTOR = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor'
 
 
 TranslationAssignment = namedtuple("TranslationAssignment", "id name term_id term")
-TranslatedTerm = namedtuple("TranslatedTerm", "id term_id term transterm transdescription")
+TranslatedTerm = namedtuple("TranslatedTerm", "id term_id term trans_id transterm transdescription")
 
 class Review:
-    def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term_id:str, term: str, transterm: str, transdescription: str):
+    def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term_id:str, term: str, trans_id: str, transterm: str, transdescription: str):
         self.rev_ass_id = rev_ass_id
         self.r_id: str = r_id
         self.t_id: str = t_id
         self.term_id: str = term_id
         self.term: str = term
+        self.trans_id: str = trans_id
         self.transterm: str = transterm
         self.transdescription: str = transdescription
         self.completed: bool = False
@@ -154,3 +155,4 @@ def convert_status(status : int) -> str:
         return "Reviews assigned to students"
     elif status == STATUS_VOTES_ASSIGNED:
         return "Votes assigned to students"
+    return "Unknown"

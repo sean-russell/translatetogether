@@ -341,7 +341,7 @@ def start_review():
     
     for id, ta in ta_reviews.items():
         for r in ta.reviews:
-            dbstuff.add_review_assignment(id, r.id, r.term, r.term_id, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
+            dbstuff.add_review_assignment(id, r.id, r.term, r.term_id, r.trans_id, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
     # dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_REVIEWS_ASSIGNED)
 
     """ now assign reviews to each student """
@@ -380,7 +380,7 @@ def start_review():
  
     for id, s in student_reviews.items():
         for r in s.reviews:
-            dbstuff.add_review_assignment(id, r.id, r.term, r.term_id, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
+            dbstuff.add_review_assignment(id, r.id, r.term, r.term_id, r.trans_id, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
     dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_REVIEWS_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
     return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
@@ -445,7 +445,7 @@ def assign_terms(iss, course, section_num) -> None:
     student_ids = [ student['vle_user_id'] for student in students ]
     # print("terms list", terms)
     # print("student ids", student_ids)
-    random_terms: List[str] = []
+    random_terms: List[Dict[str,str]] = []
     while len(random_terms) < len(student_ids):
         random_terms.extend(terms_with_ids)
     # print("random terms", len(random_terms), random_terms)
