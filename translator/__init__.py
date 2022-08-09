@@ -671,6 +671,7 @@ def add_votes():
         for score in scores:
             print("score",score,"vote.vote_assign_id", vote.vote_assign_id, "scores[score]", scores[score])
             if vote.vote_assign_id == scores[score]:
+                print("setting score of" , vote.vote_assign_id, "to", score)
                 vote.set_vote_score(score)
                 dbstuff.update_vote(vote, data['iss'], data['course'], data['section_num'])
         # vs = request.form.get("vote-{}".format(vote.vote_assign_id))
