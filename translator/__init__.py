@@ -181,9 +181,8 @@ def main_page():
                     return render_template('reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),reviews=review_assignments)
             elif data['phase'] == PHASE_VOTE:
                 if data['section']['status'] in (STATUS_VOTES_ASSIGNED, convert_status(STATUS_VOTES_ASSIGNED)):
-                    data['candidates']: Dict[str,List[Vote]] = {}
-                    assignment = dbstuff.get_trans_assignment_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
-                    candidates = dbstuff.get_candidates_for_section(data['iss'], data['course'], data['section_num'])
+                    data['candidates']: Dict[str,List[Dict[str,str]]] = {}
+                    candidates = dbstuff.get_votes_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
                     candidates = [ {
                             "vote_assign_id": c.vote_assign_id,
                             "v_id": c.v_id,
@@ -194,12 +193,12 @@ def main_page():
                             "vote_score": c.vote_score,
                             "completed": c.completed
                         } for c in candidates ]
+                    
                     for candidate in candidates:
-                        if candidate.term not in data['candidates']:
-                            data['candidates'][candidate[term]] = []
-                        if candidate.term != assignment[term]:
-                            data['candidates'][candidate[term]].append(candidate)
-                    terms: List[str] = list(data['candidates'].keys())
+                        if candidate['term'] not in data['candidates']:
+                            data['candidates'][candidate['term']] = []
+                        data['candidates'][candidate[term]].append(candidate)
+                    data['terms']: List[str] = list(data['candidates'].keys())
                     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), terms=terms)
             
         else:
