@@ -71,7 +71,8 @@ app.config.from_mapping(config)
 cache = Cache(app)
 
 @app.template_filter()
-def any(dttm):
+def any_filter(dttm):
+    print("any filter", dttm)
     return any(dttm)
 
 def get_lti_config_path():
