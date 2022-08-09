@@ -641,7 +641,7 @@ def show_vote():
     votes = data['candidates'][term]
 
 
-    render_template('vote.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), votes=votes, term=term)
+    return render_template('vote.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), votes=votes, term=term)
 
 @app.route('/translation/addvote/', methods=['POST'])
 def add_votes():
@@ -650,7 +650,7 @@ def add_votes():
     votes = data['candidates'][term]
 
 
-    render_template('vote.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), votes=votes)
+    return render_template('vote.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), votes=votes)
 
 
 
