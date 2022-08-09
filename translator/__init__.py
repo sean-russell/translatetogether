@@ -197,9 +197,9 @@ def main_page():
                     for candidate in candidates:
                         if candidate['term'] not in data['candidates']:
                             data['candidates'][candidate['term']] = []
-                        data['candidates'][candidate[term]].append(candidate)
+                        data['candidates'][candidate['term']].append(candidate)
                     data['terms']: List[str] = list(data['candidates'].keys())
-                    return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), terms=terms)
+                    return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
             
         else:
             return render_template('config.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
