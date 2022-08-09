@@ -652,6 +652,7 @@ def show_vote():
 @app.route('/translation/addvote/', methods=['POST'])
 def add_votes():
     term = request.form['term']
+    print('term',term)
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     votes: List[Vote] = []
     print("data['candidates']",data['candidates'])
