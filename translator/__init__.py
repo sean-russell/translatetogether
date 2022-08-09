@@ -672,11 +672,12 @@ def add_votes():
             print("score",score,"vote.vote_assign_id", vote.vote_assign_id, "scores[score]", scores[score])
             if vote.vote_assign_id == scores[score]:
                 vote.set_vote_score(score)
+                dbstuff.update_vote(vote, data['iss'], data['course'], data['section_num'])
         # vs = request.form.get("vote-{}".format(vote.vote_assign_id))
         # print("getting","vote-{}".format(vote.vote_assign_id), vs)
         # if vs != None:
         #     vote.set_vote_score(vs)
-        #     dbstuff.update_vote(vote, data['iss'], data['course'], data['section_num'])
+        #     
 
     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
