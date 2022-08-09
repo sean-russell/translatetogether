@@ -183,30 +183,34 @@ def main_page():
             elif data['phase'] == PHASE_VOTE:
                 if data['section']['status'] in (STATUS_VOTES_ASSIGNED, convert_status(STATUS_VOTES_ASSIGNED)):
                     data['candidates']: Dict[str,List[Dict[str,str]]] = {}
-                    candidates = dbstuff.get_votes_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
-                    
-                    candidates = [ {
-                            "vote_assign_id": c.vote_assign_id,
-                            "v_id": c.v_id,
-                            "t_id": c.t_id,
-                            "term_id": c.term_id,
-                            "term": c.term,
-                            "trans_id": c.trans_id,
-                            "transterm": c.transterm,
-                            "transdescription": c.transdescription,
-                            "vote_score": c.vote_score,
-                            "completed": c.completed
-                        } for c in candidates ]
-                    
-                    for candidate in candidates:
-                        if candidate['term'] not in data['candidates']:
-                            data['candidates'][candidate['term']] = []
-                        data['candidates'][candidate['term']].append(candidate)
+                    get_candidates(data)
                     data['terms']: List[str] = list(data['candidates'].keys())
                     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
             
         else:
             return render_template('config.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
+
+def get_candidates(data):
+    data['candidates']: Dict[str,List[Dict[str,str]]] = {}
+    candidates = dbstuff.get_votes_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+    
+    candidates = [ {
+            "vote_assign_id": c.vote_assign_id,
+            "v_id": c.v_id,
+            "t_id": c.t_id,
+            "term_id": c.term_id,
+            "term": c.term,
+            "trans_id": c.trans_id,
+            "transterm": c.transterm,
+            "transdescription": c.transdescription,
+            "vote_score": c.vote_score,
+            "completed": c.completed
+        } for c in candidates ]
+    
+    for candidate in candidates:
+        if candidate['term'] not in data['candidates']:
+            data['candidates'][candidate['term']] = []
+        data['candidates'][candidate['term']].append(candidate)
 
 ######################################################################################################################################################################
 # Functions for managing the sections in a course ####################################################################################################################
@@ -679,7 +683,7 @@ def add_votes():
         # if vs != None:
         #     vote.set_vote_score(vs)
         #     
-
+        get_candidates(data)
     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 

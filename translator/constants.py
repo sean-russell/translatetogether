@@ -130,6 +130,7 @@ class Vote:
             score = int(score)
         self.vote_score = score
         self.completed = True
+    
     def toJSON(self):
         return {
             "vote_assign_id": self.vote_assign_id,
