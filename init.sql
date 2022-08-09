@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `actions` (
 CREATE TABLE IF NOT EXISTS `trans_assignments` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `vle_user_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `term_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL,
   `status` INTEGER NOT NULL DEFAULT 0,
   `iss` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `translations` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `trans_ass_id` bigint(20) NOT NULL,
   `vle_user_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `term_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL, /*duplication of term in terms table*/
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `transdescription` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL,
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `review_assignments` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `reviewer_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `translator_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `term_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL, /*duplication of term in terms table*/
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,/*duplication of transterm in translations table*/
   `transdescription` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transdescription in translations table*/
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   `rev_ass_id` bigint(20) NOT NULL,
   `reviewer_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `translator_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `term_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL, /*duplication of term in terms table*/
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transterm in translations table*/
   `transdescription` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transdescription in translations table*/
@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS `vote_assignments` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `voter_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `translator_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `term_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL, /*duplication of term in terms table*/
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,/*duplication of transterm in translations table*/
   `transdescription` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transdescription in translations table*/
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   `vote_ass_id` bigint(20) NOT NULL,
   `voter_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `translator_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-  `term_id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `term_id` bigint(20) NOT NULL,
   `term` varchar(255) NOT NULL, /*duplication of term in terms table*/
   `transterm` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transterm in translations table*/
   `transdescription` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL, /*duplication of transdescription in translations table*/
