@@ -669,9 +669,9 @@ def add_votes():
         scores[i] = vs
     for vote in votes:
         for score in scores:
-            print("vote.vote_assign_id", vote.vote_assign_id, "scores[score]", scores[score])
+            print("score",score,"vote.vote_assign_id", vote.vote_assign_id, "scores[score]", scores[score])
             if vote.vote_assign_id == scores[score]:
-                vote.set_vote_score(1)
+                vote.set_vote_score(score)
         # vs = request.form.get("vote-{}".format(vote.vote_assign_id))
         # print("getting","vote-{}".format(vote.vote_assign_id), vs)
         # if vs != None:
