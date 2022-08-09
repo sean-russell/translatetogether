@@ -683,8 +683,10 @@ def add_votes():
         # if vs != None:
         #     vote.set_vote_score(vs)
         #     
+        print("data['candidates'][term]",data['candidates'][term], type(data['candidates'][term]), len(data['candidates'][term]))
         get_candidates(data)
-        print(data)
+        print("data['candidates'][term]",data['candidates'][term], type(data['candidates'][term]), len(data['candidates'][term]))
+    
     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 
