@@ -72,7 +72,7 @@ cache = Cache(app)
 
 @app.template_filter()
 def any_filter(dttm):
-    print("any filter", dttm)
+    print("any filter", list(dttm))
     return any(dttm)
 
 def get_lti_config_path():
@@ -632,6 +632,11 @@ def add_new_ta_review():
         rll[review.term].append(review)
     return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=rll)
     # return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
+
+
+@app.route('/translation/vote/', methods=['POST'])
+def show_vote():
+    pass
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5003)
