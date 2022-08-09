@@ -684,6 +684,7 @@ def add_votes():
         #     vote.set_vote_score(vs)
         #     
         get_candidates(data)
+        print(data)
     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 
