@@ -5,10 +5,12 @@
     <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
 </head>
 <body>
+    
     <h1>Voting</h1>
     <p>The list below is the terms that you can vote on. This allows you to have an influence on which translations will be used in the final glossary of terms we produce in the class.</p>
     {% for term in data['candidates'] %}
-    <article {% if data.candidates[term]| map(attribute='completed')| any_filter %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
+    {% set completed = data.candidates[term]| map(attribute='completed')| any_filter %}
+    <article {% if completed %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
         <header>
             <!-- r_id t_id term transterm transdescription -->
             {{term}}
@@ -17,7 +19,7 @@
         <form action="{{ preface~url_for('show_vote') }}" method="post">
             <input type="hidden" id="term" name="term" value="{{ term }}">
             <input type="hidden" name="datajson" value="{{datajson}}">
-            {% if review.completed %}
+            {% if completed %}
                 <input type="submit" value="Update Votes">
             {% else %}
                 <input type="submit" value="Vote on Translations">
