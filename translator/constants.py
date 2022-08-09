@@ -113,12 +113,13 @@ class ReviewAssignments:
         return len(self.reviews)
 
 class Vote:
-    def __init__(self, vai: str, v_id, t_id, term_id, term, transterm, transdescription):
+    def __init__(self, vai: str, v_id, t_id, term_id, term, trans_id, transterm, transdescription):
         self.vote_assign_id: str = vai
         self.v_id: str = v_id
         self.t_id: str = t_id
         self.term_id: str = term_id
         self.term: str = term
+        self.trans_id: str = trans_id
         self.transterm: str = transterm
         self.transdescription: str = transdescription
         self.vote_score: int = -1
