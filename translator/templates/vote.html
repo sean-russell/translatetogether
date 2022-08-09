@@ -15,19 +15,14 @@
             <article {% if v.completed %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
                 <header>{{v.transterm}}</header>
                 <p>{{v.transdescription}}</p>
-                <details role="list">
-                    <summary aria-haspopup="listbox">Vote</summary>
-                    <ul role="listbox">
-                        {%  for n in range(num_votes) %}
-                        <li>
-                            <label for="vote-{{v.vote_assign_id}}-{{n}}">
-                                <input type="radio" id="vote-{{v.vote_assign_id}}-{{n}}" name="vote-{{v.vote_assign_id}}" value="{{n}}" {% if v.vote_score == n %}checked{% endif %}>
-                                {{n+1}}
-                            </label>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </details>
+                <div class="grid">
+                    {%  for n in range(num_votes) %}
+                    <label for="vote-{{v.vote_assign_id}}-{{n}}">
+                        <input type="radio" id="vote-{{v.vote_assign_id}}-{{n}}" name="vote-{{n}}" value="vote-{{v.vote_assign_id}}" {% if v.vote_score == n %}checked{% endif %}>
+                            {{n+1}}
+                        </label>
+                    {% endfor %}
+                </div>
             </article>
             {% endfor %}
             <input type="submit" value="Submit Votes">
