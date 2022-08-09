@@ -663,6 +663,7 @@ def get_assigned_term(data: Dict) -> Dict[str,str]:
         trans_rows = cursor.fetchall()
         t_dict = {
             'id': ass_rows[0]['id'],
+            'term_id': ass_rows[0]['term_id'],
             'term': ass_rows[0]['term'],
             'status': ass_rows[0]['status'],
             'transterm' : "",
