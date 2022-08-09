@@ -647,8 +647,16 @@ def show_vote():
 def add_votes():
     term = request.form['term']
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
-    votes = data['candidates'][term]
-
+    votes: List[Vote] = []
+    for v in data['candidates'][term]:
+        v = Vote(v['vote_assign_id'], v['v_id'], v['t_id'], v['term'], v['transterm'], v['transdescription'])
+        v.set_vote_score(v['vote_score'])
+        votes.append(v)
+    for vote in votes:
+        vs = request.form.get("vote-{}".format(vote.vote_assign_id))
+        if vs != None:
+            vote.set_vote_score(vs)
+            dbstuff.update_vote(vote, data['iss'], data['course'], data['section_num'])
 
     return render_template('vote.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), votes=votes)
 

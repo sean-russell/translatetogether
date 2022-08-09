@@ -10,6 +10,7 @@
         <p>The list below contains the different translations of the term "" that were nimonated as the best. Please vote by placing a number beside the terms according to how you would rank them. For the term you consider the best you would choose 1, for the next best 2 and so on. </p>
         <form action="{{ preface~url_for('add_votes') }}" method="post">
             <input type="hidden" id="term" name="term" value="{{term}}">
+            <input type="hidden" name="datajson" value="{{datajson}}">
             {% for v in votes %}
             <article {% if v.completed %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
                 <header>{{v.transterm}}</header>
