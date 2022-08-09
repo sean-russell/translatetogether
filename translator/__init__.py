@@ -281,7 +281,7 @@ def start_review():
     ta_reviews: Dict[str, TAReviewAssignments] = {}
     for term in term_assignments:
         for t in term_assignments[term]:
-            student_reviews[t.id] = ReviewAssignments(t.id, t.name, term)
+            student_reviews[t.id] = ReviewAssignments(t.id, t.term_id, t.name, term)
     # print("student_reviews length", len(student_reviews))
     tas = dbstuff.get_ta_details_for_course(iss, course)
     for ta in tas:
