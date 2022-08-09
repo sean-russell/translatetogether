@@ -655,7 +655,7 @@ def add_votes():
     print('term',term)
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     votes: List[Vote] = []
-    print("data['candidates']",data['candidates'])
+    print("data['candidates'][term]",data['candidates'][term])
     for v in data['candidates'][term]:
         vt = Vote(v['vote_assign_id'], v['v_id'], v['t_id'], v['term_id'], v['term'], v['trans_id'], v['transterm'], v['transdescription'])
         vt.set_vote_score(v['vote_score'])
