@@ -659,7 +659,7 @@ def add_votes():
             vote.set_vote_score(vs)
             dbstuff.update_vote(vote, data['iss'], data['course'], data['section_num'])
 
-    return render_template('vote.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), votes=votes)
+    return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 
 
