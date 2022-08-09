@@ -582,11 +582,12 @@ def build_launch_dict(mld, launch_id)-> Dict:
 @app.route('/translation/add/', methods=['POST'])
 def add_new_translation():
     term = request.form['term']
+    term_id = request.form['term_id']
     trans_ass_id = request.form['trans_ass_id']
     termtrans = request.form['termtrans']
     translation = request.form['translation']
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
-    dbstuff.add_term_translation(data['id'], trans_ass_id, term, termtrans, translation, data['iss'], data['course'], data['section_num'])
+    dbstuff.add_term_translation(data['id'], trans_ass_id, term_id, term, termtrans, translation, data['iss'], data['course'], data['section_num'])
     term = dbstuff.get_assigned_term(data)
     return render_template('term.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
 

@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `trans_assignments` (
   `course` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `section` INTEGER NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`term_id`) REFERENCES `terms`(`term_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`vle_user_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_mrt_ot6 FOREIGN KEY (`iss`,`course`, `section`) REFERENCES `sections`(`iss`,`course`, `section_number`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `translations` (
   `section` INTEGER NOT NULL,
   `submit_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`term_id`) REFERENCES `terms`(`term_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`trans_ass_id`) REFERENCES `trans_assignments`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`vle_user_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_mrt_ot7 FOREIGN KEY (`iss`,`course`, `section`) REFERENCES `sections`(`iss`,`course`, `section_number`) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `review_assignments` (
   `course` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `section` INTEGER NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`term_id`) REFERENCES `terms`(`term_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`reviewer_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`translator_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_mrt_ot8 FOREIGN KEY (`iss`,`course`, `section`) REFERENCES `sections`(`iss`,`course`, `section_number`) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `reviews` (
   `course` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `section` INTEGER NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`term_id`) REFERENCES `terms`(`term_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`reviewer_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`translator_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`rev_ass_id`) REFERENCES `review_assignments`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -158,7 +158,7 @@ CREATE TABLE IF NOT EXISTS `vote_assignments` (
   `course` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `section` INTEGER NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`term_id`) REFERENCES `terms`(`term_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`voter_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`translator_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_mrt_ot10 FOREIGN KEY (`iss`,`course`, `section`) REFERENCES `sections`(`iss`,`course`, `section_number`) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -179,7 +179,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   `course` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `section` INTEGER NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`term_id`) REFERENCES `terms`(`term_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (`term_id`) REFERENCES `terms`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`voter_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`translator_id`) REFERENCES `participants`(`vle_user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (`vote_ass_id`) REFERENCES `vote_assignments`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
