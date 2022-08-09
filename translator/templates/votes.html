@@ -8,7 +8,7 @@
     <h1>Voting</h1>
     <p>The list below is the terms that you can vote on. This allows you to have an influence on which translations will be used in the final glossary of terms we produce in the class.</p>
     {% for term in data['candidates'] %}
-    <article {% if data.candidates[term]| map(attribute='completed')| any %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
+    <article {% if data.candidates[term]| map(attribute='completed')| any_filter %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
         <header>
             <!-- r_id t_id term transterm transdescription -->
             {{term}}
