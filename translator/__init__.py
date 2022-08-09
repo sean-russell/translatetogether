@@ -402,10 +402,10 @@ def start_voting():
     
     for term, ass_list in term_assignments.items():
         for ass in ass_list:
-            term_ids = []
+            trans_ids = []
             for vc in vote_candidates:
-                if vc.term != term and vc.term_id not in term_ids:
-                    term_ids.append(vc.term_id)
+                if vc.term != term and vc.trans_id not in trans_ids:
+                    trans_ids.append(vc.trans_id)
                     dbstuff.assign_vote_to_student(ass.id, vc, iss, course, section_num)
     dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_VOTES_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
