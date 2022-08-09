@@ -11,6 +11,7 @@
                 for (let i = 0; i < l; i++) {
                     var x = document.getElementById("vote-{{v.vote_assign_id}}-" + i);
                     if (x != myRadio){
+                        console.log("unchecking vote-{{v.vote_assign_id}}-"+i)
                         x.checked = false;
                     }
                 }

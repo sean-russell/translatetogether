@@ -657,15 +657,26 @@ def add_votes():
     votes: List[Vote] = []
     print("data['candidates'][term]",data['candidates'][term], type(data['candidates'][term]), len(data['candidates'][term]))
     for v in data['candidates'][term]:
+        print(v)
         vt = Vote(v['vote_assign_id'], v['v_id'], v['t_id'], v['term_id'], v['term'], v['trans_id'], v['transterm'], v['transdescription'])
         vt.set_vote_score(v['vote_score'])
         print(vt)
         votes.append(vt)
+    scores = {}
+    for i in range(len(votes)):
+        vs = request.form.get("vote-{}".format(i))
+        print("getting","vote-{}".format(i), vs)
+        scores[i] = vs
     for vote in votes:
-        vs = request.form.get("vote-{}".format(vote.vote_assign_id))
-        if vs != None:
-            vote.set_vote_score(vs)
-            dbstuff.update_vote(vote, data['iss'], data['course'], data['section_num'])
+        for score in scores:
+            print("vote.vote_assign_id", vote.vote_assign_id, "scores[score]", scores[score])
+            if vote.vote_assign_id == scores[score]:
+                vote.set_vote_score(1)
+        # vs = request.form.get("vote-{}".format(vote.vote_assign_id))
+        # print("getting","vote-{}".format(vote.vote_assign_id), vs)
+        # if vs != None:
+        #     vote.set_vote_score(vs)
+        #     dbstuff.update_vote(vote, data['iss'], data['course'], data['section_num'])
 
     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
