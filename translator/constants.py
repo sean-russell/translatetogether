@@ -136,7 +136,7 @@ class Vote:
             "completed": self.completed
         }
     def __str__(self):
-        return f"{self.vote_assign_id} {self.transterm} {self.vote_score}"
+        return f"{self.vote_assign_id} {self.t_id} {self.transterm} {self.vote_score}"
 
 
 def convert_status(status : int) -> str:
