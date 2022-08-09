@@ -399,9 +399,10 @@ def start_voting():
     term_assignments = dbstuff.get_trans_assignments_for_section_of_course(iss, course, section_num)
     print("vote candidates", vote_candidates)
     print("term assignments", term_assignments)
-    term_ids = []
+    
     for term, ass_list in term_assignments.items():
         for ass in ass_list:
+            term_ids = []
             for vc in vote_candidates:
                 if vc.term != term and vc.term_id not in term_ids:
                     term_ids.append(vc.term_id)
