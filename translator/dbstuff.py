@@ -616,8 +616,8 @@ def get_latest_vote_by_vote_assignment_id(v_id) -> Vote:
 def update_vote(vote: Vote, iss: str, course: str, section: int):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO votes (vote_ass_id, voter_id, translator_id, term, transterm, transdescription, vote_score, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
-    (vote.vote_assign_id, vote.v_id, vote.t_id, vote.term, vote.transterm, vote.transdescription, vote.vote_score, iss, course, section))
+    cursor.execute("INSERT INTO votes (vote_ass_id, voter_id, translator_id, term_id, term, trans_id, transterm, transdescription, vote_score, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    (vote.vote_assign_id, vote.v_id, vote.t_id, vote.term_id, vote.term, vote.trans_id, vote.transterm, vote.transdescription, vote.vote_score, iss, course, section))
     conn.commit()
     conn.close()
 
