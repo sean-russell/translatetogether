@@ -644,7 +644,7 @@ def show_vote():
     render_template('vote.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), votes=votes, term=term)
 
 @app.route('/translation/addvote/', methods=['POST'])
-def show_vote():
+def add_votes():
     term = request.form['term']
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     votes = data['candidate'][term]
