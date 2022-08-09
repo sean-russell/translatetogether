@@ -36,14 +36,15 @@ LEARNER = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
 INSTRUCTOR = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor'
 
 
-TranslationAssignment = namedtuple("TranslationAssignment", "id name term")
-TranslatedTerm = namedtuple("TranslatedTerm", "id term transterm transdescription")
+TranslationAssignment = namedtuple("TranslationAssignment", "id name term_id term")
+TranslatedTerm = namedtuple("TranslatedTerm", "id term_id term transterm transdescription")
 
 class Review:
-    def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term: str, transterm: str, transdescription: str):
+    def __init__(self, rev_ass_id: str, r_id: str, t_id: str, term_id:str, term: str, transterm: str, transdescription: str):
         self.rev_ass_id = rev_ass_id
         self.r_id: str = r_id
         self.t_id: str = t_id
+        self.term_id: str = term_id
         self.term: str = term
         self.transterm: str = transterm
         self.transdescription: str = transdescription
@@ -85,14 +86,15 @@ class TAReviewAssignments:
         return len(self.reviews)
 
 class ReviewAssignments:
-    def __init__(self, id, name, term):
+    def __init__(self, id: str, name: str, term_id: str, term: str):
         self.id: str = id
         self.name: str = name
+        self.term_id: str = term_id
         self.term: str = term
         self.reviews: List[TranslatedTerm] = []
 
     def add_review(self, trans: TranslatedTerm) -> bool:
-        if trans.term != self.term and trans.term not in ( r.term for r in self.reviews ):
+        if trans.term_id != self.term_id and trans.term_id not in ( r.term_id for r in self.reviews ):
             self.reviews.append(trans)
             return True
         return False
@@ -100,7 +102,7 @@ class ReviewAssignments:
     def add_extra_review(self, trans: TranslatedTerm) -> bool:
         """ Adds a term to be reviewed. This version of the method allows addition of reviews 
         when the same term has been previously added """
-        if trans.term != self.term and trans not in self.reviews:
+        if trans.term_id != self.term_id and trans not in self.reviews:
             self.reviews.append(trans)
             return True
         return False
@@ -109,10 +111,11 @@ class ReviewAssignments:
         return len(self.reviews)
 
 class Vote:
-    def __init__(self, vai: str, v_id, t_id, term, transterm, transdescription):
+    def __init__(self, vai: str, v_id, t_id, term_id, term, transterm, transdescription):
         self.vote_assign_id: str = vai
         self.v_id: str = v_id
         self.t_id: str = t_id
+        self.term_id: str = term_id
         self.term: str = term
         self.transterm: str = transterm
         self.transdescription: str = transdescription

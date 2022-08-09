@@ -36,6 +36,7 @@
             <article>
                 <form action="{{ preface~url_for('add_new_translation') }}" method="post">
                     <input type="hidden" id="term" name="term" value="{{ term.term }}">
+                    <input type="hidden" id="term_id" name="term_id" value="{{ term.term_id }}">
                     <input type="hidden" id="trans_ass_id" name="trans_ass_id" value="{{ term.id }}">
                     <input type="hidden" name="datajson" value="{{datajson}}">
                     <label for="termtrans" data-tooltip="This should be the best translation of the just the term that you can come up with.">

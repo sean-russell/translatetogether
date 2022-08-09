@@ -341,7 +341,7 @@ def start_review():
     
     for id, ta in ta_reviews.items():
         for r in ta.reviews:
-            dbstuff.add_review_assignment(id, r.id, r.term, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
+            dbstuff.add_review_assignment(id, r.id, r.term, r.term_id, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
     # dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_REVIEWS_ASSIGNED)
 
     """ now assign reviews to each student """
@@ -380,7 +380,7 @@ def start_review():
  
     for id, s in student_reviews.items():
         for r in s.reviews:
-            dbstuff.add_review_assignment(id, r.id, r.term, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
+            dbstuff.add_review_assignment(id, r.id, r.term, r.term_id, r.transterm, r.transdescription, data['iss'], data['course'], section_num)
     dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_REVIEWS_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
     return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
@@ -441,20 +441,19 @@ def delete_term():
 def assign_terms(iss, course, section_num) -> None:
     """ assign a term to every student in a course for the current section """
     terms_with_ids = dbstuff.get_terms_for_section_of_course(iss,course,section_num)
-    terms = [ term['term'] for term in terms_with_ids ]
     students = dbstuff.get_student_details_for_course(iss, course)
     student_ids = [ student['vle_user_id'] for student in students ]
     # print("terms list", terms)
     # print("student ids", student_ids)
     random_terms: List[str] = []
     while len(random_terms) < len(student_ids):
-        random_terms.extend(terms)
+        random_terms.extend(terms_with_ids)
     # print("random terms", len(random_terms), random_terms)
     random.shuffle(random_terms)
     random.shuffle(student_ids)
     for student in student_ids:
         term = random_terms.pop(0)
-        dbstuff.assign_term_to_student(iss, course, section_num, term, student)
+        dbstuff.assign_term_to_student(iss, course, section_num, term['term'], student, term['id'])
 
 def assign_term(data: Dict) -> None:
     """ This is for when a student was not in the list when terms were being assigned
@@ -468,8 +467,8 @@ def assign_term(data: Dict) -> None:
     elif len(term_counts) == 0:
         raise Exception("There were no values returned, this should be impossible!")
     else:
-        term = term_counts[0]['term']
-        dbstuff.assign_term_to_student(data['iss'], data['course'], data['section_num'], term, data['id'])
+        term = term_counts[0]
+        dbstuff.assign_term_to_student(data['iss'], data['course'], data['section_num'], term['term'], data['id'], term['id'])
 
 ######################################################################################################################################################################
 # Functions for administering the teaching assistants in a course ####################################################################################################
