@@ -568,7 +568,7 @@ def get_votes_for_student_in_section(id:str, iss:str, course:str, section:int) -
     """ Get all votes for a student in a section """
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("SELECT * FROM votes WHERE id in (SELECT max(id) from votes GROUP BY iss, section, course, voter_id HAVING voter_id = %s AND iss = %s AND course = %s AND section = %s)", (id, iss, course, section))
+    cursor.execute("SELECT * FROM votes WHERE id in (SELECT max(id) from votes GROUP BY iss, section, course, vote_ass_id HAVING voter_id = %s AND iss = %s AND course = %s AND section = %s)", (id, iss, course, section))
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
