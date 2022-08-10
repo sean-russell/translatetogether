@@ -72,13 +72,8 @@ cache = Cache(app)
 
 @app.template_filter()
 def any_filter(dttm):
-    g = dttm
     l = list(dttm)
-    tps = list(type(a) for a in l)
-    print("type(l)",type(l),"len(l)", len(l),"l", l, "type(tps)",type(tps), "tps", tps, "returning", any(l))
-    dttm = [ bool(a) for a in dttm ]
-    print("any filter",list(dttm), list((type(a) for a in dttm)), "returning",any(dttm))
-    return any(dttm)
+    return any(l)
 
 def get_lti_config_path():
     return os.path.join(app.root_path, 'config', 'tool.json')
