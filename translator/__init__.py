@@ -185,27 +185,34 @@ def main_page():
             elif data['phase'] == PHASE_VOTE:
                 if data['section']['status'] in (STATUS_VOTES_ASSIGNED, convert_status(STATUS_VOTES_ASSIGNED)):
                     data['candidates']: Dict[str,List[Dict[str,str]]] = {}
-                    candidates = dbstuff.get_votes_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
-                    candidates = [ {
-                            "vote_assign_id": c.vote_assign_id,
-                            "v_id": c.v_id,
-                            "t_id": c.t_id,
-                            "term": c.term,
-                            "transterm": c.transterm,
-                            "transdescription": c.transdescription,
-                            "vote_score": c.vote_score,
-                            "completed": c.completed
-                        } for c in candidates ]
-                    
-                    for candidate in candidates:
-                        if candidate['term'] not in data['candidates']:
-                            data['candidates'][candidate['term']] = []
-                        data['candidates'][candidate['term']].append(candidate)
+                    get_candidates(data)
                     data['terms']: List[str] = list(data['candidates'].keys())
                     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
             
         else:
             return render_template('config.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
+
+def get_candidates(data):
+    data['candidates']: Dict[str,List[Dict[str,str]]] = {}
+    candidates = dbstuff.get_votes_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+    
+    candidates = [ {
+            "vote_assign_id": c.vote_assign_id,
+            "v_id": c.v_id,
+            "t_id": c.t_id,
+            "term_id": c.term_id,
+            "term": c.term,
+            "trans_id": c.trans_id,
+            "transterm": c.transterm,
+            "transdescription": c.transdescription,
+            "vote_score": c.vote_score,
+            "completed": c.completed
+        } for c in candidates ]
+    
+    for candidate in candidates:
+        if candidate['term'] not in data['candidates']:
+            data['candidates'][candidate['term']] = []
+        data['candidates'][candidate['term']].append(candidate)
 
 ######################################################################################################################################################################
 # Functions for managing the sections in a course ####################################################################################################################
@@ -398,10 +405,13 @@ def start_voting():
     term_assignments = dbstuff.get_trans_assignments_for_section_of_course(iss, course, section_num)
     print("vote candidates", vote_candidates)
     print("term assignments", term_assignments)
+    
     for term, ass_list in term_assignments.items():
         for ass in ass_list:
+            trans_ids = []
             for vc in vote_candidates:
-                if vc.term != term:
+                if vc.term != term and vc.trans_id not in trans_ids:
+                    trans_ids.append(vc.trans_id)
                     dbstuff.assign_vote_to_student(ass.id, vc, iss, course, section_num)
     dbstuff.set_status_of_section(data['iss'], data['course'], section_num, STATUS_VOTES_ASSIGNED)
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], section_num)
@@ -648,19 +658,37 @@ def show_vote():
 @app.route('/translation/addvote/', methods=['POST'])
 def add_votes():
     term = request.form['term']
+    print('term',term)
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     votes: List[Vote] = []
+    print("data['candidates'][term]",data['candidates'][term], type(data['candidates'][term]), len(data['candidates'][term]))
     for v in data['candidates'][term]:
-        vt = Vote(v['vote_assign_id'], v['v_id'], v['t_id'], v['term'], v['transterm'], v['transdescription'])
+        print(v)
+        vt = Vote(v['vote_assign_id'], v['v_id'], v['t_id'], v['term_id'], v['term'], v['trans_id'], v['transterm'], v['transdescription'])
         vt.set_vote_score(v['vote_score'])
         print(vt)
         votes.append(vt)
+    scores = {}
+    for i in range(len(votes)):
+        vs = request.form.get("vote-{}".format(i))
+        print("getting","vote-{}".format(i), vs)
+        scores[i] = vs
     for vote in votes:
-        vs = request.form.get("vote-{}".format(vote.vote_assign_id))
-        if vs != None:
-            vote.set_vote_score(vs)
-            dbstuff.update_vote(vote, data['iss'], data['course'], data['section_num'])
-
+        for score in scores:
+            print("score",score,"vote.vote_assign_id", vote.vote_assign_id, "scores[score]", scores[score])
+            if "vote-"+str(vote.vote_assign_id) == scores[score]:
+                print("setting score of" , vote.vote_assign_id, "to", score)
+                vote.set_vote_score(score)
+                dbstuff.update_vote(vote, data['iss'], data['course'], data['section_num'])
+        # vs = request.form.get("vote-{}".format(vote.vote_assign_id))
+        # print("getting","vote-{}".format(vote.vote_assign_id), vs)
+        # if vs != None:
+        #     vote.set_vote_score(vs)
+        #     
+        print("data['candidates'][term]",data['candidates'][term], type(data['candidates'][term]), len(data['candidates'][term]))
+        get_candidates(data)
+        print("data['candidates'][term]",data['candidates'][term], type(data['candidates'][term]), len(data['candidates'][term]))
+    
     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 

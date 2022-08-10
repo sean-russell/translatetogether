@@ -562,7 +562,7 @@ def get_votes_for_student_in_section(id:str, iss:str, course:str, section:int) -
     conn.close()
     cursor.close()
     for r in rows:
-        vote = Vote(r['id'], r['voter_id'],r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription'])
+        vote = Vote(r['id'], r['voter_id'],r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription'])
         votes[r['id']] = vote
 
     """ Get all votes for a student in a section """
@@ -574,7 +574,7 @@ def get_votes_for_student_in_section(id:str, iss:str, course:str, section:int) -
     cursor.close()
     
     for r in rows:
-        vote = Vote(r['vote_ass_id'], r['voter_id'],r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription'])
+        vote = Vote(r['vote_ass_id'], r['voter_id'],r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription'])
         vote.set_vote_score(r['vote_score'])
         votes[r['vote_ass_id']] = vote
     return list(votes.values())
@@ -596,7 +596,7 @@ def get_assigned_votes_for_student_in_section(id:str, iss:str, course:str, secti
     rows = cursor.fetchall()
     conn.close()
     cursor.close()
-    return [ Vote(r['id'], r['voter_id'], r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription']) for r in rows ]
+    return [ Vote(r['id'], r['voter_id'], r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription']) for r in rows ]
 
 def get_latest_vote_by_vote_assignment_id(v_id) -> Vote:
     conn = mysql.connect()
@@ -609,15 +609,15 @@ def get_latest_vote_by_vote_assignment_id(v_id) -> Vote:
     vote = None
     if len(rows) == 1:
         r = rows[0]
-        vote = Vote(r['v_ass_id'], r['voter_id'], r['translator_id'], r['term_id'], r['term'], r['transterm'], r['transdescription'])
+        vote = Vote(r['v_ass_id'], r['voter_id'], r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription'])
         vote.set_vote_score(r['vote_score'])
     return vote
     
 def update_vote(vote: Vote, iss: str, course: str, section: int):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO votes (vote_ass_id, voter_id, translator_id, term, transterm, transdescription, vote_score, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
-    (vote.vote_assign_id, vote.v_id, vote.t_id, vote.term, vote.transterm, vote.transdescription, vote.vote_score, iss, course, section))
+    cursor.execute("INSERT INTO votes (vote_ass_id, voter_id, translator_id, term_id, term, trans_id, transterm, transdescription, vote_score, iss, course, section) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    (vote.vote_assign_id, vote.v_id, vote.t_id, vote.term_id, vote.term, vote.trans_id, vote.transterm, vote.transdescription, vote.vote_score, iss, course, section))
     conn.commit()
     conn.close()
 

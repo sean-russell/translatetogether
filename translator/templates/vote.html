@@ -3,9 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+    <script>
+        {% set num_votes = votes | length %}
+        {% for v in votes %}
+            var l = {{num_votes}};
+            function handleChange{{v.vote_assign_id}}(myRadio) {
+                for (let i = 0; i < l; i++) {
+                    var x = document.getElementById("vote-{{v.vote_assign_id}}-" + i);
+                    if (x != myRadio){
+                        console.log("unchecking vote-{{v.vote_assign_id}}-"+i)
+                        x.checked = false;
+                    }
+                }
+                
+                console.log("something changed in {{v.vote_assign_id}}")
+                currentValue = myRadio.value;
+            }
+        {% endfor %}
+    </script>
 </head>
     <body>
-        {% set num_votes = votes | length %}
+        
         <h1>Voting</h1>
         <p>The list below contains the different translations of the term "" that were nimonated as the best. Please vote by placing a number beside the terms according to how you would rank them. For the term you consider the best you would choose 1, for the next best 2 and so on. </p>
         <form action="{{ preface~url_for('add_votes') }}" method="post">
@@ -15,19 +33,14 @@
             <article {% if v.completed %}style="background-color:#e6ffe6"{%else%}style="background-color:#ffe6e6"{% endif %}>
                 <header>{{v.transterm}}</header>
                 <p>{{v.transdescription}}</p>
-                <details role="list">
-                    <summary aria-haspopup="listbox">Vote</summary>
-                    <ul role="listbox">
-                        {%  for n in range(num_votes) %}
-                        <li>
-                            <label for="vote-{{v.vote_assign_id}}-{{n}}">
-                                <input type="radio" id="vote-{{v.vote_assign_id}}-{{n}}" name="vote-{{v.vote_assign_id}}" value="{{n}}" {% if v.vote_score == n %}checked{% endif %}>
-                                {{n+1}}
-                            </label>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </details>
+                <div class="grid">
+                    {%  for n in range(num_votes) %}
+                    <label for="vote-{{v.vote_assign_id}}-{{n}}">
+                        <input type="radio" id="vote-{{v.vote_assign_id}}-{{n}}" name="vote-{{n}}" value="vote-{{v.vote_assign_id}}" onchange="handleChange{{v.vote_assign_id}}(this);" {% if v.vote_score == n %}checked{% endif %}>
+                            {{n+1}}
+                        </label>
+                    {% endfor %}
+                </div>
             </article>
             {% endfor %}
             <input type="submit" value="Submit Votes">
