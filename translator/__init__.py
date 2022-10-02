@@ -10,7 +10,7 @@ from typing import Dict, List, Set, Any
 
 from collections import namedtuple
 from flask import Flask, jsonify, request, render_template, url_for, redirect, escape
-
+from datetime import date
 from tempfile import mkdtemp
 from flask_caching import Cache
 from importlib.resources import is_resource
@@ -160,7 +160,20 @@ def main_page():
             else:
                 return render_template('no_action.html')
     elif data['role'] == LEARNER:
+        start = date.fromisoformat(data['phase_start'])
+        end = date.fromisoformat(data['phase_end'])
         if dbstuff.section_exists(data['iss'], data['course'], data['section_num']):
+            today : date = date.today()
+            if start > today:
+                pass # too early
+                return render_template('wrong_time.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
+            elif end < today:
+                pass # too late
+            else:
+                pass
+
+
+
             data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
             print("data['section']", data['section'])
             print("current status is ", data['section']['status'])
@@ -563,6 +576,8 @@ def build_launch_dict(mld, launch_id)-> Dict:
     course_code = context.get('label')
     custom = mld.get(CLAIM_CUSTOM)
     phase = custom.get('phase')
+    phase_start = custom.get('phase_start')
+    phase_end = custom.get('phase_end')
     language = custom.get('language')
     section = custom.get('section')
     roles = mld.get(CLAIM_ROLES)
@@ -580,6 +595,9 @@ def build_launch_dict(mld, launch_id)-> Dict:
         'iss'           : iss,
         'course'        : course_code,
         'phase'         : phase,
+        'phase_start'   : phase_start,
+        'phase_end'     : phase_end,
+        'today'         : date.today().isoformat(),
         'section_num'   : section,
         'language'      : language,
         'launch_id'     : launch_id
