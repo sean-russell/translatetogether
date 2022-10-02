@@ -45,23 +45,19 @@
                         <legend>Review Assessment:</legend>
                         <label for="Inadequate">
                             <input type="radio" id="Inadequate" name="review_score" value="0" {% if review.review_score == 0 %}checked{% endif %}>
-                            Inadequate
+                            Poor
                         </label>
                         <label for="Adequate">
                             <input type="radio" id="Adequate" name="review_score" value="1" {% if review.review_score == 1 %}checked{% endif %}>
-                            Adequate
+                            Good
                         </label>
                         <label for="Proficient">
                             <input type="radio" id="Proficient" name="review_score" value="2" {% if review.review_score == 2 %}checked{% endif %}>
-                            Proficient
+                            Very Good
                         </label>
                         <label for="Skilled">
                             <input type="radio" id="Skilled" name="review_score" value="3" {% if review.review_score == 3 %}checked{% endif %}>
-                            Skilled
-                        </label>
-                        <label for="Exceptional">
-                            <input type="radio" id="Exceptional" name="review_score" value="4" {% if review.review_score == 4 %}checked{% endif %}>
-                            Exceptional
+                            Excellent
                         </label>
                     </fieldset>
                     <label for="review_comment" data-tooltip="This section is completely optional. But you can add some constructive feedback here.">
