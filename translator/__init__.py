@@ -165,10 +165,9 @@ def main_page():
         if dbstuff.section_exists(data['iss'], data['course'], data['section_num']):
             today : date = date.today()
             if start > today:
-                pass # too early
-                return render_template('wrong_time.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
+                return render_template('before_start.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
             elif end < today:
-                pass # too late
+                return render_template('after_end.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
             else:
                 pass
 
