@@ -162,21 +162,20 @@ def main_page():
     elif data['role'] == LEARNER:
         start = date.fromisoformat(data['phase_start'])
         end = date.fromisoformat(data['phase_end'])
+        today : date = date.today()
+        if start > today:
+            dbstuff.record_action(data, "Entered the translation tool before it is open")
+            return render_template('before_start.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
+        elif end < today:
+            dbstuff.record_action(data, "Entered the translation tool after the deadline")
+            return render_template('after_end.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
+        
         if dbstuff.section_exists(data['iss'], data['course'], data['section_num']):
-            today : date = date.today()
-            if start > today:
-                return render_template('before_start.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
-            elif end < today:
-                return render_template('after_end.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
-            else:
-                pass
-
-
-
             data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], data['section_num'])
             print("data['section']", data['section'])
             print("current status is ", data['section']['status'])
             if data['section']['status'] in (STATUS_NOT_PREPARED, STATUS_TERMS_PREPARED):
+                dbstuff.record_action(data, "encountered a configuration error")
                 return render_template('config.html', preface=preface, data=jsonify(data))
             elif data['phase'] == PHASE_TRANSLATE:
                 if data['section']['status'] in (STATUS_TERMS_ASSIGNED, convert_status(STATUS_TERMS_ASSIGNED)):
@@ -184,6 +183,7 @@ def main_page():
                     if term == None:
                         assign_term(data)
                         term = dbstuff.get_assigned_term(data)
+                    dbstuff.record_action(data, "opened the translation assignment")
                     return render_template('term.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
             elif data['phase'] == PHASE_REVIEW:
                 print("phase is review")
@@ -191,15 +191,18 @@ def main_page():
                     review_assignments = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
                     if review_assignments == None:
                         raise Exception("No reviews assigned!!!")
+                    dbstuff.record_action(data, "opened the review assignment")
                     return render_template('reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),reviews=review_assignments)
             elif data['phase'] == PHASE_VOTE:
                 if data['section']['status'] in (STATUS_VOTES_ASSIGNED, convert_status(STATUS_VOTES_ASSIGNED)):
                     data['candidates']: Dict[str,List[Dict[str,str]]] = {}
                     get_candidates(data)
                     data['terms']: List[str] = list(data['candidates'].keys())
+                    dbstuff.record_action(data, "opened the voting assignment")
                     return render_template('votes.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
             
         else:
+            dbstuff.record_action(data, "encountered a configuration error, probably because the section does not exist")
             return render_template('config.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 def get_candidates(data):
@@ -616,6 +619,7 @@ def add_new_translation():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     dbstuff.add_term_translation(data['id'], trans_ass_id, term_id, term, termtrans, translation, data['iss'], data['course'], data['section_num'])
     term = dbstuff.get_assigned_term(data)
+    dbstuff.record_action(data, "added a new translation")
     return render_template('term.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
 
 @app.route('/translation/review/', methods=['POST'])
@@ -625,6 +629,7 @@ def show_review():
     review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
     if data['role'] == INSTRUCTOR:
         return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),review=review)
+    dbstuff.record_action(data, "displayed a review")
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 @app.route('/review/add/', methods=['POST'])
