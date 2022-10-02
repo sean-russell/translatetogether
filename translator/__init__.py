@@ -166,7 +166,7 @@ def main_page():
             today : date = date.today()
             if start > today:
                 pass # too early
-                return render_template('wrong_time.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),term=term)
+                return render_template('wrong_time.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
             elif end < today:
                 pass # too late
             else:
