@@ -629,7 +629,7 @@ def show_review():
     review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
     if data['role'] == INSTRUCTOR:
         return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),review=review)
-    dbstuff.record_action(data, "displayed a review")
+    dbstuff.record_action(data, "displayed a translation to review")
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
 @app.route('/review/add/', methods=['POST'])
@@ -643,6 +643,7 @@ def add_new_review():
     review_assignments = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
     if review_assignments == None:
         raise Exception("No reviews assigned!!!")
+    dbstuff.record_action(data, "submitted a review of a translation")
     return render_template('reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),reviews=review_assignments)
     # return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
@@ -662,6 +663,7 @@ def add_new_ta_review():
         if review.term not in rll:
             rll[review.term] = []
         rll[review.term].append(review)
+    dbstuff.record_action(data, "submitted a review of a translation as a TA")
     return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=rll)
     # return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
 
