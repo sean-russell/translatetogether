@@ -370,6 +370,19 @@ def remove_ta_from_course(ta_id: int) -> None:
     cursor.close()
     return
 
+def get_ta_emails_for_course(iss: str, course: str) -> List:
+    """ Get the emails of all TAs for a course """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT email FROM assistants WHERE iss = %s AND course = %s", (iss, course))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    emails = []
+    for row in rows:
+        emails.append(row['email'])
+    return emails
+
 def get_student_details_for_course(iss: str, course: str) -> List:
     """ Get all students for a course """
     conn = mysql.connect()
