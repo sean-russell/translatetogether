@@ -633,7 +633,10 @@ def show_review():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     rev_ass_id = request.form['rev_ass_id']
     review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
-    if data['role'] == INSTRUCTOR:
+    ta_emails = dbstuff.get_ta_emails_for_course(data['iss'], data['course'])
+    if data['email'] in ta_emails:
+        data['role'] = TEACHING_ASSISTANT
+    if data['role'] == INSTRUCTOR or data['role'] == TEACHING_ASSISTANT:
         return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),review=review)
     dbstuff.record_action(data, "displayed a translation to review")
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)
