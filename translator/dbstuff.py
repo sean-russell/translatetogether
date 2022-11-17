@@ -579,6 +579,33 @@ def get_votes_for_student_in_section(id:str, iss:str, course:str, section:int) -
         votes[r['vote_ass_id']] = vote
     return list(votes.values())
 
+def get_votes_for_student(id:str, iss:str, course:str) -> List[Vote]:
+    votes: Dict[str,Vote] = {}
+    """ Get all vote assignments for a student """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM vote_assignments WHERE voter_id = %s AND iss = %s AND course = %s", (id, iss, course))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    for r in rows:
+        vote = Vote(r['id'], r['voter_id'],r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription'])
+        votes[r['id']] = vote
+
+    """ Get all votes for a student """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM votes WHERE id in (SELECT max(id) from votes GROUP BY iss, section, course, vote_ass_id HAVING voter_id = %s AND iss = %s AND course = %s)", (id, iss, course))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    
+    for r in rows:
+        vote = Vote(r['vote_ass_id'], r['voter_id'],r['translator_id'], r['term_id'], r['term'], r['trans_id'], r['transterm'], r['transdescription'])
+        vote.set_vote_score(r['vote_score'])
+        votes[r['vote_ass_id']] = vote
+    return list(votes.values())
+
 def assign_vote_to_student(vle_user_id: str, vc: Review, iss: str, course: str, section_num: str):
     conn = mysql.connect()
     cursor = conn.cursor()

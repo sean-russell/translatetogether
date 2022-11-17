@@ -207,7 +207,7 @@ def main_page():
 
 def get_candidates(data):
     data['candidates']: Dict[str,List[Dict[str,str]]] = {}
-    candidates = dbstuff.get_votes_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+    candidates = dbstuff.get_votes_for_student(data['id'], data['iss'], data['course'])
     
     candidates = [ {
             "vote_assign_id": c.vote_assign_id,
