@@ -34,7 +34,7 @@ CLAIM_CUSTOM = "https://purl.imsglobal.org/spec/lti/claim/custom"
 CLAIM_ROLES = "https://purl.imsglobal.org/spec/lti/claim/roles"
 LEARNER = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Learner'
 INSTRUCTOR = 'http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor'
-
+TEACHING_ASSISTANT = "TeachingAssistant"
 
 TranslationAssignment = namedtuple("TranslationAssignment", "id name term_id term")
 TranslatedTerm = namedtuple("TranslatedTerm", "id term_id term trans_id transterm transdescription")

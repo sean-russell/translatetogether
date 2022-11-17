@@ -120,6 +120,11 @@ def main_page():
     dbstuff.create_course(data)
     dbstuff.add_participant_to_course(data['id'], data['email'], data['full_name'], data['role'], data['iss'], data['course'])
     dbstuff.record_action(data, "Initiated the translation tool")
+    ta_emails = dbstuff.get_ta_emails_for_course(data['iss'], data['course'])
+    if data['email'] in ta_emails:
+        data['role'] = TEACHING_ASSISTANT
+
+
     if data['role'] == INSTRUCTOR:
         owner = dbstuff.get_course_owner(data['iss'], data['course'])
         if message_launch.is_deep_link_launch():
@@ -147,18 +152,19 @@ def main_page():
             data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
             data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
             return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
-        else: # This is where the teaching assistants should be 
-            status = dbstuff.get_status_of_section(data['iss'], data['course'], data['section_num'])
-            if status in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
-                reviews = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
-                rll: Dict[str,List[Review]] = {}
-                for review in reviews:
-                    if review.term not in rll:
-                        rll[review.term] = []
-                    rll[review.term].append(review)
-                return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=rll)
-            else:
-                return render_template('no_action.html')
+    #    else: # This is where the teaching assistants should be 
+    elif data['role'] == TEACHING_ASSISTANT:
+        status = dbstuff.get_status_of_section(data['iss'], data['course'], data['section_num'])
+        if status in (STATUS_REVIEWS_ASSIGNED, convert_status(STATUS_REVIEWS_ASSIGNED)):
+            reviews = dbstuff.get_assigned_and_completed_reviews_for_student_in_section(data['id'], data['iss'], data['course'], data['section_num'])
+            rll: Dict[str,List[Review]] = {}
+            for review in reviews:
+                if review.term not in rll:
+                    rll[review.term] = []
+                rll[review.term].append(review)
+            return render_template('ta_reviews.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), reviews=rll)
+        else:
+            return render_template('no_action.html')
     elif data['role'] == LEARNER:
         start = date.fromisoformat(data['phase_start'])
         end = date.fromisoformat(data['phase_end'])
@@ -627,7 +633,10 @@ def show_review():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     rev_ass_id = request.form['rev_ass_id']
     review = dbstuff.get_latest_review_by_review_assignment_id(rev_ass_id)
-    if data['role'] == INSTRUCTOR:
+    ta_emails = dbstuff.get_ta_emails_for_course(data['iss'], data['course'])
+    if data['email'] in ta_emails:
+        data['role'] = TEACHING_ASSISTANT
+    if data['role'] == INSTRUCTOR or data['role'] == TEACHING_ASSISTANT:
         return render_template('ta_review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"),review=review)
     dbstuff.record_action(data, "displayed a translation to review")
     return render_template('review.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"), review=review)

@@ -59,10 +59,6 @@
                             <input type="radio" id="Skilled" name="review_score" value="3" {% if review.review_score == 3 %}checked{% endif %}>
                             Skilled
                         </label>
-                        <label for="Exceptional">
-                            <input type="radio" id="Exceptional" name="review_score" value="4" {% if review.review_score == 4 %}checked{% endif %}>
-                            Exceptional
-                        </label>
                     </fieldset>
                     <label for="candidate" data-tooltip="These choices will be used to determine which translations can be voted on.">
                         <input type="checkbox" id="candidate" name="candidate" {% if review.review_candidate %}checked{% endif %}>
