@@ -334,8 +334,7 @@ def get_assistant_review_assignments_for_section(iss: str, course: str, section:
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT vle_user_id, fullname FROM assistants NATURAL LEFT OUTER JOIN participants WHERE iss = %s AND course = %s", (iss, course))
     rows = cursor.fetchall()
-    conn.close()
-    cursor.close()
+    
     assistants = [ [a['vle_user_id'], a['fullname']] for a in rows]
     i = 0
     for vle_user_id, fullname in assistants:
