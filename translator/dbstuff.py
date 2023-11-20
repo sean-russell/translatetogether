@@ -368,6 +368,14 @@ def get_assistant_review_assignments_for_section(iss: str, course: str, section:
     return assistants
 
 
+def get_candidates_for_section(iss: str, course: str, section: str):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT translator_id,term, fullname FROM reviews WHERE iss = %s AND course = %s AND section = %s AND candidate = 1", (iss, course, section))
+    rows = cursor.fetchall()
+    print(rows)
+
+
 def get_name_for_vle_user_id(vle_user_id: str) -> str:
     """ Get the name of a VLE user """
     conn = mysql.connect()
