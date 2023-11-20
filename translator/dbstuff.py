@@ -483,6 +483,17 @@ def add_tas_to_course(iss: str, course: str, tas : List) -> None:
     conn.close()
     cursor.close()
 
+def update_tas_in_course(iss: str, course: str, tas : List) -> None:
+    """ Add TAs to a course """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    for ta in tas:
+        cursor.execute("INSERT IGNORE INTO assistants (iss, course, email) VALUES (%s, %s, %s)", (iss, course, ta))
+        cursor.execute("UPDATE participants SET role = %s WHERE iss = %s AND course = %s AND email = %s", (INSTRUCTOR, iss, course, ta))
+    conn.commit()
+    conn.close()
+    cursor.close()
+
 def remove_ta_from_course(ta_id: int) -> None:
     """ Remove a TA from a course """
     conn = mysql.connect()

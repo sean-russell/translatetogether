@@ -528,13 +528,21 @@ def add_teaching_assistants():
     data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
     return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
+@app.route('/tas/update/', methods=['POST'])
+def add_teaching_assistants():
+    data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
+    ta_emails = [ a.strip() for a in request.form['tas'].split(',') if a.strip() != '' and re.fullmatch(email_regex, a.strip()) ] 
+    dbstuff.update_tas_in_course(data['iss'], data['course'], ta_emails)
+    data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
+    data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
+    data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
+    return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
+
 @app.route('/tas/remove/', methods=['POST'])
 def remove_teaching_assistant():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     ta_id = request.form['ta_id']
-    ids = ta_id.split(',')
-    for ta_id in ids:
-        dbstuff.remove_ta_from_course(ta_id)
+    dbstuff.remove_ta_from_course(ta_id)
     data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])

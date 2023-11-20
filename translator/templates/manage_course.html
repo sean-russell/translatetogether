@@ -91,6 +91,11 @@
         <input type="text" name="tas" placeholder="Enter TA email addresses separated by commas">
         <input type="submit" value="Add Teaching Assistants">
     </form>
+    <form action="{{preface~url_for('update_teaching_assistants')}}" method="POST">
+        <input type="hidden" name="datajson" value="{{datajson}}">
+        <input type="text" name="tas" placeholder="Enter TA email addresses separated by commas">
+        <input type="submit" value="Update Teaching Assistants">
+    </form>
     <h1>Students</h1>
     <p>There are the following {{data.students|length}} students registered for this course:</p>
     <table>
