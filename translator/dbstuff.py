@@ -308,7 +308,7 @@ def get_student_review_assignments_for_section(iss: str, course: str, section: s
     for vle_user_id, fullname, term, trans_ass_id, comp in students:
         cursor.execute("SELECT id, term from review_assignments WHERE iss = %s AND course = %s AND section = %s and reviewer_id = %s", (iss, course, section, vle_user_id))
         rows = cursor.fetchall()
-        if result != None:
+        if rows != None:
             rev_assignments = []
             for r in rows:
                 rev_ass_id, rev_term = r['id'], r['term']
