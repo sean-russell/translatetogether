@@ -148,7 +148,7 @@
         </thead>
         <tbody>
             {% for s in data.students %}
-                <tr {% if s[4] == "True" %}class="highlighted"{% endif %}>
+                <tr {% if s[4] == "True" or s[4] == true %}class="highlighted"{% endif %}>
                     <td>{{s[1]}}</td>
                     <td>{{s[2]}}</td>
                 </tr>
