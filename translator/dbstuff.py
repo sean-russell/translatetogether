@@ -652,6 +652,20 @@ def get_latest_review_by_review_assignment_id(rev_id) -> Review:
     
     return review
 
+def get_candidates_names_for_section(iss:str, course:str, section:int):
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT Distinct trans_id, translator_id, term from reviews where iss = %s AND course = %s AND section = %s AND Candidate = 1", (iss, course, section));
+    rows = cursor.fetchall()
+    candidates = []
+    for row in rows:
+        cursor.execute("SELECT fullname from participants where vle_user_id = %s", (row['translator_id']))
+        name = cursor.fetchone()
+        row['fullname'] = name['fullname']
+        candidates.append([ row['term'], row['fullname'] ])
+    return sorted(candidates)
+
+
 def get_candidates_for_section(iss:str, course:str, section:int) -> List[Review]:
     """ Get all candidates for a section """
     conn = mysql.connect()

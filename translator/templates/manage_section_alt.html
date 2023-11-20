@@ -224,6 +224,32 @@
 
             {% endif %}
         </details>
+        <details>
+            <summary>Candidates</summary>
+            {% if data.section.status == "Not prepared" or data.section.status == "Terms added to section" %}
+            {% elif data.section.status == "Terms assigned to students" %}
+            
+            {% elif data.section.status == "Reviews assigned to students" %}
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Term</th>
+                        <th scope="col">Original Translator</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in data.candidates %}
+                        <tr>
+                            <td>{{a[0]}}</td>
+                            <td>{{a[1]}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% elif data.section.status == "Votes assigned to students" %}
+
+            {% endif %}
+        </details>
         {% if data.section.status == "Not prepared" %}
         <form action="{{preface~url_for('add_term')}}" method="POST">
             <input type="hidden" name="section" value="{{data.section.section}}">
