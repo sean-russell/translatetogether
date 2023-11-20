@@ -265,7 +265,7 @@ def manage_section():
     elif data['section']['status'] == STATUS_REVIEWS_ASSIGNED_STR:
         data['students'] = dbstuff.get_student_translation_assignments_for_section(data['iss'], data['course'], request.form['section'])
         data['students'] = dbstuff.get_student_review_assignments_for_section(data['iss'], data['course'], request.form['section'], data['students'])
-    return render_template('manage_section_new.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
+    return render_template('manage_section_alt.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/section/setterms/', methods=['POST'])
 def set_num_terms():
