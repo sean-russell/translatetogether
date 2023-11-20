@@ -209,7 +209,7 @@
                         <tr>
                             <td rowspan="{{a[2]|length}}">{{a[1]}}</td>
                             {% for r in a[2] %}
-                                <td{% if r[4] == "True" or r[4] == true %}class="highlighted"{% endif %}>{{r[1]}}</td>
+                                <td {% if r[4] == "True" or r[4] == true %}class="highlighted"{% endif %}>{{r[1]}}</td>
                                 <td {% if r[4] == "True" or r[4] == true %}class="highlighted"{% endif %}>{{r[3]}}</td>
                                 {% if not loop.last  %}
                             </tr>
