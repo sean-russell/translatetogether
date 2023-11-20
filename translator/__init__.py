@@ -262,9 +262,15 @@ def manage_section():
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
     if data['section']['status'] == STATUS_TERMS_ASSIGNED_STR:
         data['students'] = dbstuff.get_student_translation_assignments_for_section(data['iss'], data['course'], request.form['section'])
+        data['num_translations'] = sum(list(dbstuff.get_num_translations_for_section_of_course(data['iss'], data['course'], request.form['section']).values()))
+        data['num_translations_complete'] = dbstuff.count_unique_translations_by_student_for_section(data['iss'], data['course'], request.form['section'])
     elif data['section']['status'] == STATUS_REVIEWS_ASSIGNED_STR:
         data['students'] = dbstuff.get_student_translation_assignments_for_section(data['iss'], data['course'], request.form['section'])
         data['students'] = dbstuff.get_student_review_assignments_for_section(data['iss'], data['course'], request.form['section'], data['students'])
+        data['num_translations'] = sum(list(dbstuff.get_num_translations_for_section_of_course(data['iss'], data['course'], request.form['section']).values()))
+        data['num_translations_complete'] = dbstuff.count_unique_translations_by_student_for_section(data['iss'], data['course'], request.form['section'])
+        data['num_reviews'] = sum(list(dbstuff.get_num_reviews_for_section_of_course(data['iss'], data['course'], request.form['section']).values()))
+        data['num_reviews_complete'] = dbstuff.count_unique_reviews_by_student_for_section(data['iss'], data['course'], request.form['section'])
     return render_template('manage_section_alt.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/section/setterms/', methods=['POST'])

@@ -406,6 +406,26 @@ def count_term_assignments_for_section(iss: str, course: str, section: str) -> L
     cursor.close()
     return terms
 
+def count_unique_translations_by_student_for_section(iss: str, course: str, section: str) -> List:
+    """ Get all term assignments for a section """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT count(DISTINCT vle_user_id) AS num_translations from translations where iss = %s AND course = %s AND section = %s", (iss, course, section))
+    count = cursor.fetchone()
+    conn.close()
+    cursor.close()
+    return count['num_translations']
+
+def count_unique_reviews_by_student_for_section(iss: str, course: str, section: str) -> List:
+    """ Get all term assignments for a section """
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT count(DISTINCT rev_ass_id) AS num_reviews from reviews where iss = %s AND course = %s AND section = %s", (iss, course, section))
+    count = cursor.fetchone()
+    conn.close()
+    cursor.close()
+    return count['num_reviews']
+
 def add_tas_to_course(iss: str, course: str, tas : List) -> None:
     """ Add TAs to a course """
     conn = mysql.connect()
