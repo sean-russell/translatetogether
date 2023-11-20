@@ -109,7 +109,7 @@
                 <th scope="col">Number of Students</th>
                 <td>{{ data.students | length }}</td>
             </tr>
-            {% if data.section.status == "Terms assigned to students" || data.section.status == "Reviews assigned to students"%}
+            {% if data.section.status == "Terms assigned to students" or data.section.status == "Reviews assigned to students"%}
             <tr>
                 <th scope="col">Number of Translations</th>
                 <td>{{ data.num_translations }}</td>
@@ -131,7 +131,7 @@
             {% endif %}
         </tbody>
     </table>
-    {% if data.section.status == "Not prepared" || data.section.status == "Terms added to section" %}
+    {% if data.section.status == "Not prepared" or data.section.status == "Terms added to section" %}
     {% elif data.section.status == "Terms assigned to students" %}
     <table>
         <thead>
