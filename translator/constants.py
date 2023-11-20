@@ -10,10 +10,15 @@ REVIEW_EXCEPTIONAL = 4
 REVIEW_SCORES = (REVIEW_INADEQUATE, REVIEW_ADEQUATE, REVIEW_PROFICIENT, REVIEW_SKILLED, REVIEW_EXCEPTIONAL)
 
 STATUS_NOT_PREPARED = 0
+STATUS_NOT_PREPARED_STR = "Not prepared"
 STATUS_TERMS_PREPARED = 1
+STATUS_TERMS_PREPARED_STR = "Terms added to section"
 STATUS_TERMS_ASSIGNED = 2
+STATUS_TERMS_ASSIGNED_STR = "Terms assigned to students"
 STATUS_REVIEWS_ASSIGNED = 3 
+STATUS_REVIEWS_ASSIGNED_STR = "Reviews assigned to students"
 STATUS_VOTES_ASSIGNED = 4
+STATUS_VOTES_ASSIGNED_STR = "Votes assigned to students"
 
 PHASE_TRANSLATE= "translate"
 PHASE_REVIEW = "review"
@@ -149,7 +154,7 @@ class Vote:
 def convert_status(status : int) -> str:
     """ Convert the status from the database to a more readable format """
     if status == STATUS_NOT_PREPARED:
-        return "Not prepared"
+        return STATUS_NOT_PREPARED_STR
     elif status == STATUS_TERMS_PREPARED:
         return "Terms added to section"
     elif status == STATUS_TERMS_ASSIGNED:
