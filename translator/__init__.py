@@ -260,7 +260,9 @@ def manage_section():
     """ change to the page for managing a section """
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     data['section'] = dbstuff.get_section_for_course(data['iss'], data['course'], request.form['section'])
-    return render_template('manage_section.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
+    data['students'] = dbstuff.get_student_details_for_section(data['iss'], data['course'], request.form['section'])
+    print(data['students'])
+    return render_template('manage_section_new.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/section/setterms/', methods=['POST'])
 def set_num_terms():

@@ -44,7 +44,7 @@
                     <fieldset>
                         <legend>Review Assessment:</legend>
                         <label for="Inadequate">
-                            <input type="radio" id="Inadequate" name="review_score" value="0" {% if review.review_score == 0 %}checked{% endif %}>
+                            <input type="radio" id="Inadequate" name="review_score" value="0" {% if review.review_score == 0 %}checked{% endif %} required>
                             Inadequate
                         </label>
                         <label for="Adequate">

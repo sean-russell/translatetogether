@@ -273,6 +273,50 @@ def get_num_votes_for_section_of_course(iss: str, course: str, section: str) -> 
     cursor.close()
     return votes_num_dict
 
+
+def get_student_details_for_section(iss: str, course: str, section: str) -> tuple:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT vle_user_id, fullname FROM participants WHERE iss = %s AND course = %s", (iss, course))
+    rows = cursor.fetchall()
+
+    students = [ [r['vle_user_id'], r['fullname']] for r in rows ]
+    i = 0
+    for vle_user_id, fullname in students:
+        cursor.execute("SELECT id, term from trans_assignments WHERE iss = %s AND course = %s AND section = %s and vle_user_id = %s", (iss, course, section, vle_user_id))
+        result = cursor.fetchone()
+        if result != None:
+            term, trans_ass_id = result['term'], result['id']
+            students[i] = students[i] + [term, trans_ass_id]
+            cursor.execute("SELECT id from translations WHERE iss = %s AND course = %s AND section = %s and trans_ass_id = %s", (iss, course, section, trans_ass_id))
+            result = cursor.fetchone()
+            if result != None:
+                students[i].append(True)
+            else:
+                students[i].append(False)
+            cursor.execute("SELECT id, term from review_assignments WHERE iss = %s AND course = %s AND section = %s and reviewer_id = %s", (iss, course, section, vle_user_id))
+            rows = cursor.fetchall()
+            rev_assignments = []
+            for r in rows:
+                rev_ass_id, rev_term = r['id'], r['term']
+                rev_assignments.append([rev_ass_id,rev_term])
+            j = 0
+            for rev_ass_id, rev_term in rev_assignments:
+                cursor.execute("SELECT id from reviews WHERE iss = %s AND course = %s AND section = %s and rev_ass_id = %s", (iss, course, section, rev_ass_id))
+                result = cursor.fetchone()
+                if result != None:
+                    rev_assignments[j].append(True)
+                else:
+                    rev_assignments[j].append(False)
+                j = j + 1
+            students[i].append(rev_assignments)
+        i = i + 1
+    students = [ s for s in students if len(s) > 2] 
+    conn.close()
+    cursor.close()
+    return students
+
+
 def get_name_for_vle_user_id(vle_user_id: str) -> str:
     """ Get the name of a VLE user """
     conn = mysql.connect()

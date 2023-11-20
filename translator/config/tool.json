@@ -11,6 +11,44 @@
             "private_key_file": "jwtRS256.key",
             "public_key_file": "jwtRS256.key.pub",
             "deployment_ids": ["5","6"]
+        },
+        {
+            "default": true,
+            "client_id": "NxDGPR3efhvcbgI",
+            "auth_login_url": "https://waist.ucd.ie/moodle/mod/lti/auth.php",
+            "auth_token_url": "https://waist.ucd.ie/moodle/mod/lti/token.php",
+            "auth_audience": "https://waist.ucd.ie/moodle",
+            "key_set_url": "https://waist.ucd.ie/moodle/mod/lti/certs.php",
+            "key_set": null,
+            "private_key_file": "jwtRS256.key",
+            "public_key_file": "jwtRS256.key.pub",
+            "deployment_ids": ["7","6"]
+        },
+        {
+            "default": true,
+            "client_id": "DwzcTocjIilHIAP",
+            "auth_login_url": "https://csmoodle.ucd.ie/moodle/mod/lti/auth.php",
+            "auth_token_url": "https://csmoodle.ucd.ie/moodle/mod/lti/token.php",
+            "auth_audience": "https://csmoodle.ucd.ie/moodle",
+            "key_set_url": "https://csmoodle.ucd.ie/moodle/mod/lti/certs.php",
+            "key_set": null,
+            "private_key_file": "jwtRS256.key",
+            "public_key_file": "jwtRS256.key.pub",
+            "deployment_ids": ["1","6"]
+        }
+    ],
+    "https://csmoodle.ucd.ie/moodle" : [
+    {
+            "default": true,
+            "client_id": "L0Fsmf4sO6wqB0P",
+            "auth_login_url": "https://csmoodle.ucd.ie/moodle/mod/lti/auth.php",
+            "auth_token_url": "https://csmoodle.ucd.ie/moodle/mod/lti/token.php",
+            "auth_audience": "https://csmoodle.ucd.ie/moodle",
+            "key_set_url": "https://csmoodle.ucd.ie/moodle/mod/lti/certs.php",
+            "key_set": null,
+            "private_key_file": "jwtRS256.key",
+            "public_key_file": "jwtRS256.key.pub",
+            "deployment_ids": ["1","2"]
         }
     ]
 }

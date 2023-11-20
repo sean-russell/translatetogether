@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cstools.ucd.ie/pico.min.css">
+    <script>
+        function validateForm() {
+            var form_num_terms = document.getElementById("form_num_terms").value;
+            var form_desired_terms = document.getElementById("form_desired_terms").value;
+            if (form_num_terms != form_desired_terms) {
+                alert("You must have the correct number of terms");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <h1>Section Management</h1>
+    <p>This is the group of terms that are gathered as a section for the course {{data.course}} on iss {{data.iss}}. Terms remain grouped in sections, translation tasks, review tasks and voting are all based on the same group of terms for a section.</p>
+    <table>
+        <thead>
+            <tr>
+                <td>Item</td>
+                <td>Information</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    Section Number
+                </td>
+                <td>{{data.section.section}}</td>
+                <td>
+                    <form action="{{preface~url_for('main_page')}}" method="POST">
+                        <input type="hidden" name="datajson" value="{{datajson}}">
+                        <input type="submit" value="Return to Course">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number of Terms
+                </td>
+                <td>Current:{{data.section.terms|length}}</br>Wanted:{{data.section.desired_terms}}</td>
+                <td>
+                    <form action="{{preface~url_for('set_num_terms')}}" method="POST">
+                        <input type="hidden" name="datajson" value="{{datajson}}">
+                        <input type="hidden" name="section" value="{{data.section.section}}">
+                        <input type="text" name="num_terms" placeholder="{{data.section.desired_terms}}">
+                        <input type="submit" value="Set Number of Terms">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Number of Reviews
+                </td>
+                <td>Current:{{data.section.desired_terms - 1}}</br></td>
+                <td>
+                    This is based on the number of terms, such that every student will encounter each term as something to translate or review.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Current Status
+                </td>
+                <td>{{data.section.status}}</td>
+                <td>
+                    {% if data.section.status == "Not prepared" %}
+                        <form action="{{preface~url_for('finalise_section')}}" method="POST" onsubmit="return validateForm()">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" id="form_num_terms" name="form_num_terms" value="{{data.section.terms|length}}">
+                            <input type="hidden" id="form_desired_terms" name="form_desired_terms" value="{{data.section.desired_terms}}">
+                            <input type="hidden" name="section" value="{{data.section.section}}">
+                            <input type="submit" value="Finalise Terms" data-tooltip="This will prevent further modification of the list of terms and allow terms to be assigned to students for translation.">
+                        </form>
+                    {% elif data.section.status == "Terms added to section" %}
+                        <form action="{{preface~url_for('asign_terms')}}" method="POST">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" name="section" value="{{data.section.section}}">
+                            <input type="submit" value="Assign Terms" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+                        </form>
+                    {% elif data.section.status == "Terms assigned to students" %}
+                        <form action="{{preface~url_for('start_review')}}" method="POST">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" name="section" value="{{data.section.section}}">
+                            <input type="submit" value="Initiate Review Phase" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+                        </form>
+                    {% elif data.section.status == "Reviews assigned to students" %}
+                        <form action="{{preface~url_for('start_voting')}}" method="POST">
+                            <input type="hidden" name="datajson" value="{{datajson}}">
+                            <input type="hidden" name="section" value="{{data.section.section}}">
+                            <input type="submit" value="Initiate Voting Phase" data-tooltip="This will assign terms to the students who are registered in the VLE currently, any others will be randomly assigned as they access the tool.">
+                        </form>
+                    {% elif data.section.status == "Votes assigned to students" %}
+
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h1>Terms</h1>
+    <p>There are the following {{data.section.terms|length}} terms are prepared in this section:</p>
+    <!-- A table for showing the section number and status for each section -->
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Student</th>
+                <th scope="col">Assigned Term</th>
+                <th scope="col">Completed</th>
+                <th scope="col">Assigned Reviews</th>
+                <th scope="col">Completed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in data.students %}
+                <tr>
+			<td rowspan="3" >{{s[1]}}</td>
+		    <td rowspan="3" >{{s[2]}}</td>
+		    <td rowspan="3" >{{s[4]}}</td>
+                    {% for r in s[5] %}
+		    <td >{{r[1]}}</td>
+			<td >{{r[2]}}</td>
+                        {% if not loop.last  %}
+                    </tr>
+                    <tr>
+                        {% endif %}
+
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if data.section.status == "Not prepared" %}
+    <form action="{{preface~url_for('add_term')}}" method="POST">
+        <input type="hidden" name="section" value="{{data.section.section}}">
+        <input type="hidden" name="datajson" value="{{datajson}}">
+        <input type="text" name="term" placeholder="Term">
+        <input type="submit" value="Add New Term(s)">
+    </form>
+    {% endif %}
+</body>
+</html>
+
