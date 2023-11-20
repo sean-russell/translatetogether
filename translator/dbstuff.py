@@ -274,7 +274,7 @@ def get_num_votes_for_section_of_course(iss: str, course: str, section: str) -> 
     return votes_num_dict
 
 
-def get_student_details_for_section(iss: str, course: str, section: str) -> tuple:
+def get_student_translation_assignments_for_section(iss: str, course: str, section: str) -> tuple:
     conn = mysql.connect()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute("SELECT vle_user_id, fullname FROM participants WHERE iss = %s AND course = %s", (iss, course))
@@ -294,8 +294,21 @@ def get_student_details_for_section(iss: str, course: str, section: str) -> tupl
                 students[i].append(True)
             else:
                 students[i].append(False)
-            cursor.execute("SELECT id, term from review_assignments WHERE iss = %s AND course = %s AND section = %s and reviewer_id = %s", (iss, course, section, vle_user_id))
-            rows = cursor.fetchall()
+        i = i + 1
+    students = [ s for s in students if len(s) > 2] 
+    conn.close()
+    cursor.close()
+    return students
+
+def get_student_review_assignments_for_section(iss: str, course: str, section: str, students: List[List[str]]) -> tuple:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT vle_user_id, fullname FROM participants WHERE iss = %s AND course = %s", (iss, course))
+    i = 0
+    for vle_user_id, fullname, term, trans_ass_id, comp in students:
+        cursor.execute("SELECT id, term from review_assignments WHERE iss = %s AND course = %s AND section = %s and reviewer_id = %s", (iss, course, section, vle_user_id))
+        rows = cursor.fetchall()
+        if result != None:
             rev_assignments = []
             for r in rows:
                 rev_ass_id, rev_term = r['id'], r['term']
@@ -311,7 +324,7 @@ def get_student_details_for_section(iss: str, course: str, section: str) -> tupl
                 j = j + 1
             students[i].append(rev_assignments)
         i = i + 1
-    students = [ s for s in students if len(s) > 2] 
+    students = [ s for s in students if len(s) > 5] 
     conn.close()
     cursor.close()
     return students
