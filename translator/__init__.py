@@ -532,7 +532,9 @@ def add_teaching_assistants():
 def remove_teaching_assistant():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     ta_id = request.form['ta_id']
-    dbstuff.remove_ta_from_course(ta_id)
+    ids = ta_id.split(',')
+    for ta_id in ids:
+        dbstuff.remove_ta_from_course(ta_id)
     data['sections'] = dbstuff.get_sections_for_course(data['iss'], data['course'])
     data['tas'] = dbstuff.get_ta_details_for_course(data['iss'], data['course'])
     data['students'] = dbstuff.get_student_details_for_course(data['iss'], data['course'])
