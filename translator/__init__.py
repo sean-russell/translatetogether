@@ -529,7 +529,7 @@ def add_teaching_assistants():
     return render_template('manage_course.html', preface=preface, data=data, datajson=jwt.encode(data, _private_key, algorithm="RS256"))
 
 @app.route('/tas/update/', methods=['POST'])
-def add_teaching_assistants():
+def update_teaching_assistants():
     data = jwt.decode(request.form['datajson'], _public_key, algorithms=["RS256"])
     ta_emails = [ a.strip() for a in request.form['tas'].split(',') if a.strip() != '' and re.fullmatch(email_regex, a.strip()) ] 
     dbstuff.update_tas_in_course(data['iss'], data['course'], ta_emails)
