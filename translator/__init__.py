@@ -267,6 +267,7 @@ def manage_section():
     elif data['section']['status'] == STATUS_REVIEWS_ASSIGNED_STR:
         data['students'] = dbstuff.get_student_translation_assignments_for_section(data['iss'], data['course'], request.form['section'])
         data['students'] = dbstuff.get_student_review_assignments_for_section(data['iss'], data['course'], request.form['section'], data['students'])
+        data['assistants'] = dbstuff.get_assistant_review_assignments_for_section(data['iss'], data['course'], request.form['section'])
         data['num_translations'] = sum(list(dbstuff.get_num_translations_for_section_of_course(data['iss'], data['course'], request.form['section']).values()))
         data['num_translations_complete'] = dbstuff.count_unique_translations_by_student_for_section(data['iss'], data['course'], request.form['section'])
         data['num_reviews'] = sum(list(dbstuff.get_num_reviews_for_section_of_course(data['iss'], data['course'], request.form['section']).values()))

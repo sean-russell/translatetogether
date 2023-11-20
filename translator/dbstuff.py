@@ -329,6 +329,45 @@ def get_student_review_assignments_for_section(iss: str, course: str, section: s
     cursor.close()
     return students
 
+def get_assistant_review_assignments_for_section(iss: str, course: str, section: str) -> tuple:
+    conn = mysql.connect()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT vle_user_id, fullname FROM assistants NATURAL LEFT OUTER JOIN participants WHERE iss = %s AND course = %s", (iss, course))
+    rows = cursor.fetchall()
+    conn.close()
+    cursor.close()
+    assistants = [ [a['vle_user_id'], a['fullname']] for a in rows]
+    i = 0
+    for vle_user_id, fullname in assistants:
+        cursor.execute("SELECT id, term, translator_id from review_assignments WHERE iss = %s AND course = %s AND section = %s and reviewer_id = %s", (iss, course, section, vle_user_id))
+        rows = cursor.fetchall()
+        if rows != None:
+            rev_assignments = []
+            for r in rows:
+                rev_ass_id, rev_term, translator_id = r['id'], r['term'], r['translator_id']
+                rev_assignments.append([rev_ass_id, rev_term, translator_id])
+            j = 0
+            for rev_ass_id, rev_term, translator_id in rev_assignments:
+                cursor.execute("SELECT fullname from participants WHERE vle_user_id = %s", (translator_id))
+                name_results = cursor.fetchone()
+                if name_results != None:
+                    rev_assignments[j].append(name_results['fullname'])
+                else:
+                    rev_assignments[j].append("unable to access name for " + str(translator_id))
+                cursor.execute("SELECT id from reviews WHERE iss = %s AND course = %s AND section = %s and rev_ass_id = %s", (iss, course, section, rev_ass_id))
+                result = cursor.fetchone()
+                if result != None:
+                    rev_assignments[j].append(True)
+                else:
+                    rev_assignments[j].append(False)
+                j = j + 1
+            assistants[i].append(rev_assignments)
+        i = i + 1
+    assistants = [ s for s in assistants if len(s) > 5] 
+    conn.close()
+    cursor.close()
+    return assistants
+
 
 def get_name_for_vle_user_id(vle_user_id: str) -> str:
     """ Get the name of a VLE user """
