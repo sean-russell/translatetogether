@@ -148,9 +148,9 @@
         </thead>
         <tbody>
             {% for s in data.students %}
-                <tr {% if s[4] == "True" or s[4] == true %}class="highlighted"{% endif %}>
+                <tr>
                     <td>{{s[1]}}</td>
-                    <td>{{s[2]}}</td>
+                    <td {% if s[4] == "True" or s[4] == true %}class="highlighted"{% endif %}>{{s[2]}}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -161,7 +161,6 @@
             <tr>
                 <th scope="col">Student</th>
                 <th scope="col">Assigned Term</th>
-                <th scope="col">Completed</th>
                 <th scope="col">Assigned Reviews</th>
                 <th scope="col">Completed</th>
             </tr>
@@ -169,12 +168,10 @@
         <tbody>
             {% for s in data.students %}
                 <tr>
-                    <td rowspan="3" >{s[1]}</td>
-                    <td rowspan="3" >{s[2]}</td>
-                    <td rowspan="3" >{s[4]}</td>
+                    <td rowspan="3" >{{s[1]}}</td>
+                    <td rowspan="3" {% if s[4] == "True" or s[4] == true %}class="highlighted"{% endif %}>{{s[2]}}</td>
                     {% for r in s[5] %}
-                        <td >{r[1]}</td>
-                        <td >{r[2]}</td>
+                        <td {% if r[2] == "True" or r[2] == true %}class="highlighted"{% endif %}>{{r[1]}}</td>
                         {% if not loop.last  %}
                     </tr>
                     <tr>
