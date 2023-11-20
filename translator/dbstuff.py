@@ -362,7 +362,7 @@ def get_assistant_review_assignments_for_section(iss: str, course: str, section:
                 j = j + 1
             assistants[i].append(rev_assignments)
         i = i + 1
-    assistants = [ s for s in assistants if len(s) > 5] 
+    assistants = [ s for s in assistants if len(s) > 2] 
     conn.close()
     cursor.close()
     return assistants
