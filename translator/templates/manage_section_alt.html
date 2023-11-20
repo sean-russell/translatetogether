@@ -107,26 +107,26 @@
         <tbody>
             <tr>
                 <th scope="col">Number of Students</th>
-                <td>{% data.students | length %}</td>
+                <td>{{ data.students | length }}</td>
             </tr>
             {% if data.section.status == "Terms assigned to students" || data.section.status == "Reviews assigned to students"%}
             <tr>
                 <th scope="col">Number of Translations</th>
-                <td>{% data.num_translations %}</td>
+                <td>{{ data.num_translations }}</td>
             </tr>
             <tr>
                 <th scope="col">Number of Students Translations Complete</th>
-                <td>{% data.num_translations_complete %}</td>
+                <td>{{ data.num_translations_complete }}</td>
             </tr>
             {% endif %}
             {% if data.section.status == "Reviews assigned to students" %}
             <tr>
                 <th scope="col">Number of Reviews</th>
-                <td>{% data.num_reviews %}</td>
+                <td>{{ data.num_reviews }}</td>
             </tr>
             <tr>
                 <th scope="col">Number of Students With All Reviews Complete</th>
-                <td>{% data.num_reviews_complete %}</td>
+                <td>{{ data.num_reviews_complete }}</td>
             </tr>
             {% endif %}
         </tbody>
