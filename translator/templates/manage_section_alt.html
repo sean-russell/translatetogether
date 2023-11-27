@@ -187,7 +187,12 @@
                 </tbody>
             </table>
             {% elif data.section.status == "Votes assigned to students" %}
+            <div id="graph" style="position:relative; width:660px; height:216px; width:600px; margin:8px; padding:0;">
+                <ul style="position:absolute; top:0; left:32px; width:600px; height:200px; border-left:1px solid black; border-bottom:1px solid black;">
 
+                </ul>
+
+            </div>
             {% endif %}
         </details>
         <details>
@@ -228,7 +233,6 @@
             <summary>Candidates</summary>
             {% if data.section.status == "Not prepared" or data.section.status == "Terms added to section" %}
             {% elif data.section.status == "Terms assigned to students" %}
-            
             {% elif data.section.status == "Reviews assigned to students" %}
             <table>
                 <thead>
@@ -247,7 +251,22 @@
                 </tbody>
             </table>
             {% elif data.section.status == "Votes assigned to students" %}
-
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Term</th>
+                        <th scope="col">Original Translator</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in data.candidates %}
+                        <tr>
+                            <td>{{c[0]}}</td>
+                            <td>{{c[1]}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             {% endif %}
         </details>
         {% if data.section.status == "Not prepared" %}
